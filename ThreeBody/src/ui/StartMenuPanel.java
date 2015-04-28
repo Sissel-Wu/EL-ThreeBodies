@@ -35,31 +35,34 @@ public class StartMenuPanel extends JPanel{
 	private void initComonent() {
 
 		// 初始化开始按钮
-		this.btnStartGame = new JButton("开始游戏");
+		this.btnStartGame = new JButton(new ImageIcon("button.png"));
 		this.btnStartGame.setContentAreaFilled(false);
 		this.btnStartGame.setBounds(483, 120, 200, 60);
-//		this.btnMultyPlay.setBorderPainted(false);
+		this.btnStartGame.setBorderPainted(false);
 		// 给开始按钮增加事件监听
 		btnStartGame.addMouseListener(new StartGameListener());
 		// 添加按钮到面板
 		this.add(btnStartGame);
 
-		this.btnOption = new JButton("游戏设置");
+		this.btnOption = new JButton(new ImageIcon("option.png"));
 		this.btnOption.setContentAreaFilled(false);
 		this.btnOption.setBounds(483, 220, 200, 60);
+		this.btnOption.setBorderPainted(false);
 		this.btnOption.addMouseListener(new OptionListener());
 
 		this.add(btnOption);
 
-		this.btnAboutUs = new JButton("关于我们");
+		this.btnAboutUs = new JButton(new ImageIcon("about.png"));
 		this.btnAboutUs.setContentAreaFilled(false);
 		this.btnAboutUs.setBounds(483, 320, 200, 60);
+		this.btnAboutUs.setBorderPainted(false);
 		this.btnAboutUs.addMouseListener(new AboutUsListener());
 		this.add(btnAboutUs);
 
-		this.btnExit = new JButton("退出");
+		this.btnExit = new JButton(new ImageIcon("exit.png"));
 		this.btnExit.setContentAreaFilled(false);
 		this.btnExit.setBounds(483, 420, 200, 60);
+		this.btnExit.setBorderPainted(false);
 		this.btnExit.addMouseListener(new ExitListener());
 		this.add(btnExit);
 
@@ -78,7 +81,7 @@ public class StartMenuPanel extends JPanel{
 	}
 	@Override
 	public void paintComponent(Graphics g) {
-		Image IMG_MAIN = new ImageIcon("img1.jpg").getImage();
+		Image IMG_MAIN = new ImageIcon("img2.jpg").getImage();
 		// 绘制游戏界面
 		g.drawImage(IMG_MAIN, 0, 0, 1158, 650, null);
 	}
@@ -213,7 +216,7 @@ public class StartMenuPanel extends JPanel{
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
 			Media.playSound(Sound.choose);
-//			add(btnAccount);
+			btnLogIn.setIcon(new ImageIcon("option.png"));
 			repaint();
 		}
 

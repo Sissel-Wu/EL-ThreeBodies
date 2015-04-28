@@ -54,8 +54,8 @@ public class MainControl {
     }
     public static void main(String[] args) {
     	MainControl mc = new MainControl();
-    	mc.frame = new MainFrame();
     	mc.startMainPanel = new StartMenuPanel(mc);
+    	mc.frame = new MainFrame();
     	mc.frame.setContentPane(mc.startMainPanel);
     	Sound.load("BGM1");
     	Media.playBGM(Sound.BGM);

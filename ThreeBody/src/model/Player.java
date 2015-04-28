@@ -2,8 +2,6 @@ package model;
 
 import java.util.Map;
 
-import model.character.Character;
-
 public class Player {
     /*
      * 关联的账户

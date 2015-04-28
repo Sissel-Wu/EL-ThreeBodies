@@ -9,7 +9,6 @@ public class MainFrame extends JFrame {
 	public MainFrame(){
 		//设置标题
 		this.setTitle("Three Bodies");
-
     	//设置默认关闭属性（程序结束）
     	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	//设置窗口大小
@@ -18,6 +17,7 @@ public class MainFrame extends JFrame {
     	this.setResizable(false);
     	//窗口居中
     	FrameUtil.setFrameCenter(this);
+//    	this.setContentPane(panel);
     	//默认窗口为显示
     	this.setVisible(true);
 	}
