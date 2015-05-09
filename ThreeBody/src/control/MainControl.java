@@ -3,17 +3,12 @@ package control;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import ui.AboutUsPanel;
-import ui.AnimatePanel;
 import ui.BroadcastPanel;
 import ui.GamePanel;
-import ui.LobbyPanel;
 import ui.MainFrame;
-import ui.PreferencePanel;
-import ui.RoomPanel;
+import ui.MessagePanel;
 import ui.SelectPanel;
 import ui.StartMenuPanel;
-import ui.TutorialPanel;
 import ui.sound.Media;
 import ui.sound.Sound;
 
@@ -26,6 +21,7 @@ public class MainControl {
     private JPanel gamePanel = null;
     private JPanel isOnlinePanel = null;
     private JPanel broadcast = null;
+    private JPanel message = null;
     
     /*
      * TESTED
@@ -94,10 +90,12 @@ public class MainControl {
     public static void main(String[] args) {
     	
     	MainControl mc = new MainControl();
+    	mc.startMenuPanel = new StartMenuPanel(mc);
+    	mc.gamePanel = new GamePanel(mc);
+    	mc.selectPanel = new SelectPanel(mc);
+    	mc.broadcast = new BroadcastPanel();
+    	mc.message = new MessagePanel();
     	//TODO 换个地方放
-    	mc.broadcast = new BroadcastPanel(mc);
-    	mc.broadcast.setBounds(0, 0, 400, 200);
-    	
     	mc.frame = new MainFrame();
     	mc.startMenuPanel = new StartMenuPanel(mc);
     	mc.currentPanel = mc.startMenuPanel;
@@ -107,10 +105,6 @@ public class MainControl {
     	Media.playBGM(Sound.BGM);
 	}
 
-    //TODO 换个地方放
-	public void openBroadcast() {
-    	this.broadcast.setVisible(true);
-    	this.frame.add(this.broadcast);
-	}
+  
 
 }

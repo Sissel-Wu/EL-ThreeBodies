@@ -35,7 +35,9 @@ public class GamePanel  extends JPanel{
 	private JButton btnHistory;
 	private JButton btnMessage;
 	
-	private JPanel panelBroadcast;
+	private JPanel panelBroadcast= new BroadcastPanel();
+	private JPanel panelMessage= new MessagePanel();
+	private JPanel panelHistory= new HistoryPanel();
 	
 	public GamePanel(MainControl mainControl) {
 		this.setLayout(null);
@@ -136,6 +138,8 @@ public class GamePanel  extends JPanel{
 		// this.btnMultyPlay.setBorderPainted(false);
 		btnCard9.addMouseListener(new CardListener9());
 		this.add(btnCard9);
+		
+		
 		
 
 		
@@ -486,14 +490,14 @@ public class GamePanel  extends JPanel{
 	
 	
 	class BroadcastListener implements MouseListener {
-		int x = btnBroadcast.getX();
-		int y = btnBroadcast.getY();
-		int w = btnBroadcast.getWidth();
-		int h = btnBroadcast.getHeight();
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			mainControl.openBroadcast();
+			panelBroadcast.setVisible(true);
+			panelMessage.setVisible(false);
+			panelHistory.setVisible(false);
+			add(panelBroadcast);
+			repaint();
 		}
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -511,14 +515,15 @@ public class GamePanel  extends JPanel{
 	}
 	
 	class HistoryListener implements MouseListener {
-		int x = btnHistory.getX();
-		int y = btnHistory.getY();
-		int w = btnHistory.getWidth();
-		int h = btnHistory.getHeight();
+		
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			btnHistory.setBounds(400, 450, 400,200);
+			panelMessage.setVisible(false);
+			panelBroadcast.setVisible(false);
+			panelHistory.setVisible(true);
+			add(panelHistory);
+			repaint();
 		}
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -537,14 +542,15 @@ public class GamePanel  extends JPanel{
 	
 	
 	class MessageListener implements MouseListener {
-		int x = btnMessage.getX();
-		int y = btnMessage.getY();
-		int w = btnMessage.getWidth();
-		int h = btnMessage.getHeight();
+		
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			btnMessage.setBounds(400, 450, 400,200);
+			panelMessage.setVisible(true);
+			panelBroadcast.setVisible(false);
+			panelHistory.setVisible(false);
+			add(panelMessage);
+			repaint();
 		}
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -558,7 +564,6 @@ public class GamePanel  extends JPanel{
 		}
 		@Override
 		public void mouseExited(MouseEvent e) {
-			btnMessage.setLocation(x, y);
 			
 		}
 	}
