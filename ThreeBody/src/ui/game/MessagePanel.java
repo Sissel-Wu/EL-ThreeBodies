@@ -1,11 +1,11 @@
-package ui;
+package ui.game;
 
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,21 +17,21 @@ import model.Player;
 import dto.GameDTO;
 
 public class MessagePanel  extends JPanel{
-		
+	private static final long serialVersionUID = 1L;
 		private JTextField message;
 
 		private JButton btnOK;
 		private JButton btnReturn;
-		private JComboBox select;
+		private JComboBox<String> select;
 		
 		
-		ArrayList<Player> players=null;
+		List<Player> players=null;
 		Player user;
 
 		public MessagePanel() {
 			this.setLayout(null);
 			setBounds(231, 435, 695, 215);
-			players=(ArrayList<Player>) GameDTO.getInstance().getPlayers();
+			players= GameDTO.getInstance().getPlayers();
 			user=GameDTO.getInstance().getUser();
 			this.initComonent();
 		}
@@ -39,7 +39,7 @@ public class MessagePanel  extends JPanel{
 		private void initComonent() {
 			this.message = new JTextField();
 			this.message.setBounds(80, 32, 560, 30);
-			message.setFont(new Font("黑体", Font.BOLD, 60));
+			message.setFont(new Font("黑体", Font.BOLD, 30));
 			this.add(message);
 			
 			
@@ -104,4 +104,6 @@ public class MessagePanel  extends JPanel{
 			// 绘制游戏界面
 			g.drawImage(IMG_MAIN, 0, 0,695,215, null);
 		}
+		
+		
 }

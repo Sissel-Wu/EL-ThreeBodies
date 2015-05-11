@@ -19,13 +19,17 @@ public class Player implements Serializable {
     private Role role;
     private Coordinate coordinate;
     /*
-     * 是否已使用特权
+     * 是否可以使用特权
      */
-    private boolean privilegeUsed;
+    private boolean privilegeAvailable=true;
     /*
      * 是否是AI
      */
     private boolean AI;
+    /*
+     * 是否可以使用广播
+     */
+    private boolean broadcast;
     /*
      * 是否已经败北
      */
@@ -82,7 +86,7 @@ public class Player implements Serializable {
 		return account;
 	}
 
-	public model.role.Role getCharacter() {
+	public model.role.Role getRole() {
 		return role;
 	}
 
@@ -90,8 +94,8 @@ public class Player implements Serializable {
 		return coordinate;
 	}
 
-	public boolean isPrivilegeUsed() {
-		return privilegeUsed;
+	public boolean isPrivilegeAvailable() {
+		return privilegeAvailable;
 	}
 
 	public boolean isLost() {
@@ -106,12 +110,12 @@ public class Player implements Serializable {
 		return techPoint;
 	}
 
-	public void setCharacter(model.role.Role character) {
-		this.role = character;
+	public void setRole(model.role.Role role) {
+		this.role = role;
 	}
 
-	public void setPrivilegeUsed(boolean privilegeUsed) {
-		this.privilegeUsed = privilegeUsed;
+	public void setPrivilegeAvailable(boolean privilegeAvailable) {
+		this.privilegeAvailable = privilegeAvailable;
 	}
 
 	public void setLost(boolean lost) {
@@ -125,7 +129,23 @@ public class Player implements Serializable {
 	public void setTechPoint(int techPoint) {
 		this.techPoint = techPoint;
 	}
-	
+
+	public boolean isBroadcast() {
+		return broadcast;
+	}
+
+	public void setBroadcast(boolean broadcast) {
+		this.broadcast = broadcast;
+	}
+
+	public Map<Player, Coordinate> getFoundCoordinates() {
+		return foundCoordinates;
+	}
+
+	public Map<Player, Role> getFoundRoles() {
+		return foundRoles;
+	}
+
 	
     
 }

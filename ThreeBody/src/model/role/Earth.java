@@ -2,6 +2,7 @@ package model.role;
 
 import model.card.Card;
 
+
 /*
  * 角色：地球
  * 目标：获得三体以及归一者的坐标，广播出去，使其消灭
@@ -20,13 +21,15 @@ public class Earth extends Role{
 		this.initialTechPoint=10;
 		this.tchDevelopSpeed=15;
 		this.rsrRestoreSpeed=10;
+		
 	}
-	public  boolean isAvailable(Card card){
-// 	switch(card){
-//		case 
-//		}	
-		//TODO
-		return false;
+	
+	
+	@Override
+	public boolean isAvailable(Card card) {
+		 
+		return true;
+
 	}
 
 	

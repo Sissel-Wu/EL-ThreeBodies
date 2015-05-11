@@ -29,38 +29,30 @@ public class SelectPanel extends JPanel {
 	}
 
 	private void initComonent() {
-		this.btnReturn = new JButton("返回");
-		this.btnReturn.setContentAreaFilled(false);
-		this.btnReturn.setBounds(483, 480, 200, 60);
-		// this.btnMultyPlay.setBorderPainted(false);
-		btnReturn.addMouseListener(new ReturnListener());
-		this.add(btnReturn);
+//		this.btnReturn = new JButton("返回");
+//		this.btnReturn.setContentAreaFilled(false);
+//		this.btnReturn.setBounds(483, 480, 200, 60);
+//		// this.btnMultyPlay.setBorderPainted(false);
+//		btnReturn.addMouseListener(new ReturnListener());
+//		this.add(btnReturn);
 
-		this.btnTwoPlayer = new JButton("2人游戏");
+		this.btnTwoPlayer = new JButton("3人游戏");
 		this.btnTwoPlayer.setContentAreaFilled(false);
 		this.btnTwoPlayer.setBounds(233, 120, 200, 300);
-		this.btnTwoPlayer.addMouseListener(new TwoPlayerListener());
+		this.btnTwoPlayer.addMouseListener(new ThreePlayerListener());
 
 		this.add(btnTwoPlayer);
 
-		this.btnFourPlayer = new JButton("4人游戏");
+		this.btnFourPlayer = new JButton("6人游戏");
 		this.btnFourPlayer.setContentAreaFilled(false);
 		this.btnFourPlayer.setBounds(483, 120, 200, 300);
-		this.btnFourPlayer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
+		this.btnFourPlayer.addMouseListener(new SixPlayerListener());
 		this.add(btnFourPlayer);
 
-		this.btnSixPlayer = new JButton("6人游戏");
+		this.btnSixPlayer = new JButton("8人游戏");
 		this.btnSixPlayer.setContentAreaFilled(false);
 		this.btnSixPlayer.setBounds(733, 120, 200, 300);
-		this.btnSixPlayer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
+		this.btnSixPlayer.addMouseListener(new EightPlayerListener());
 		this.add(btnSixPlayer);
 
 	}
@@ -102,13 +94,66 @@ public class SelectPanel extends JPanel {
 		}
 	}
 
-	class TwoPlayerListener implements MouseListener {
-		int x = btnTwoPlayer.getX();
-		int y = btnTwoPlayer.getY();
+	class ThreePlayerListener implements MouseListener {
+	
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			mainControl.toGame();
+			mainControl.toLobby(3);
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+	}
+
+	
+	class EightPlayerListener implements MouseListener {
+		
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			mainControl.toLobby(8);
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+	}
+	
+	
+	
+class SixPlayerListener implements MouseListener {
+		
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			mainControl.toLobby(6);
 		}
 
 		@Override

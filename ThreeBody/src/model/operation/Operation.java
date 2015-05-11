@@ -36,8 +36,16 @@ public abstract class Operation implements Serializable{
 	public String toOthers() {
 		return null;
 	}
-    
-    public Operation(String operator,String receiver){
+	
+	public String getOperator(){
+		return this.operator;
+	}
+	
+    public String getReceiver() {
+		return receiver;
+	}
+
+	public Operation(String operator,String receiver){
     	this.operator = operator;
     	this.receiver = receiver;
     }

@@ -33,6 +33,13 @@ public abstract class Role {
 		return rsrRestoreSpeed;
 	}
 
+	/**
+	 * 工厂方法，返回包含各个种类指定数目的Role数组
+	 * @param earthNum 地球的数目
+	 * @param tbNum 三体的数目
+	 * @param uniNum 归一者的数目
+	 * @return
+	 */
 	public static Role[] generateRoles(int earthNum, int tbNum, int uniNum){
 		List<Role> roles = new LinkedList<Role>();
 		for (int i = 0; i < earthNum; i++) {

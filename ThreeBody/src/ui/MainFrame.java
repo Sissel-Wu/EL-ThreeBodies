@@ -1,12 +1,19 @@
 package ui;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.JFrame;
+
+import control.MainControl;
 
 public class MainFrame extends JFrame {
 	// default
 	private static final long serialVersionUID = 1L;
 	
-	public MainFrame(){
+	private MainControl mc ;
+	
+	public MainFrame(MainControl mc){
 		//设置标题
 		this.setTitle("Three Bodies");
     	//设置默认关闭属性（程序结束）
@@ -20,6 +27,39 @@ public class MainFrame extends JFrame {
 //    	this.setContentPane(panel);
     	//默认窗口为显示
     	this.setVisible(true);
+    	
+    	this.mc = mc;
+    	
+    	this.addWindowListener(new WindowListener(){
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				MainFrame.this.mc.exit();
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+			}
+    	});
 	}
 
 }

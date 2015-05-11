@@ -4,8 +4,8 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import model.Room;
@@ -39,8 +39,8 @@ public class LobbyServer extends UnicastRemoteObject implements RMILobby{
 	}
 
 	@Override
-	public ArrayList<Room> getRooms() throws RemoteException {
-		ArrayList<Room> rooms = new ArrayList<Room>();
+	public LinkedList<Room> getRooms() throws RemoteException {
+		LinkedList<Room> rooms = new LinkedList<Room>();
 		for (Room room : this.rooms.values()) {
 			rooms.add(room);
 		}

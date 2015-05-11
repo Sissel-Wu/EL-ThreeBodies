@@ -17,6 +17,7 @@ public final class R {
     public static enum info implements Serializable{
     	SUCCESS,
     	ALREADY_EXISTED,
+    	ALREADY_IN,
     	NOT_EXISTED,
     	INVALID,
     	ROOM_FULL

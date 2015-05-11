@@ -16,7 +16,7 @@ public interface RMIAccount extends Remote {
 
 	R.info uploadChange(Account account) throws RemoteException;
 	
-	Account downloadChange() throws RemoteException;
+	Account getAccount() throws RemoteException;
 	
 	R.info connect() throws RemoteException;
 	

@@ -30,8 +30,8 @@ public class AccountServerTest {
 				System.out.println("INIT");
 			}
 			center.login("Green", "g1234");
-			account = center.getAccount("Green");
 			service = center.getService("Green");
+			account = service.getAccount();
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
 		} catch (RemoteException e1) {
@@ -70,7 +70,7 @@ public class AccountServerTest {
 			assertEquals(R.info.SUCCESS,service.uploadChange(account));
 			
 			service.test("changeGames");
-			account = service.downloadChange();
+			account = service.getAccount();
 			assertEquals(998, account.getTotalGames());
 		} catch (RemoteException e) {
 			e.printStackTrace();

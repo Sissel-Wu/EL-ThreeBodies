@@ -18,4 +18,6 @@ public interface RMIRoom extends Remote {
 	
 	Room refresh() throws RemoteException;
 	
+	RMIGame getGameServer() throws RemoteException;
+	
 }

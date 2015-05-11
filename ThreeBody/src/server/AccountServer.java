@@ -11,9 +11,8 @@ import util.R;
 import util.R.info;
 
 /**
- * 
- * @author Sissel
  * 每个对象服务于相对应的客户端
+ * @author Sissel
  */
 
 public class AccountServer extends UnicastRemoteObject implements RMIAccount,Serializable{
@@ -29,10 +28,10 @@ public class AccountServer extends UnicastRemoteObject implements RMIAccount,Ser
 		FAIL
 	}
 	
-	AccountCenter center;
-	Account account;
-	State state;
-	long lastWriten;
+	private AccountCenter center;
+	private Account account;
+	private State state;
+	private long lastWriten;
 
 	protected AccountServer(AccountCenter center, Account account) throws RemoteException {
 		super();
@@ -41,7 +40,7 @@ public class AccountServer extends UnicastRemoteObject implements RMIAccount,Ser
 		this.lastWriten = 0;
 		state = State.NORMAL;
 		
-		new ConnectionChecker().run();
+		new ConnectionChecker().start();
 	}
 
 	@Override
@@ -52,7 +51,7 @@ public class AccountServer extends UnicastRemoteObject implements RMIAccount,Ser
 	}
 
 	@Override
-	public Account downloadChange() throws RemoteException {
+	public Account getAccount() throws RemoteException {
 		return this.account;
 	}
 
@@ -76,6 +75,10 @@ public class AccountServer extends UnicastRemoteObject implements RMIAccount,Ser
 		return this.state;
 	}
 	
+	public void setState(State state) {
+		this.state = state;
+	}
+
 	private synchronized void checkLink(){
 		if(lastWriten == 0){
 			lastWriten = Calendar.getInstance().getTimeInMillis();

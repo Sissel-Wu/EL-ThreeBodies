@@ -6,7 +6,7 @@ import dto.GameDTO;
 public class ResourceChange extends Operation implements Operable{
 	
 	/**
-	 * 
+	 * default
 	 */
 	private static final long serialVersionUID = 1L;
 	

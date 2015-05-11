@@ -5,14 +5,20 @@ package model;
  */
 public class Broadcast {
     
-    private Player from;
-    private Player to;
+    private String from;
+    private String to;
     private String content;
     
-	public Player getFrom() {
+	public Broadcast(String from, String to, String content) {
+		super();
+		this.from = from;
+		this.to = to;
+		this.content = content;
+	}
+	public String getFrom() {
 		return from;
 	}
-	public Player getTo() {
+	public String getTo() {
 		return to;
 	}
 	public String getContent() {

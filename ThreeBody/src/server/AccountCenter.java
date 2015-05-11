@@ -14,6 +14,7 @@ import java.util.TreeSet;
 import javax.rmi.PortableRemoteObject;
 
 import model.Account;
+import server.AccountServer.State;
 import server.interfaces.RMIAccount;
 import server.interfaces.RMIAccountCenter;
 import util.R;
@@ -54,11 +55,6 @@ public class AccountCenter extends UnicastRemoteObject implements
 	 * 邀请码
 	 */
 	private Set<String> invitationIDs;
-	
-	/*
-	 * 不正常的连接
-	 */
-	private Set<String> irregularConnections;
 
 	protected AccountCenter() throws RemoteException {
 		try {
@@ -69,7 +65,10 @@ public class AccountCenter extends UnicastRemoteObject implements
 			this.invitationIDs = new TreeSet<String>();
 			this.transientIDs = new HashMap<String, String>();
 			this.actives = new HashMap<String, AccountServer>();
-			this.irregularConnections = new TreeSet<String>();
+			
+			// TODO test
+			accounts.put("Red", new Account("Red"));
+			passwords.put("Red", "r1234");
 			
 			// 检查链接是否正常的线程
 			ConnectionSupervision supervisor = new ConnectionSupervision();
@@ -87,7 +86,7 @@ public class AccountCenter extends UnicastRemoteObject implements
 	@Override
 	public info logout(String id) throws RemoteException {
 		if(actives.containsKey(id)){
-			this.unbindAccount(id);
+			this.informLogout(id);
 			return R.info.SUCCESS;
 		}else{
 			return R.info.NOT_EXISTED;
@@ -100,7 +99,7 @@ public class AccountCenter extends UnicastRemoteObject implements
 	@Override
 	public info logoutAndClear(String id) throws RemoteException {
 		if(actives.containsKey(id)){
-			this.unbindAccount(id);
+			this.informLogout(id);
 			transientIDs.remove(id);
 			return R.info.SUCCESS;
 		}else{
@@ -112,7 +111,7 @@ public class AccountCenter extends UnicastRemoteObject implements
 	public info login(String id, String password) throws RemoteException {
 		Account account = accounts.get(id);
 		if(actives.containsKey(id)){
-			return R.info.INVALID;
+			return R.info.ALREADY_IN;
 		}
 		if (account == null) {
 			return R.info.NOT_EXISTED;
@@ -155,7 +154,7 @@ public class AccountCenter extends UnicastRemoteObject implements
 			throws RemoteException {
 		Account account = accounts.get(id);
 		if(actives.containsKey(id)){
-			return R.info.INVALID;
+			return R.info.ALREADY_IN;
 		}
 		if (account == null) {
 			return R.info.NOT_EXISTED;
@@ -204,7 +203,6 @@ public class AccountCenter extends UnicastRemoteObject implements
 		return transientIDs.get(id);
 	}
 	
-	@Override
 	public Account getAccount(String id){
 		return accounts.get(id);
 	}
@@ -232,13 +230,8 @@ public class AccountCenter extends UnicastRemoteObject implements
 		}
 	}
 
-	private void unbindAccount(String id) {
-		try {
-			PortableRemoteObject.unexportObject(actives.get(id));
-		} catch (NoSuchObjectException e) {
-			e.printStackTrace();
-		}
-		actives.remove(id);
+	private void informLogout(String id) {
+		actives.get(id).setState(State.FAIL);
 	}
 	
 	public void unbindAccount(Account account){
@@ -250,18 +243,36 @@ public class AccountCenter extends UnicastRemoteObject implements
 		actives.remove(account.getId());
 	}
 	
+	// TODO 保存Account
+	public void saveAccount(Account account) {
+		accounts.put(account.getId(), account);
+		
+	}
+	
 	private class ConnectionSupervision extends Thread{
 		@Override
 		public void run() {
 			while(true){
 				System.out.println("Thread alive " + actives.size());
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
-
-	// TODO 保存Account
-	public void saveAccount(Account account) {
-		accounts.put(account.getId(), account);
+	
+	private class AccountData{
+		
+		private Map<String, Account> accounts;
+		private Map<String, String> passwords;
+		private Map<String, String> transientIDs;
+		private Set<String> invitationIDs;
+		
+		public AccountData() {
+			super();
+		}
 		
 	}
 

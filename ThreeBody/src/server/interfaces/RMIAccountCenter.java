@@ -28,6 +28,4 @@ public interface RMIAccountCenter extends Remote {
 
 	String getTransientID(String id) throws RemoteException;
 
-	Account getAccount(String id) throws RemoteException;
-
 }
