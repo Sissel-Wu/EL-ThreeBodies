@@ -1,11 +1,11 @@
-package ui;
+package ui.game;
 
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -13,27 +13,26 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import dto.GameDTO;
 import model.Player;
+import dto.GameDTO;
 
 public class BroadcastPanel extends JPanel {
-	
+	private static final long serialVersionUID = 1L;
 	private JTextField btnCoordinateOne;
 	private JTextField btnCoordinateTwo;
 	private JTextField btnCoordinateThree;
 	private JTextField btnCoordinateFour;
 	private JButton btnOK;
 	private JButton btnReturn;
-	private JComboBox select;
+	private JComboBox<String> select;
 	
-	
-	ArrayList<Player> players=null;
+	List<Player> players=null;
 	Player user;
 
 	public BroadcastPanel() {
 		this.setLayout(null);
 		setBounds(231, 435, 695, 215);
-		players=(ArrayList<Player>) GameDTO.getInstance().getPlayers();
+		players=GameDTO.getInstance().getPlayers();
 		user=GameDTO.getInstance().getUser();
 		this.initComonent();
 	}
@@ -63,7 +62,7 @@ public class BroadcastPanel extends JPanel {
 		this.btnOK.setContentAreaFilled(false);
 		this.btnOK.setBounds(360, 105, 150, 60);
 		this.btnOK.setBorderPainted(false);
-//		btnOK.addMouseListener(new StartGameListener());
+//		btnOK.addMouseListener(new FindListener());
 		this.add(btnOK);
 		
 		this.btnReturn = new JButton(new ImageIcon("exit.png"));
@@ -76,6 +75,7 @@ public class BroadcastPanel extends JPanel {
 		select = new JComboBox<String>();
 		select.setFont(new Font("宋体", Font.PLAIN, 30));
 		select.setBounds(100,105, 60, 30);
+		//
 		if (players != null) {
 			for (int i = 0; i < players.size(); i++) {
 				if (players.get(i).equals(user)) {
@@ -112,6 +112,8 @@ public class BroadcastPanel extends JPanel {
 			
 		}
 	}
+	
+	
 
 	@Override
 	public void paintComponent(Graphics g) {

@@ -3,12 +3,12 @@ package control;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import ui.BroadcastPanel;
-import ui.GamePanel;
+import ui.AboutUsPanel;
+import ui.LobbyPanel;
 import ui.MainFrame;
-import ui.MessagePanel;
 import ui.SelectPanel;
 import ui.StartMenuPanel;
+import ui.game.GamePanel;
 import ui.sound.Media;
 import ui.sound.Sound;
 
@@ -20,9 +20,8 @@ public class MainControl {
     private JPanel selectPanel = null;
     private JPanel gamePanel = null;
     private JPanel isOnlinePanel = null;
-    private JPanel broadcast = null;
-    private JPanel message = null;
-    
+    private JPanel aboutUs = null;
+	private JPanel lobbyPanel=null;
     /*
      * TESTED
      */
@@ -67,7 +66,7 @@ public class MainControl {
     public void toGame() {
     	currentPanel.setVisible(false);
     	if(this.gamePanel == null){
-    		this.gamePanel = new GamePanel(this);
+    		this.gamePanel = new GamePanel(this,3);
     	}
 		currentPanel = this.gamePanel;
 		frame.setContentPane(currentPanel);
@@ -75,13 +74,30 @@ public class MainControl {
     	frame.validate();
     }
 
-    public void toLobby() {
-    }
+    public void toLobby(int i) {
+    	currentPanel.setVisible(false);
+    	if(this.lobbyPanel==null){
+    		this.lobbyPanel=new LobbyPanel(this);
+    	}
+    	currentPanel=this.lobbyPanel;
+		frame.setContentPane(currentPanel);
+    	currentPanel.setVisible(true);	
+    	frame.validate();
+    	}
+    	
+    	
+ 
 
     public void toRoom() {
     }
 
     public void toAboutUs() {
+    	currentPanel.setVisible(false);
+   		this.aboutUs = new AboutUsPanel(this);
+		currentPanel = this.aboutUs;
+		frame.setContentPane(currentPanel);
+    	currentPanel.setVisible(true);	
+    	frame.validate();
     }
 
     public void exit() {
@@ -91,10 +107,10 @@ public class MainControl {
     	
     	MainControl mc = new MainControl();
     	mc.startMenuPanel = new StartMenuPanel(mc);
-    	mc.gamePanel = new GamePanel(mc);
+    	mc.gamePanel = new GamePanel(mc,3);
     	mc.selectPanel = new SelectPanel(mc);
-    	mc.broadcast = new BroadcastPanel();
-    	mc.message = new MessagePanel();
+    	mc.aboutUs = new AboutUsPanel(mc);
+    	mc.lobbyPanel=new LobbyPanel(mc);
     	//TODO 换个地方放
     	mc.frame = new MainFrame();
     	mc.startMenuPanel = new StartMenuPanel(mc);

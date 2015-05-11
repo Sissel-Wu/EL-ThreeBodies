@@ -66,6 +66,7 @@ public class RandomCombiner {
 
 	}
 	
+	// TEST PASSED
 	public static void main(String[] args) {
 		RandomCombiner rc = new RandomCombiner(4);
 		Account[] accs = new Account[4];
@@ -87,8 +88,8 @@ public class RandomCombiner {
 		for (Object[] records : rc.generate()) {
 			Account ac = (Account)records[0];
 			String rl = (String)records[1];
-			
-			System.out.println();
+			Coordinate cd = (Coordinate)records[2];
+			System.out.println(ac.getId()+" ^ "+rl+" ^ "+cd);
 		}
 	}
 }

@@ -34,7 +34,7 @@ public class Sophon extends Card{
 		super(operator, receiver);
 		// TODO 游戏平衡配置
 		this.requiredTechPoint = 30;
-		this.requiredResource = 80;
+		this.requiredResource = 40;
 		this.position = position;
 	}
 
@@ -54,7 +54,7 @@ public class Sophon extends Card{
 		//执行获取坐标操作
 		Coordinate coordinate = pReceiver.getCoordinate();
 		int result = coordinate.getCoordinateElement(position);
-		if(result == Coordinate.UNKNOWN){
+		if(result == Coordinate.PROTECTED){
 			CoordinateGetFail cgf = new CoordinateGetFail(operator,receiver);
 			dto.depositOperation(cgf);
 		}else{

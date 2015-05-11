@@ -57,7 +57,7 @@ public class AccountCenterTest {
 			String transientID = center.getTransientID("Sissel");
 			System.out.println("transientID = " + transientID);
 
-			account = center.getAccount("Sissel");
+			account = service.getAccount();
 			System.out.println("id = " + account.getId());
 
 		} catch (RemoteException e) {

@@ -17,11 +17,15 @@ public class Account implements Serializable{
     /*
      * 头像
      */
-    private Image head;
+    private transient Image head;
     /*
      * 积分
      */
     private int point;
+    /*
+     * 排名
+     */
+    private int rank;
     /*
      * 总游戏次数，除了输和赢还有强退的
      */
@@ -37,16 +41,20 @@ public class Account implements Serializable{
      */
     public Account(String id){
     	this.id = id;
-    }
-    
-    /*
-     * 初始化账号信息
-     */
-    public void init(){
-    	this.point = 0;
+    	this.head = null;
+    	this.rank = -1;
+    	this.point = 1000;
     	this.totalGames = 0;
     	this.wins = 0;
     	this.losts = 0;
+    }
+    
+    public void synchronize(Account acc){
+    	this.rank = acc.rank;
+    	this.point = acc.point;
+    	this.totalGames = acc.totalGames;
+    	this.wins = acc.wins;
+    	this.losts = acc.losts;
     }
     
     /*
@@ -67,9 +75,11 @@ public class Account implements Serializable{
 	public void setPoint(int point) {
 		this.point = point;
 	}
-	// TODO 通过服务器交互返回
 	public int getRank() {
-		return 0;
+		return rank;
+	}
+	public void setRank(int rank){
+		this.rank = rank;
 	}
 	public int getTotalGames() {
 		return totalGames;

@@ -13,6 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import server.interfaces.RMIAccount;
 import server.interfaces.RMIAccountCenter;
 import server.interfaces.RMILobby;
 import server.interfaces.RMIRoom;
@@ -42,7 +43,8 @@ public class LobbyServerTest {
 			}
 			
 			center.login("Green", "g1234");
-			account = center.getAccount("Green");
+			RMIAccount service = center.getService("Green");
+			account = service.getAccount();
 			System.out.println("Account: "+account.getId());
 		} catch (Exception e) {
 			e.printStackTrace();

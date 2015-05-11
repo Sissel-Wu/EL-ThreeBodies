@@ -1,24 +1,22 @@
 package control;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import io.UserData;
+import dto.PreferenceDTO;
 
 /*
  * Preference
  */
 public class PreferenceControl {
     
-	UserData userData=new UserData();
+	PreferenceDTO dto = PreferenceDTO.getInstance();
 	
-	
-    public void savePreference() throws IOException{
- 		userData.saveFile();
+    public void savePreference() {
+    	UserData.savePreference(dto);
     }
     
-    public void loadPreference() throws ClassNotFoundException, IOException{
-        userData.readFile();
+    public void loadPreference() {
+    	PreferenceDTO old = UserData.loadPreference();
+    	PreferenceDTO.init(old);
     }
 
 }

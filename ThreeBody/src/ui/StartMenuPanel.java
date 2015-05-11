@@ -7,14 +7,19 @@ import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import ui.login.LoginFrame;
+import ui.login.LoginPanel;
 import ui.sound.Media;
 import ui.sound.Sound;
 import control.MainControl;
 
 public class StartMenuPanel extends JPanel{
-	//Ϊ�˲�Ʈ���߼ӵ�һ�д��룬��Ҫ�е����
+	/*
+	 * default
+	 */
 	private static final long serialVersionUID = 1L;
 	
 	private JButton btnStartGame;
@@ -25,11 +30,13 @@ public class StartMenuPanel extends JPanel{
 	private JButton btnLogIn;
 	
 	private MainControl mainControl;
+	private String accountId;
 	
 	public StartMenuPanel(MainControl mainControl) {
 		this.setLayout(null);
 		this.mainControl = mainControl;
 		this.initComonent();
+//		this.accountId=AccountDTO.getInstance().getId();
 	}
 	
 	private void initComonent() {
@@ -38,9 +45,7 @@ public class StartMenuPanel extends JPanel{
 		this.btnStartGame.setContentAreaFilled(false);
 		this.btnStartGame.setBounds(483, 120, 200, 80);
 		this.btnStartGame.setBorderPainted(false);
-		// ����ʼ��ť�����¼�����
-		btnStartGame.addMouseListener(new StartGameListener());
-		// ��Ӱ�ť�����
+		this.btnStartGame.addMouseListener(new StartGameListener());
 		this.add(btnStartGame);
 
 		this.btnOption = new JButton(new ImageIcon("option.png"));
@@ -66,14 +71,14 @@ public class StartMenuPanel extends JPanel{
 		this.add(btnExit);
 
 		
-		this.btnLogIn = new JButton("��½");
+		this.btnLogIn = new JButton(accountId);
 		this.btnLogIn.setContentAreaFilled(false);
 		this.btnLogIn.setBounds(0, 0, 150, 25);
 		this.btnLogIn.addMouseListener(new LogInListener());
 		this.add(btnLogIn);
 		
 		
-		this.btnAccount = new JButton("�û���Ϣ");
+		this.btnAccount = new JButton("账号");
 		this.btnAccount.setContentAreaFilled(false);
 		this.btnAccount.setBounds(0, 25, 150, 25);
 		this.btnAccount.addMouseListener(new AccountListener());
@@ -81,7 +86,6 @@ public class StartMenuPanel extends JPanel{
 	@Override
 	public void paintComponent(Graphics g) {
 		Image IMG_MAIN = new ImageIcon("img2.jpg").getImage();
-		// ������Ϸ����
 		g.drawImage(IMG_MAIN, 0, 0, 1158, 650, null);
 		
 	}
@@ -216,7 +220,11 @@ public class StartMenuPanel extends JPanel{
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
 			Media.playSound(Sound.choose);
-			btnLogIn.setIcon(new ImageIcon("option.png"));
+			if(accountId==null){
+				JFrame loginFrame = new LoginFrame();
+				JPanel loginPanel = new LoginPanel(loginFrame);
+				loginFrame.setContentPane(loginPanel);
+			}
 			repaint();
 		}
 

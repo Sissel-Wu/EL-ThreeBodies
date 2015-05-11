@@ -54,11 +54,6 @@ public class AccountCenter extends UnicastRemoteObject implements
 	 * 邀请码
 	 */
 	private Set<String> invitationIDs;
-	
-	/*
-	 * 不正常的连接
-	 */
-	private Set<String> irregularConnections;
 
 	protected AccountCenter() throws RemoteException {
 		try {
@@ -69,7 +64,6 @@ public class AccountCenter extends UnicastRemoteObject implements
 			this.invitationIDs = new TreeSet<String>();
 			this.transientIDs = new HashMap<String, String>();
 			this.actives = new HashMap<String, AccountServer>();
-			this.irregularConnections = new TreeSet<String>();
 			
 			// 检查链接是否正常的线程
 			ConnectionSupervision supervisor = new ConnectionSupervision();
@@ -204,7 +198,6 @@ public class AccountCenter extends UnicastRemoteObject implements
 		return transientIDs.get(id);
 	}
 	
-	@Override
 	public Account getAccount(String id){
 		return accounts.get(id);
 	}
@@ -250,6 +243,12 @@ public class AccountCenter extends UnicastRemoteObject implements
 		actives.remove(account.getId());
 	}
 	
+	// TODO 保存Account
+	public void saveAccount(Account account) {
+		accounts.put(account.getId(), account);
+		
+	}
+	
 	private class ConnectionSupervision extends Thread{
 		@Override
 		public void run() {
@@ -258,10 +257,17 @@ public class AccountCenter extends UnicastRemoteObject implements
 			}
 		}
 	}
-
-	// TODO 保存Account
-	public void saveAccount(Account account) {
-		accounts.put(account.getId(), account);
+	
+	private class AccountData{
+		
+		private Map<String, Account> accounts;
+		private Map<String, String> passwords;
+		private Map<String, String> transientIDs;
+		private Set<String> invitationIDs;
+		
+		public AccountData() {
+			super();
+		}
 		
 	}
 
