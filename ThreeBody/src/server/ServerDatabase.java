@@ -121,6 +121,87 @@ public class ServerDatabase {
 		}
 	}
 	
+	//TESTED
+	public void updateTransientID(String id,String transientID){
+		String url;
+		if(transientID == null){
+			url = "update account set transientPW = null"
+					+" where id = \""+id+"\"";
+		}else{
+			url = "update account set transientPW = \""+transientID+"\""
+					+" where id = \""+id+"\"";
+		}
+		try {
+			statement.execute(url);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//TODO
+	public void updatePassword(String id,String newPassword){
+		String url = "update account set password = \""+newPassword+"\""
+				+" where id = \""+id+"\"";
+		try {
+			statement.execute(url);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//TODO
+	public void updateAccount(Account account){
+		String url = "update account set point = \""+account.getPoint()+"\""
+				+" totalgames = "+account.getTotalGames()
+				+" wins = "+account.getWins()
+				+" losts = "+account.getLosts()
+				+" where id = \""+account.getId()+"\"";
+		try {
+			statement.execute(url);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	//TESTED
+	public void addAccount(String id,String password,String transientID){
+		String url = "insert into account values("
+				+"\""+id+"\","
+				+"\""+password+"\","
+				+"1400," //point
+				+"0," //total games
+				+"0," //wins
+				+"0," //losts
+				+"null," //head
+				+"null," //regions
+				+"\""+transientID+"\""
+				+")";
+		try {
+			statement.execute(url);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//TESTED
+	public void addInvitationID(String invitationID){
+		String url = "insert into invitations values(null,\""+invitationID+"\")";
+		try {
+			statement.execute(url);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//TESTED
+	public void deleteInvitationID(String invitationID){
+		String url = "delete from invitations where value = \""+invitationID+"\"";
+		try {
+			statement.execute(url);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public Map<String, Account> getAccounts() {
 		return accounts;
 	}

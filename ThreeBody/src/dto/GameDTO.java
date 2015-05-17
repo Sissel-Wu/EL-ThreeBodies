@@ -2,8 +2,9 @@ package dto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
-import model.Broadcast;
+import model.Information;
 import model.Player;
 import model.operation.Operation;
 
@@ -12,10 +13,12 @@ public class GameDTO {
 	/*
 	 * singleton
 	 */
-	private static GameDTO dto = new GameDTO(null);
+	private static GameDTO dto;
     
+	/*
+	 * 所有玩家
+	 */
     private List<Player> players;
-    
     
     /*
      * 该回合的玩家
@@ -31,6 +34,11 @@ public class GameDTO {
      * 轮次，所有玩家均完成一次操作即为增加一轮
      */
     private int round;
+    
+    /*
+     * 倒计时
+     */
+    private int countdowns;
  
     /*
      * 本地玩家
@@ -39,15 +47,15 @@ public class GameDTO {
     /*
      * 历史消息记录
      */
-    private List<Broadcast> broadcasts;
+    private List<Information> informations;
     /*
      * 历史操作记录
      */
     private List<Operation> historyOperations;
     /*
-     * 待执行操作
+     * 待同步操作
      */
-    private List<Operation> unhandledOperations;
+    private List<Operation> unSyncOperations;
     /*
      * 游戏是否结束
      */
@@ -58,25 +66,45 @@ public class GameDTO {
     }
     
     private GameDTO(List<Player> players){
-    	//TODO 本地账号
-//    	this.players = players;
-    	this.players = new LinkedList<Player>();
-    	broadcasts = new LinkedList<Broadcast>();
+    	this.players = players;
+    	// 找USER
+    	for(Player player:players){
+    		if(player.getAccount().getId().equals(AccountDTO.getInstance().getId())){
+    			user = player;
+    		}
+    	}
+    	informations = new LinkedList<Information>();
     	historyOperations = new LinkedList<Operation>();
-    	unhandledOperations = new LinkedList<Operation>();
+    	unSyncOperations = new LinkedList<Operation>();
+    	bout = 0;
+    	whoseTurn = this.players.get(0);
     	gameOver = false;
+    }
+    
+    public void init(){
+    	for (Player player : this.players) {
+			player.initFoundCoordinates();
+		}
     }
     
     public static GameDTO getInstance(){
     	return dto;
     }
     
-    public void depositOperation(Operation operation){
-        this.unhandledOperations.add(operation);
+    public void depositHistoryOperation(Operation operation){
+    	this.historyOperations.add(operation);
     }
     
-    public void depositBroadcast(Broadcast br){
-    	this.broadcasts.add(br);
+    public synchronized void depositInformation(Information br){
+    	this.informations.add(br);
+    }
+    
+    public void depositUnSyncOperation(Operation operation){
+    	this.unSyncOperations.add(operation);
+    }
+    
+    public void setSynced(){
+    	this.unSyncOperations.clear();
     }
 
     /*
@@ -84,6 +112,16 @@ public class GameDTO {
      */
 	public List<Player> getPlayers() {
 		return players;
+	}
+	
+	public Player findPlayerByID(String id){
+		Player result = null;
+		for (Player player : getPlayers()) {
+			if (player.getAccount().getId().equals(id)) {
+				result = player;
+			}
+		}
+		return result;
 	}
 	
 	public int getBout() {
@@ -106,30 +144,18 @@ public class GameDTO {
 		return user;
 	}
 
-	public void setUser(Player user) {
-		this.user = user;
-	}
-
-	public List<Broadcast> getBroadcasts() {
-		return broadcasts;
+	public synchronized String[] getInformations(){
+		String[] infos = new String[informations.size()];
+		for (int i = 0; i < infos.length; i++) {
+			infos[i] = informations.get(i).getContent();
+		}
+		return infos;
 	}
 
 	public List<Operation> getHistoryOperations() {
 		return historyOperations;
 	}
 	
-	public void addToHistoryOperations(List<Operation> oprts){
-		historyOperations.addAll(oprts);
-	}
-
-	public List<Operation> getUnhandledOperations() {
-		return unhandledOperations;
-	}
-	
-	public void setHandled(){
-		unhandledOperations.clear();
-	}
-
 	public boolean isGameOver() {
 		return gameOver;
 	}
@@ -145,7 +171,17 @@ public class GameDTO {
 	public void setWhoseTurn(Player whoseTurn) {
 		this.whoseTurn = whoseTurn;
 	}
-	
-	
+
+	public List<Operation> getUnSyncOperations() {
+		return unSyncOperations;
+	}
+
+	public int getCountdowns() {
+		return countdowns;
+	}
+
+	public void setCountdowns(int countdowns) {
+		this.countdowns = countdowns;
+	}
 
 }

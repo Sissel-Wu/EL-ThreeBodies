@@ -29,7 +29,10 @@ public class LoginPanel extends JPanel{
 	private JPanel thisPanel;
 	private JLabel passwordLabel;
 	private JLabel errorMsgLabel;
-	
+	private JLabel loadingLabel;
+	//双缓冲机制
+	private Image iBuffer;
+	private Graphics gBuffer;
 	public JFrame getLoginFrame() {
 		return loginFrame;
 	}
@@ -47,11 +50,13 @@ public class LoginPanel extends JPanel{
 		this.btnlogin = new JButton(new ImageIcon("images/login.png"));
 		this.btnlogin.setBounds(220, 220, 80, 40);
 		btnlogin.setContentAreaFilled(false);
+		this.btnlogin.setBorderPainted(false);
 		btnlogin.addMouseListener(new LoginListener());
 		this.add(btnlogin);
 		
 		this.btnlogup = new JButton(new ImageIcon("images/logup.png"));
 		this.btnlogup.setBounds(100, 220, 80, 40);
+		this.btnlogup.setBorderPainted(false);
 		btnlogup.setContentAreaFilled(false);
 		btnlogup.addMouseListener(new LogupListener());
 		this.add(btnlogup);
@@ -79,53 +84,61 @@ public class LoginPanel extends JPanel{
 		errorMsgLabel.setFont(new Font("宋体", Font.BOLD, 20));
 		errorMsgLabel.setBounds(110,140,190,30);
 		
+		loadingLabel = new JLabel();
+		loadingLabel.setBounds(110,170,190,40);
 	}
 	class LoginListener implements MouseListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
+
+		}
+		
+		 private void setGif() {
+			 loadingLabel.setIcon(new ImageIcon("images/loading2.gif"));
+				add(loadingLabel);
+				loginFrame.setContentPane(thisPanel);
+		}
+
+		private void login() {
 			String id = idField.getText();
 			String password = passwordField.getText();
-			
-			System.out.println(id);
-			System.out.println(password);
 			
 			// TODO 消息窗口
 			switch(accountControl.login(id, password)){
 			case SUCCESS:
-				System.out.println("login success");
 				loginFrame.setVisible(false);
 				FrameUtil.sendMessageByFrame("登录成功", "登录成功！");
+//				AccountDTO.getInstance().getId()
 				break;
 			case ALREADY_IN:
-				System.out.println("already log in");
 				errorMsgLabel.setText("账户已在别处登录");
 				add(errorMsgLabel);
 				loginFrame.setContentPane(thisPanel);
 				break;
 			case INVALID:
-				System.out.println("wrong password");
 				errorMsgLabel.setText("密码输入错误");
 				add(errorMsgLabel);
 				loginFrame.setContentPane(thisPanel);
 				break;
 			case NOT_EXISTED:
-				System.out.println("account not existed");
-				errorMsgLabel.setText("账户已在别处登录");
+				errorMsgLabel.setText("账户不存在");
 				add(errorMsgLabel);
 				loginFrame.setContentPane(thisPanel);
 				break;
+			default:
+				break;
 			}
-			
-			
 		}
-		
+
 		@Override
 		public void mousePressed(MouseEvent e) {
 			
 		}
 		@Override
 		public void mouseReleased(MouseEvent e) {
+//			setGif();
+			login();
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
@@ -140,10 +153,7 @@ public class LoginPanel extends JPanel{
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			setVisible(false);
-			panelLogup.setVisible(true);
-			loginFrame.setContentPane(panelLogup);
-			repaint();
+
 		}
 		
 		@Override
@@ -152,6 +162,11 @@ public class LoginPanel extends JPanel{
 		}
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			setVisible(false);
+			panelLogup.setVisible(true);
+			loginFrame.setTitle("注册");
+			loginFrame.setContentPane(panelLogup);
+			repaint();
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
@@ -161,6 +176,21 @@ public class LoginPanel extends JPanel{
 			
 		}
 	}
+	
+	@Override
+	public void update(Graphics scr)
+	{
+	    if(iBuffer==null)
+	    {
+	       iBuffer=createImage(this.getSize().width,this.getSize().height);
+	       gBuffer=iBuffer.getGraphics();
+	    }
+	       gBuffer.setColor(getBackground());
+	       gBuffer.fillRect(0,0,this.getSize().width,this.getSize().height);
+	       paint(gBuffer);
+	       scr.drawImage(iBuffer,0,0,this);
+	}
+	
 	public void paintComponent(Graphics g) {
 		Image img = new ImageIcon("images/img1.jpg").getImage();
 		g.drawImage(img, 0, 0, null);

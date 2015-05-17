@@ -4,6 +4,7 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+import dto.GameDTO;
 import ui.FrameUtil;
 
 public class TechPanel extends JPanel {
@@ -12,12 +13,12 @@ public class TechPanel extends JPanel {
 	
 	public TechPanel() {
 		this.setLayout(null);
-		setBounds(110, 510, 140, 32);
+		setBounds(100, 510, 140, 32);
+		this.setOpaque(false);
 	}
 	
 	@Override
 	public void paint(Graphics g) {
-		
-		FrameUtil.drawNumberLeftPad(60, 0, 64, 3, g);
+		FrameUtil.drawNumberLeftPad(60, 0, GameDTO.getInstance().getUser().getTechPoint(), 3, g);
 	}
 }

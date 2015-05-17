@@ -1,8 +1,11 @@
 package model;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
+import dto.GameDTO;
 import model.role.Role;
 
 public class Player implements Serializable {
@@ -21,7 +24,7 @@ public class Player implements Serializable {
     /*
      * 是否可以使用特权
      */
-    private boolean privilegeAvailable=true;
+    private boolean privilegeAvailable;
     /*
      * 是否是AI
      */
@@ -29,7 +32,7 @@ public class Player implements Serializable {
     /*
      * 是否可以使用广播
      */
-    private boolean broadcast;
+    private boolean broadcastable;
     /*
      * 是否已经败北
      */
@@ -37,18 +40,16 @@ public class Player implements Serializable {
     /*
      * 已经获知的其他玩家的坐标
      */
-    private Map<Player,Coordinate> foundCoordinates;
+    private HashMap<Player,Coordinate> foundCoordinates;
     /*
      * 已经获知的其他玩家的身份
      */
-    private Map<Player,Role> foundRoles;
+    private HashMap<Player,Role> foundRoles;
     /*
      * 资源，科技点
      */
     private int resource;
     private int techPoint;
-    
-    
     
     public Player(Account account, Role role, Coordinate coordinate,
 			boolean aI) {
@@ -61,6 +62,10 @@ public class Player implements Serializable {
 		
 		resource = this.role.getInitialResource();
 		techPoint = this.role.getInitialTechPoint();
+		
+		privilegeAvailable = true;
+		lost = false;
+		broadcastable = true;
 	}
     
     public void findCoordinate(Player player,int position,int value){
@@ -70,16 +75,28 @@ public class Player implements Serializable {
     public void findRole(Player player,Role role){
     	this.foundRoles.put(player, role);
     }
+    
+    public void initFoundCoordinates(){
+    	foundCoordinates = new HashMap<Player, Coordinate>();
+    	foundRoles = new HashMap<Player, Role>();
+    	// make四个都为UNKNOWN的坐标
+    	
+    	for(Player player : GameDTO.getInstance().getPlayers()){
+    		int uk = Coordinate.UNKNOWN;
+        	int[] uks = new int[Coordinate.DIMENSIONS];
+        	Arrays.fill(uks, uk);
+    		if(player != this){
+    			foundCoordinates.put(player, new Coordinate(uks));
+    			foundRoles.put(player, null);
+    		}
+    	}
+    }
 
 	/*
      * getters and setters
      */
     public boolean isAI() {
 		return AI;
-	}
-
-	public void setAI(boolean aI) {
-		AI = aI;
 	}
 
 	public Account getAccount() {
@@ -130,12 +147,12 @@ public class Player implements Serializable {
 		this.techPoint = techPoint;
 	}
 
-	public boolean isBroadcast() {
-		return broadcast;
+	public boolean isBroadcastable() {
+		return broadcastable;
 	}
 
-	public void setBroadcast(boolean broadcast) {
-		this.broadcast = broadcast;
+	public void setBroadcastable(boolean broadcast) {
+		this.broadcastable = broadcast;
 	}
 
 	public Map<Player, Coordinate> getFoundCoordinates() {
@@ -145,7 +162,5 @@ public class Player implements Serializable {
 	public Map<Player, Role> getFoundRoles() {
 		return foundRoles;
 	}
-
-	
     
 }

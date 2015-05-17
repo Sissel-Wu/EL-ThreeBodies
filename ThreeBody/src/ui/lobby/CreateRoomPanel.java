@@ -2,8 +2,8 @@ package ui.lobby;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -13,7 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import ui.FrameUtil;
 import control.LobbyControl;
+import control.MainControl;
 
 public class CreateRoomPanel extends JPanel{
 	
@@ -26,12 +28,15 @@ public class CreateRoomPanel extends JPanel{
 	private JComboBox<String> select;
 	private JButton btnOk;
 	private JButton btnCancel;
+	
+	MainControl mainControl;
 
-	public CreateRoomPanel(JFrame createRoomFrame,LobbyControl lobbyControl) {
+	public CreateRoomPanel(JFrame createRoomFrame,LobbyControl lobbyControl,MainControl mainControl) {
 		this.lobbyControl = lobbyControl;
+		this.createRoomFrame = createRoomFrame;
+		this.mainControl = mainControl;
 		
 		this.setLayout(null);
-		this.createRoomFrame=createRoomFrame;
 		this.initComonent();
 	}
 
@@ -74,12 +79,11 @@ public class CreateRoomPanel extends JPanel{
 	public void paintComponent(Graphics g) {
 		Image img = new ImageIcon("images/img1.jpg").getImage();
 		g.drawImage(img, 0, 0, null);
-		}
-	
-	class CreateListener implements MouseListener{
+	}
 
+	class CreateListener extends MouseAdapter {
 		@Override
-		public void mouseClicked(MouseEvent e) {
+		public void mouseReleased(MouseEvent e) {
 			// 选择的房间人数
 			int size = 0;
 			switch(select.getSelectedIndex()){
@@ -93,41 +97,32 @@ public class CreateRoomPanel extends JPanel{
 				size = 8;
 				break;
 			}
+			// 房间名不为空
+			if(idField.getText().equals("")){
+				FrameUtil.sendMessageByFrame("房间名不能为空", "房间名不能为空");
+				return;
+			}
 			// 创建房间
-			lobbyControl.createRoom(idField.getText(), size);
+			switch(lobbyControl.createRoom(idField.getText(), size)){
+			case ALREADY_EXISTED:
+				FrameUtil.sendMessageByFrame("房间名已使用", "房间名已使用");
+				break;
+			case SUCCESS:
+				createRoomFrame.setVisible(false);
+				FrameUtil.sendMessageByFrame("创建成功", "创建成功");
+				lobbyControl.changeEntered();
+				mainControl.toRoom(idField.getText());
+				break;
+			default:
+				break;
+			}
 		}
-		@Override
-		public void mousePressed(MouseEvent e) {
-		}
+	}
+	
+	class CancelListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-		}
-		
-	}
-	class CancelListener implements MouseListener{
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
 			createRoomFrame.setVisible(false);
 		}
-		@Override
-		public void mousePressed(MouseEvent e) {
-		}
-		@Override
-		public void mouseReleased(MouseEvent e) {
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-		}
-		
 	}
 }

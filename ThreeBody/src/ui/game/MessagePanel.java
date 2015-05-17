@@ -1,10 +1,11 @@
 package ui.game;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -14,16 +15,20 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import model.Player;
+import model.operation.Operation;
+import model.operation.SendMessage;
+import control.GameControl;
+import dto.AccountDTO;
 import dto.GameDTO;
 
 public class MessagePanel  extends JPanel{
 	private static final long serialVersionUID = 1L;
 		private JTextField message;
 
-		private JButton btnOK;
+		private JButton btnSend;
 		private JButton btnReturn;
 		private JComboBox<String> select;
-		
+		private boolean isAbleToPress=true;
 		
 		List<Player> players=null;
 		Player user;
@@ -44,16 +49,16 @@ public class MessagePanel  extends JPanel{
 			
 			
 			
-			this.btnOK = new JButton(new ImageIcon("images/button.png"));
-			this.btnOK.setContentAreaFilled(false);
-			this.btnOK.setBounds(360, 95, 150, 60);
-			this.btnOK.setBorderPainted(false);
-//			btnOK.addMouseListener(new StartGameListener());
-			this.add(btnOK);
+			this.btnSend = new JButton(new ImageIcon("images/btnbroadcast.png"));
+			this.btnSend.setContentAreaFilled(false);
+			this.btnSend.setBounds(360, 95, 120, 60);
+			this.btnSend.setBorderPainted(false);
+			btnSend.addMouseListener(new SendMessageListener());
+			this.add(btnSend);
 			
-			this.btnReturn = new JButton(new ImageIcon("images/exit.png"));
+			this.btnReturn = new JButton(new ImageIcon("images/btnbroadcastcancel.png"));
 			this.btnReturn.setContentAreaFilled(false);
-			this.btnReturn.setBounds(520, 95, 150, 60);
+			this.btnReturn.setBounds(520, 95, 120, 60);
 			this.btnReturn.setBorderPainted(false);
 			btnReturn.addMouseListener(new ReturnListener());
 			this.add(btnReturn);
@@ -69,41 +74,46 @@ public class MessagePanel  extends JPanel{
 						select.addItem(players.get(i).getAccount().getId());
 					}
 				}
+			}else{
+				select.addItem("aa");
+				select.addItem("bb");
 			}
-
-			select.addItem("aa");
-			select.addItem("bb");
+			
 			this.add(select);
 		}
 		
-		class ReturnListener implements MouseListener {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				setVisible(false);
-			}
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
+		class ReturnListener extends MouseAdapter {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				setVisible(false);
 			}
+		}
+		class SendMessageListener extends MouseAdapter {
 			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				
+			public void mouseReleased(MouseEvent e) {
+				String receiver = (String)select.getSelectedItem();
+				String messageStr=message.getText();
+				SendMessage operation = new SendMessage(AccountDTO.getInstance().getId(), receiver,messageStr);
+				GameControl.getInstance().doOperation(operation);
 			}
 		}
 
 		@Override
 		public void paintComponent(Graphics g) {
-			Image IMG_MAIN = new ImageIcon("images/img1.jpg").getImage();
+			Image IMG_MAIN = new ImageIcon("images/opaqueHalf.png").getImage();
 			// 绘制游戏界面
 			g.drawImage(IMG_MAIN, 0, 0,695,215, null);
 		}
-		
+		 private void ableToPress(Component c){
+				
+				c.setEnabled(isAbleToPress);
+			}
+			private void unableToPress(Component c){
+				isAbleToPress=false;
+				c.setEnabled(isAbleToPress);
+			}
+			private void changeIsAbleToPress(Component c) {
+				c.setEnabled(!c.isEnabled());
+			}
 		
 }

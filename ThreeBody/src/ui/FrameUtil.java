@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class FrameUtil {
-	public static final Image NUMBER =  new ImageIcon("images/num.png").getImage();
+	public static final Image NUMBER =  new ImageIcon("images/num2.png").getImage();
 	static int IMG_NUMBER_W=NUMBER.getWidth(null)/10;
 	static int IMG_NUMBER_H=NUMBER.getHeight(null);
 	/**
@@ -24,8 +24,6 @@ public class FrameUtil {
     	int y = (screen.height-jf.getHeight()>>1)-32;
     	jf.setLocation(x,y);
 	}
-
-	
 	
 	public static void drawNumberLeftPad(int x, int y, int num, int maxCount,
 			Graphics g) {
@@ -42,27 +40,20 @@ public class FrameUtil {
 			}
 		}
 	}
-	/*public static void drawNumberLeftPad(int rectX, int rectY, String number,
-			int maxCount, Graphics g) {
-		for (int i = 0; i < maxCount; i++) {
-			if (maxCount - i <= number.length()) {
-				int idx = i + number.length() - maxCount;
-				String bitString = String.valueOf(number.charAt(idx));
-				g.drawString(bitString, rectX + 240+i*10, rectY + 23);
-			}
-		}
-	}*/
+	
 	public static  void drawCoordinate(int i, int j, int k, int l, Graphics g) {
 		drawNumberLeftPad(5, 28,i,4, g);
 		drawNumberLeftPad(114, 28,j,4, g);
 		drawNumberLeftPad(223, 28,k,4, g);
 		drawNumberLeftPad(333, 28,l,4, g);
 	}
+	
 	public static  void drawCoordinate(int i, int j, int k, Graphics g) {
 		drawNumberLeftPad(5, 28,i,4, g);
 		drawNumberLeftPad(164, 28,j,4, g);
 		drawNumberLeftPad(323, 28,k,4, g);
 	}
+	
 	public static void sendMessageByFrame(String frameName,String message){
 		InformFrame successInformFrame = new InformFrame(frameName, 300,200); 
 		JPanel successIn = new MessageByFramePanel(successInformFrame,message);

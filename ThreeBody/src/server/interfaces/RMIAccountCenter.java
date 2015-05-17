@@ -20,11 +20,12 @@ public interface RMIAccountCenter extends Remote {
 	
 	info logoutAndClear(String id) throws RemoteException;
 
-	// TODO test
 	String command(String command) throws RemoteException;
 
 	RMIAccount getService(String id) throws RemoteException;
 
 	String getTransientID(String id) throws RemoteException;
+	
+	R.info editPassword(String id,String password,String newPassword) throws RemoteException;
 
 }

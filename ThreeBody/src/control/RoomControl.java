@@ -4,25 +4,39 @@ import java.rmi.RemoteException;
 
 import model.Room;
 import server.interfaces.RMIRoom;
+import ui.RoomPanel;
 import util.R;
 import dto.AccountDTO;
 
 public class RoomControl {
 	
-	RMIRoom rmir;
-	String id = AccountDTO.getInstance().getId();
+	private RMIRoom rmir;
+	private MainControl mainControl;
+	private Room room;
+	private RoomPanel roomPanel;
+	private GameStartChecker gsc;
+	private boolean inRoom;
 	
-	public RoomControl(RMIRoom rmir) {
+	public RoomControl(MainControl mc,RMIRoom rmir){
+		this.mainControl = mc;
 		this.rmir = rmir;
+		room = refreshRoom();
+		this.gsc = new GameStartChecker();
+		this.inRoom = true;
+		gsc.start();
 	}
-
+	
+	public void setRoomPanel(RoomPanel roomPanel){
+		this.roomPanel = roomPanel;
+	}
+	
 	/**
 	 * 
 	 * @return SUCCESS：准备好
 	 */
 	public R.info ready(){
 		try {
-			return rmir.ready(id);
+			return rmir.ready(AccountDTO.getInstance().getId());
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -35,7 +49,7 @@ public class RoomControl {
 	 */
 	public R.info cancelReady(){
 		try {
-			return rmir.cancelReady(id);
+			return rmir.cancelReady(AccountDTO.getInstance().getId());
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -60,9 +74,13 @@ public class RoomControl {
 	 * 
 	 * @return SUCCESS: 成功离开房间
 	 */
-	public R.info exit(){
+	public synchronized R.info exit(){
 		try {
-			return rmir.exit(id);
+			inRoom = false;
+			mainControl.roomControl = null;
+			R.info feedback = rmir.exit(AccountDTO.getInstance().getId());
+			mainControl.toLobby();
+			return feedback;
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -73,7 +91,7 @@ public class RoomControl {
 	 * 
 	 * @return 刷新后的Room
 	 */
-	public Room refresh(){
+	public Room refreshRoom(){
 		try {
 			return rmir.refresh();
 		} catch (RemoteException e) {
@@ -82,17 +100,53 @@ public class RoomControl {
 		return null;
 	}
 	
+	public Room getRoom(){
+		return room;
+	}
+	
 	/**
 	 * 
 	 * @return GameControl对象
 	 */
 	public GameControl getGameService(){
 		try {
-			return new GameControl(rmir.getGameServer());
+			GameControl.init(rmir.getGameServer());
+			return GameControl.getInstance();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
+	/**
+	 * 检查游戏是否开始，若开始，进入游戏界面
+	 */
+	private class GameStartChecker extends Thread {
+		@Override
+		public void run() {
+			while (inRoom && !room.isStart()) {
+				try {
+					Thread.sleep(2000);
+					refreshRoomPanel();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if(room.isStart()){
+				mainControl.toGame(room.getSize());
+			}
+		}
+	}
+	
+	private synchronized void refreshRoomPanel(){
+		if(inRoom){
+			room = refreshRoom();
+			roomPanel.refresh();
+		}
+	}
+
+	public synchronized void changeInRoom() {
+		this.inRoom = !this.inRoom;
+	}
 }

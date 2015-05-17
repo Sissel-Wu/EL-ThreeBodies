@@ -23,4 +23,14 @@ public final class R {
     	ROOM_FULL
     }
     
+    public static enum img_format implements Serializable{
+    	PNG,
+    	JPG
+    }
+    
+    public static enum img_type implements Serializable{
+    	HEAD,
+    	ADVERTISEMENT,
+    }
+    
 }

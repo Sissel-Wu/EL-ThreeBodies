@@ -31,23 +31,27 @@ public class RoomServer extends UnicastRemoteObject implements RMIRoom {
 	
 	@Override
 	public info ready(String id) throws RemoteException {
+		if(room.isStart()){
+			return R.info.INVALID;
+		}
 		return room.ready(this.searchAccountByID(id));
 	}
 
 	@Override
 	public info cancelReady(String id) throws RemoteException {
+		if(room.isStart()){
+			return R.info.INVALID;
+		}
 		return room.cancelReady(this.searchAccountByID(id));
 	}
 
 	@Override
 	public info start() throws RemoteException {
-		for(Boolean ready:room.getReady().values()){
-			if(!ready){
-				return R.info.INVALID;
-			}
+		if(!room.isAllReady()){
+			return R.info.INVALID;
 		}
 		room.setStart(true);
-		new GameServer(room.getAccounts());
+		gameServer = new GameServer(room.getAccounts());
 		return R.info.SUCCESS;
 	}
 

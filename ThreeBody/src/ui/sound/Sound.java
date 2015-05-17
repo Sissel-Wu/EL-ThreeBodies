@@ -3,7 +3,6 @@ package ui.sound;
  * 
  * @author luck
  *@version 2013.3/30
- * 用于存放音乐与音效的路径
  */
 public class Sound {
 	public static String BGM;

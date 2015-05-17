@@ -32,7 +32,7 @@ public class Room implements Serializable{
     /**
      * 每位玩家是否准备好
      */
-	private Map<Account,Boolean> ready;
+	private Map<String,Boolean> ready;
     /**
      * 房间人数上限
      */
@@ -46,8 +46,8 @@ public class Room implements Serializable{
 		
 		accounts = new ArrayList<Account>();
 		accounts.add(creater);
-		ready = new HashMap<Account,Boolean>();
-		ready.put(creater, true);
+		ready = new HashMap<String,Boolean>();
+		ready.put(creater.getId(), true);
 	}
 	
 	public info enterRoom(Account account){
@@ -55,18 +55,18 @@ public class Room implements Serializable{
 		if(size == accounts.size()){
 			return R.info.ROOM_FULL;
 		}
-		ready.put(account, false);
+		ready.put(account.getId(), false);
 		accounts.add(account);
 		return R.info.SUCCESS;
 	}
 	
 	public info ready(Account account){
-		ready.put(account, true);
+		ready.put(account.getId(), true);
 		return R.info.SUCCESS;
 	}
 	
 	public info cancelReady(Account account) {
-		ready.put(account, false);
+		ready.put(account.getId(), false);
 		return R.info.SUCCESS;
 	}
 
@@ -77,14 +77,9 @@ public class Room implements Serializable{
 		}
 	}
 
-	
 	/*
 	 * setters
 	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public void setStart(boolean state) {
 		this.start = state;
 	}
@@ -108,8 +103,20 @@ public class Room implements Serializable{
 	public boolean isStart() {
 		return start;
 	}
-	public Map<Account, Boolean> getReady() {
-		return ready;
+	public boolean isReady(String id){
+		return ready.get(id);
+	}
+	public boolean isAllReady(){
+		if(accounts.size()<size){
+			return false;
+		}else{
+			for(boolean bl:ready.values()){
+				if(!bl){
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	public int getSize() {
 		return size;

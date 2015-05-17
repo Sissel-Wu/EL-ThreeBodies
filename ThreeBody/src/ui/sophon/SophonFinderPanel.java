@@ -3,9 +3,8 @@ package ui.sophon;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -14,11 +13,13 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import model.Broadcast;
+import model.Coordinate;
 import model.Player;
 import model.card.SillySophon;
 import model.card.Sophon;
 import model.operation.CardUse;
+import util.SillySophonHelper;
+import control.GameControl;
 import dto.GameDTO;
 
 public class SophonFinderPanel extends JPanel{
@@ -30,28 +31,30 @@ public class SophonFinderPanel extends JPanel{
 	private JButton btnCoordinateFour;
 	private JButton btnOK;
 	private JButton btnReturn;
-	private JFrame sophonFinder;
+	private JFrame sophonFinderFrame;
 	private JComboBox<String> select;
 	private String result;
 	private JPanel sillyResultPanel;
 	private ResultPanel resultPanel;
-	private int coordinate;
+	
+	private int position;
 	List<Player> players=null;
 	Player user;
+	private GameControl gameControl;
 	
-	public SophonFinderPanel(JFrame sophonFinder) {
+	public SophonFinderPanel(JFrame sophonFinder,GameControl gameControl) {
+		this.gameControl = gameControl;
 		this.setLayout(null);
 		players= GameDTO.getInstance().getPlayers();
 		user=GameDTO.getInstance().getUser();
-		this.sophonFinder=sophonFinder;
-		sillyResultPanel = new SillyResultPanel(sophonFinder);
+		this.sophonFinderFrame=sophonFinder;
 		resultPanel = new ResultPanel(sophonFinder);
 		this.initComonent();
 	}
 	
 	private void initComonent() {
 		
-		coordinate=1;
+		position=0;
 		
 		this.btnCoordinateOne = new JButton();
 		this.btnCoordinateOne.setBounds(11, 16, 99, 60);
@@ -59,20 +62,17 @@ public class SophonFinderPanel extends JPanel{
 		btnCoordinateOne.setContentAreaFilled(false);
 		btnCoordinateOne.addMouseListener(new CoordinateOneListener());
 		
-		
 		this.btnCoordinateTwo = new JButton();
 		this.btnCoordinateTwo.setBounds(120, 16, 99, 60);
 		btnCoordinateTwo.setFont(new Font("黑体", Font.BOLD, 60));
 		btnCoordinateTwo.setContentAreaFilled(false);
 		btnCoordinateTwo.addMouseListener(new CoordinateTwoListener());
 		
-		
 		this.btnCoordinateThree = new JButton();
 		this.btnCoordinateThree.setBounds(229, 16, 99, 60);
 		btnCoordinateThree.setFont(new Font("黑体", Font.BOLD, 60));
 		btnCoordinateThree.setContentAreaFilled(false);
 		btnCoordinateThree.addMouseListener(new CoordinateThreeListener());
-		
 		
 		this.btnCoordinateFour = new JButton();
 		this.btnCoordinateFour.setBounds(339, 16, 99, 60);
@@ -84,22 +84,19 @@ public class SophonFinderPanel extends JPanel{
 		this.add(btnCoordinateTwo);
 		this.add(btnCoordinateThree);
 		this.add(btnCoordinateFour);
-		this.setPicture(coordinate);
+		this.setPicture(position);
 		
-		this.btnOK = new JButton(new ImageIcon("images/button.png"));
+		this.btnOK = new JButton(new ImageIcon("images/find.png"));
 		this.btnOK.setContentAreaFilled(false);
-		this.btnOK.setBounds(150, 105, 150, 60);
-		this.btnOK.setBorderPainted(false);
+		this.btnOK.setBounds(250, 125, 60, 30);
 		btnOK.addMouseListener(new FindListener());
 		this.add(btnOK);
 		
-		this.btnReturn = new JButton(new ImageIcon("images/exit.png"));
+		this.btnReturn = new JButton(new ImageIcon("images/littlecancel.png"));
 		this.btnReturn.setContentAreaFilled(false);
-		this.btnReturn.setBounds(295, 105, 150, 60);
-		this.btnReturn.setBorderPainted(false);
+		this.btnReturn.setBounds(335, 125, 60, 30);
 		btnReturn.addMouseListener(new ReturnListener());
 		this.add(btnReturn);
-
 		
 		select = new JComboBox<String>();
 		select.setFont(new Font("宋体", Font.PLAIN, 30));
@@ -113,184 +110,105 @@ public class SophonFinderPanel extends JPanel{
 					select.addItem(players.get(i).getAccount().getId());
 				}
 			}
+		}else{
+			select.addItem("aa");
+			select.addItem("bb");
 		}
-
-		select.addItem("aa");
-		select.addItem("bb");
 		this.add(select);
 	}
 	
-	class ReturnListener implements MouseListener {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			sophonFinder.setVisible(false);
-		}
-		@Override
-		public void mousePressed(MouseEvent e) {
-			
-		}
+	class ReturnListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-			
+			sophonFinderFrame.setVisible(false);
 		}
 	}
-	class FindListener implements MouseListener {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-//			useSophon();
-			jumpPanel();
-			
-		}
+	class FindListener extends MouseAdapter {
+		
+		boolean jumpOrNot = true;
+		
 		private void jumpPanel() {
-			if(sophonFinder.getTitle().equals("智子")){
+			if(sophonFinderFrame.getTitle().equals("智子")){
 				setVisible(false);
-				sophonFinder.setContentPane(resultPanel);
+				sophonFinderFrame.setContentPane(resultPanel);
 				resultPanel.setVisible(true);	
-				sophonFinder.validate();
-			}else if(sophonFinder.getTitle().equals("人造智子")){
+				sophonFinderFrame.validate();
+			}else if(sophonFinderFrame.getTitle().equals("人造智子")){
 				setVisible(false);
-				sophonFinder.setContentPane(sillyResultPanel);
+				sophonFinderFrame.setContentPane(sillyResultPanel);
 				sillyResultPanel.setVisible(true);	
-				sophonFinder.validate();
+				sophonFinderFrame.validate();
 			}
 			
 		}
 		private void useSophon() {
-			if(sophonFinder.getTitle().equals("智子")){
-				Sophon sophon  =new Sophon(user.getAccount().getId(), select.getSelectedItem().toString(), coordinate);
+			String id = user.getAccount().getId();
+			GameDTO dto = GameDTO.getInstance();
+			String receiverName = select.getSelectedItem().toString();
+			if(sophonFinderFrame.getTitle().equals("智子")){
+				
+				Sophon sophon  =new Sophon(id, receiverName, position);
 				CardUse cardSophon = new CardUse(user.getAccount().getId(), select.getSelectedItem().toString(), sophon);
-				GameDTO.getInstance().depositOperation(cardSophon);
-				ArrayList<Broadcast> broadcasts = (ArrayList<Broadcast>) GameDTO.getInstance().getBroadcasts();
-				result=broadcasts.get(broadcasts.size()-1).toString();
-				resultPanel.setResult(result);
-			}else if(sophonFinder.getTitle().equals("人造智子")){
-				SillySophon sillySophon  =new SillySophon(user.getAccount().getId(), select.getSelectedItem().toString(), coordinate);
-				CardUse cardSophon = new CardUse(user.getAccount().getId(), select.getSelectedItem().toString(), sillySophon);
-				GameDTO.getInstance().depositOperation(cardSophon);
+				gameControl.doOperation(cardSophon);
+				
+			}else if(sophonFinderFrame.getTitle().equals("人造智子")){
+				Player receiver = dto.findPlayerByID(receiverName);
+				int value = receiver.getCoordinate().probeCoordinateElement(position);
+				if(value == Coordinate.PROTECTED){
+					jumpOrNot = false;
+					// 获取失败
+					SillySophon ss = new SillySophon(id, receiverName, -1, null, -1);
+					CardUse cardUse = new CardUse(id, receiverName, ss);
+					gameControl.doOperation(cardUse);
+				}else{
+					sillyResultPanel = new SillyResultPanel(sophonFinderFrame, 
+							SillySophonHelper.generatePossibleList(value),
+							receiverName,
+							position);
+				}
+//				SillySophon sillySophon  =new SillySophon(id, select.getSelectedItem().toString(), coordinate);
+//				CardUse cardSophon = new CardUse(user.getAccount().getId(), select.getSelectedItem().toString(), sillySophon);
+//				GameControl.getInstance().doOperation(cardSophon);
 			}
-			
-		}
-		@Override
-		public void mousePressed(MouseEvent e) {
-			
 		}
 		@Override
 		public void mouseReleased(MouseEvent e) {
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-			
+			useSophon();
+			if(jumpOrNot == true){
+				jumpPanel();
+			}
 		}
 	}
-	class CoordinateOneListener implements MouseListener {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			coordinate=1;
-			setPicture(coordinate);
-			repaint();
-		}
-		
-		
-		@Override
-		public void mousePressed(MouseEvent e) {
-			
-		}
+	class CoordinateOneListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-			
+			position=0;
+			setPicture(position);
+			repaint();
 		}
 	}
-	class CoordinateTwoListener implements MouseListener {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			coordinate=2;
-			setPicture(coordinate);
-			repaint();
-		}
-		
-		
-		@Override
-		public void mousePressed(MouseEvent e) {
-			
-		}
+	class CoordinateTwoListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-			
+			position=1;
+			setPicture(position);
+			repaint();
 		}
 	}
-	class CoordinateThreeListener implements MouseListener {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			coordinate=3;
-			setPicture(coordinate);
-			repaint();
-		}
-		
-		
-		@Override
-		public void mousePressed(MouseEvent e) {
-			
-		}
+	class CoordinateThreeListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-			
+			position=2;
+			setPicture(position);
+			repaint();
 		}
 	}
-	class CoordinateFourListener implements MouseListener {
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			coordinate=4;
-			setPicture(coordinate);
-			repaint();
-		}
-		
-		
-		@Override
-		public void mousePressed(MouseEvent e) {
-			
-		}
+	class CoordinateFourListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-			
+			position=3;
+			setPicture(position);
+			repaint();
 		}
 	}
 	public void setPicture(int cooperate) {
@@ -298,16 +216,16 @@ public class SophonFinderPanel extends JPanel{
 		btnCoordinateTwo.setIcon(new ImageIcon("images/coNothing.png"));
 		btnCoordinateThree.setIcon(new ImageIcon("images/coNothing.png"));
 		btnCoordinateFour.setIcon(new ImageIcon("images/coNothing.png"));
-		if(cooperate==1){
+		if(cooperate==0){
 			btnCoordinateOne.setIcon(new ImageIcon("images/select.png"));
 		}
-		if(cooperate==2){
+		if(cooperate==1){
 			btnCoordinateTwo.setIcon(new ImageIcon("images/select.png"));
 		}
-		if(cooperate==3){
+		if(cooperate==2){
 			btnCoordinateThree.setIcon(new ImageIcon("images/select.png"));
 		}
-		if(cooperate==4){
+		if(cooperate==3){
 			btnCoordinateFour.setIcon(new ImageIcon("images/select.png"));
 		}
 	}
@@ -316,9 +234,6 @@ public class SophonFinderPanel extends JPanel{
 		Image img = new ImageIcon("images/img1.jpg").getImage();
 		g.drawImage(img, 0, 0, null);
 //		FrameUtil.drawCoordinate(123,156,502,666,g);
-		
 	}
 
-
-	
 }

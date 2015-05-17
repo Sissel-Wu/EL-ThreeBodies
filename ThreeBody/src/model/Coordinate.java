@@ -1,22 +1,28 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Coordinate {
+public class Coordinate implements Serializable{
     
-    public static final int UNKNOWN = 998;
+    /**
+	 * default
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public static final int UNKNOWN = 998;
     public static final int PROTECTED = 10086;
-    // TODO hard code
-    public final static int dimensions = 4;
-    public final static int MAX_NUM = 64;
+    
+    public final static int DIMENSIONS = 4;
+    public final static int MAX_NUM = 9;
     
     private int[] sequence;
     private boolean[] isProtected;
     
     public Coordinate(int[] sequence) {
 		this.sequence = sequence;
-		this.isProtected = new boolean[dimensions];
+		this.isProtected = new boolean[DIMENSIONS];
 		Arrays.fill(isProtected, false);
 	}
     
@@ -26,7 +32,7 @@ public class Coordinate {
      */
     public static Coordinate generateCoordinate(){
     	Random random = new Random();
-		int sequence[] = new int[dimensions];
+		int sequence[] = new int[DIMENSIONS];
 		for (int i = 0; i < sequence.length; i++) {
 			sequence[i] = random.nextInt(MAX_NUM);
 		}
@@ -59,10 +65,14 @@ public class Coordinate {
      * @param position 坐标的第几个
      * @return 如果没有被保护，返回正常的坐标，否则返回PROTECTED
      */
-    public int getCoordinateElement(int position){
+    public int probeCoordinateElement(int position){
     	if(isProtected[position]){
     		return PROTECTED;
     	}
+    	return sequence[position];
+    }
+    
+    public int getCoordinateElement(int position){
     	return sequence[position];
     }
     
@@ -81,7 +91,7 @@ public class Coordinate {
 	public boolean equals(Object obj) {
 		if(obj instanceof Coordinate){
 			Coordinate compared = (Coordinate)obj;
-			for (int i = 0; i < dimensions; i++) {
+			for (int i = 0; i < DIMENSIONS; i++) {
 				if(compared.getCoordinateElement(i) != this.getCoordinateElement(i)){
 					return false;
 				}
@@ -94,9 +104,27 @@ public class Coordinate {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < dimensions; i++) {
-			sb.append(sequence[i]+"-");
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < DIMENSIONS; i++) {
+			if(sequence[i] == Coordinate.UNKNOWN){
+				sb.append("不明-");
+			}else{
+				sb.append(sequence[i]+"-");
+			}
+		}
+		sb.deleteCharAt(sb.length()-1);
+		return sb.toString();
+	}
+	
+	// TODO test
+	public String getProtectingState(){
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0;i<DIMENSIONS;i++){
+			if(isProtected[i]){
+				sb.append("被保护-");
+			}else{
+				sb.append(sequence[i]+"-");
+			}
 		}
 		sb.deleteCharAt(sb.length()-1);
 		return sb.toString();

@@ -81,20 +81,27 @@ public class LobbyServer extends UnicastRemoteObject implements RMILobby{
 	Room rm2;
 	
 	@Override
-	public info command(String command) throws RemoteException {
-		switch(command){
-		case "init":
-			createRoom("Room1","Red",4);
-			createRoom("Room2","Blue",2);
-			rm1 = getRoomService("Room1").refresh();
-			rm2 = getRoomService("Room2").refresh();
-			return R.info.SUCCESS;
-		case "clear":
-			deleteRoom(rm1);
-			deleteRoom(rm2);
-			return R.info.SUCCESS;
+	public String command(String command) throws RemoteException {
+		String[] parts = command.split(" ");
+		StringBuilder sb = new StringBuilder();
+		switch(parts[0]){
+		case "cr":
+			sb.append("total:");
+			sb.append(rooms.size());
+			sb.append("\n");
+			for(Room room:rooms.values()){
+				sb.append("RoomName:");
+				sb.append(room.getName());
+				sb.append(" Creater:");
+				sb.append(room.getCreater().getId());
+				sb.append("\n");
+			}
+			return sb.toString();
+		case "dr":
+			deleteRoom(rooms.get(parts[1]));
+			return "success";
 		}
-		return R.info.INVALID;
+		return "INVALID";
 	}
 
 	public void deleteRoom(Room room){

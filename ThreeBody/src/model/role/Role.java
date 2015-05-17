@@ -1,13 +1,19 @@
 package model.role;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import model.card.Card;
 
-public abstract class Role {
+public abstract class Role implements Serializable{
     
-    protected int initialTechPoint;
+    /**
+	 * default
+	 */
+	
+	private static final long serialVersionUID = 1L;
+	protected int initialTechPoint;
     protected int initialResource;
     protected int tchDevelopSpeed;
     protected int rsrRestoreSpeed;
@@ -43,24 +49,25 @@ public abstract class Role {
 	public static Role[] generateRoles(int earthNum, int tbNum, int uniNum){
 		List<Role> roles = new LinkedList<Role>();
 		for (int i = 0; i < earthNum; i++) {
-			roles.add(null);
+			roles.add(new Earth());
 		}
 		for (int i = 0; i < tbNum; i++) {
-			roles.add(null);
+			roles.add(new ThreeBody());
 		}
 		for (int i = 0; i < uniNum; i++) {
-			roles.add(null);
+			roles.add(new Unifier());
 		}
-		return (Role[]) roles.toArray();
+		return roles.toArray(new Role[0]);
 	}
 	
-	public String getName(){
-    	return this.getClass().getName();
-    }
+	@Override
+	public String toString(){
+		return this.getClass().getName();
+	}
 
 	@Override
 	public boolean equals(Object arg0) {
-		return this.getName().equals(arg0.getClass().getName());
+		return this.toString().equals(arg0.getClass().getName());
 	}
     
 }

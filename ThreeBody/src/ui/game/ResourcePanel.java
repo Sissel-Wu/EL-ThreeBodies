@@ -4,6 +4,7 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+import dto.GameDTO;
 import ui.FrameUtil;
 
 public class ResourcePanel extends JPanel {
@@ -14,11 +15,12 @@ public class ResourcePanel extends JPanel {
 	
 	public ResourcePanel() {
 		this.setLayout(null);
-		setBounds(110, 478, 140, 32);
+		setBounds(100, 478, 140, 32);
 	}	
 	
 	@Override
 	public void paint(Graphics g) {
-		FrameUtil.drawNumberLeftPad(60, 0, 12, 3, g);
+		FrameUtil.drawNumberLeftPad(60, 0, GameDTO.getInstance().getUser().getResource(), 3, g);
 	}
+	
 }

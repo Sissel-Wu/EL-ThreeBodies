@@ -18,10 +18,14 @@ import dto.PreferenceDTO;
  */
 public class UserData {
 	
+	private static String prefURL = "userdata/Preference.dat";
+	private static String accURL = "userdata/Account.dat";
+	private static String tidURL = "userdata/transientID.dat";
+	
 	public static void savePreference(PreferenceDTO pfr){
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(
-					new FileOutputStream(new File("Preference.dat")));
+					new FileOutputStream(new File(prefURL)));
 			oos.writeObject(pfr);
 			oos.close();
 		} catch (FileNotFoundException e) {
@@ -35,7 +39,7 @@ public class UserData {
 		PreferenceDTO localData = null;
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
-					new File("Preference.dat")));
+					new File(prefURL)));
 			localData = (PreferenceDTO) ois.readObject();
 			ois.close();
 		} catch (FileNotFoundException e) {
@@ -51,7 +55,7 @@ public class UserData {
 	public static void saveAccount(Account ac) {
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(
-					new FileOutputStream(new File("Account.dat")));
+					new FileOutputStream(new File(accURL)));
 			oos.writeObject(ac);
 			oos.close();
 		} catch (FileNotFoundException e) {
@@ -64,15 +68,12 @@ public class UserData {
 	public static Account loadAccount() {
 		Account localData = null;
 		try {
-			File file = new File("Account.dat");
+			File file = new File(accURL);
 			if(file.exists()){
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
 						file));
 				localData = (Account) ois.readObject();
 				ois.close();
-			}else{
-				// TODO
-				System.out.println("Account.dat not existed");
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -85,7 +86,7 @@ public class UserData {
 	public static void saveTransientID(String transientID){
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(
-					new FileOutputStream(new File("transientID.dat")));
+					new FileOutputStream(new File(tidURL)));
 			oos.writeObject(transientID);
 			oos.close();
 		} catch (FileNotFoundException e) {
@@ -99,7 +100,7 @@ public class UserData {
 		String tid = null;
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
-					new File("transientID.dat")));
+					new File(tidURL)));
 			tid = (String) ois.readObject();
 			ois.close();
 		} catch (FileNotFoundException e) {
@@ -113,9 +114,9 @@ public class UserData {
 	}
 	
 	public static void clearAccount(){
-		File localData = new File("Account.dat");
+		File localData = new File(accURL);
 		localData.delete();
-		localData = new File("transientID.dat");
+		localData = new File(tidURL);
 		localData.delete();
 	}
 }

@@ -1,16 +1,15 @@
 package control;
 
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-
 import io.NetClient;
 import io.UserData;
-import dto.AccountDTO;
+
+import java.rmi.RemoteException;
+
 import model.Account;
 import server.interfaces.RMIAccount;
 import server.interfaces.RMIAccountCenter;
 import util.R;
+import dto.AccountDTO;
 
 /**
  * 跟账户控制有关
@@ -23,15 +22,16 @@ public class AccountControl {
     private Account account;
     private RMIAccountCenter rmiac;
     private RMIAccount rmia;
-    private MainControl mc;
+    private MainControl mainControl;
     
     public AccountControl(MainControl mc) {
-    	this.mc = mc;
+    	this.mainControl = mc;
 		// 读取本地缓存
 		account = UserData.loadAccount();
 		AccountDTO.initializeByLocalData(account);
 	}
     
+    // TODO 为了测试删了自动登陆
     public R.info logUp(String id,String password,String invitationID){
     	setUpRMIAC();
     	R.info feedback = null;
@@ -40,14 +40,14 @@ public class AccountControl {
 			if(feedback == R.info.SUCCESS){
 				rmia = rmiac.getService(id);
 				// 设成连接状态
-				mc.setConnected(true);
+				mainControl.setConnected(true);
 				// 保存transientID
 				String transientID = rmiac.getTransientID(id);
-				UserData.saveTransientID(transientID);
+//				UserData.saveTransientID(transientID);
 				// 同步网络端的account
 				account = rmia.getAccount();
 				AccountDTO.synchronize(account);	
-				UserData.saveAccount(account);
+//				UserData.saveAccount(account);
 				// 开启检查连接的线程
 				new ConnectionChecker().start();
 			}
@@ -58,6 +58,7 @@ public class AccountControl {
     }
 
     // TODO 比较两端的不同
+    // TODO 为了测试删了自动登陆
 	public R.info login(String id,String password){
 		setUpRMIAC();
 		R.info feedback = null;
@@ -66,14 +67,14 @@ public class AccountControl {
 			if(feedback == R.info.SUCCESS){
 				rmia = rmiac.getService(id);
 				// 设成连接状态
-				mc.setConnected(true);
+				mainControl.setConnected(true);
 				// 保存transientID
 				String transientID = rmiac.getTransientID(id);
-				UserData.saveTransientID(transientID);
+//				UserData.saveTransientID(transientID);
 				// 同步网络端的account
 				account = rmia.getAccount();
 				AccountDTO.synchronize(account);	
-				UserData.saveAccount(account);
+//				UserData.saveAccount(account);
 				// 开启检查连接的线程
 				new ConnectionChecker().start();
 			}
@@ -93,7 +94,7 @@ public class AccountControl {
 			if(feedback == R.info.SUCCESS){
 				rmia = rmiac.getService(id);
 				// 设成连接状态
-				mc.setConnected(true);
+				mainControl.setConnected(true);
 				// 同步网络端的account
 				account = rmia.getAccount();
 				AccountDTO.synchronize(account);
@@ -116,7 +117,7 @@ public class AccountControl {
     	try {
 			feedback = rmiac.logout(account.getId());
 			if(feedback == R.info.SUCCESS){
-				mc.setConnected(false);
+				mainControl.setConnected(false);
 				rmia = null;
 		    	account = null;
 		    	AccountDTO.synchronize(account);
@@ -136,7 +137,7 @@ public class AccountControl {
     	try {
 			feedback = rmiac.logoutAndClear(account.getId());
 			if(feedback == R.info.SUCCESS){
-				mc.setConnected(false);
+				mainControl.setConnected(false);
 				UserData.clearAccount();
 				rmia = null;
 		    	account = null;
@@ -146,6 +147,18 @@ public class AccountControl {
 			e.printStackTrace();
 		}
     	return feedback;
+    }
+    
+    /*
+     * 更改密码
+     */
+    public R.info editPassword(String password,String newPassword){
+    	try {
+			return rmiac.editPassword(account.getId(), password,newPassword);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+    	return null;
     }
     
     /*
@@ -176,7 +189,7 @@ public class AccountControl {
 					break;
 				}
     			try {
-					Thread.sleep(1000);
+					Thread.sleep(10000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -204,5 +217,5 @@ public class AccountControl {
     		rmiac = NetClient.getInstance().getAccountCenter();
     	}
     }
-    
+
 }

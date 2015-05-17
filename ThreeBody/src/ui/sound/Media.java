@@ -6,9 +6,6 @@ import saint.media.SimplePlayer;
 /**
  * 
  * @author СY
- * ��лСY�����İ���
- * saint���Լ�Media��ΪСY�����ṩ
- * �������ֵĲ���
  *
  */
 
@@ -31,7 +28,7 @@ public class Media{
 			bgmPlayer.setLoop(true);
 			bgmPlayer.setLoopCount(1000);
 		}catch (Exception e) {
-			System.err.println("�ļ��޷�����");
+			System.err.println("ppt");
 			return;
 		}
 
@@ -49,7 +46,7 @@ public class Media{
 			soundPlayer.open(new File("sound/"+name+".mp3"));
 			soundPlayer.setLoop(false);
 		}catch (Exception e) {
-			System.err.println("�ļ��޷�����");
+			System.err.println("jji");
 			return;
 		}
 
@@ -67,7 +64,7 @@ public class Media{
 			midiPlayer.open(new File("sound/"+name+".mid"));
 			midiPlayer.setLoop(false);
 		}catch (Exception e) {
-			System.err.println("�ļ��޷�����");
+			System.err.println("oox");
 			return;
 		}
 

@@ -1,4 +1,4 @@
-            package server;
+package server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -39,7 +39,18 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 		players = new LinkedList<Player>();
 		RandomCombiner rc = new RandomCombiner(accounts.size());
 		rc.addColumn(accounts.toArray());
-		rc.addColumn(Role.generateRoles(3, 2, 1));
+		// 角色数量分配
+		switch(accounts.size()){
+		case 3:
+			rc.addColumn(Role.generateRoles(2, 1, 0));
+			break;
+		case 6:
+			rc.addColumn(Role.generateRoles(3, 2, 1));
+			break;
+		case 8:
+			rc.addColumn(Role.generateRoles(4, 3, 1));
+			break;
+		}
 		rc.addColumn(Coordinate.generateCoordinates(accounts.size()));
 		for (Object[] records : rc.generate()) {
 			Account ac = (Account)records[0];
@@ -50,7 +61,7 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 	}
 	
 	@Override
-	public LinkedList<Operation> downloadOperation(String id) throws RemoteException {
+	public synchronized LinkedList<Operation> downloadOperation(String id) throws RemoteException {
 		LinkedList<Operation> result = unhandledOperations.get(id);
 		// 清空
 		unhandledOperations.put(id, new LinkedList<Operation>());
@@ -58,10 +69,9 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 	}
 
 	@Override
-	public info uploadOperation(String id, List<Operation> unhandled)
-			throws RemoteException {
+	public synchronized info uploadOperation(String id, List<Operation> unhandled) throws RemoteException {
 		for (Entry<String, LinkedList<Operation>> entries : unhandledOperations.entrySet()) {
-			if(entries.getKey()!=id){
+			if(!entries.getKey().equals(id)){
 				entries.getValue().addAll(unhandled);
 			}
 		}

@@ -17,5 +17,5 @@ public interface RMILobby extends Remote {
 	
 	RMIRoom getRoomService(String roomName) throws RemoteException;
 
-	R.info command(String command) throws RemoteException;
+	String command(String command) throws RemoteException;
 }
