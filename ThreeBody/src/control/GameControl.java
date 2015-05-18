@@ -80,7 +80,7 @@ public class GameControl {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					MainControl.getInstance().toStartMenu();;
+					MainControl.getInstance().toScore(gameDTO.getUser().isLost());;
 				}
 			}).start();
 		} catch (RemoteException e) {
