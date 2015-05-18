@@ -167,7 +167,7 @@ public class AccountPanel extends JPanel{
 	}
 	@Override
 	public void paintComponent(Graphics g) {
-		Image IMG_MAIN = new ImageIcon("images/img1.jpg").getImage();
+		Image IMG_MAIN = new ImageIcon("images/模糊背景.jpg").getImage();
 		// ������Ϸ����
 		g.drawImage(IMG_MAIN, 0, 0, 1158, 650, null);
 	}
