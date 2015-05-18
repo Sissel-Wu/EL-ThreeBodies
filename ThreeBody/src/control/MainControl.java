@@ -20,6 +20,8 @@ import ui.sound.Sound;
 import dto.AccountDTO;
 
 public class MainControl {
+	
+	private static MainControl instance;
 
 	private JPanel currentPanel = null;
 	public JFrame frame = null;
@@ -65,6 +67,12 @@ public class MainControl {
 //		mc.toAnimate("opening");
 		Sound.load("BGM1");
 		Media.playBGM(Sound.BGM);
+		
+		instance = mc;
+	}
+	
+	public static MainControl getInstance(){
+		return instance;
 	}
 
 	public void toStartMenu() {
@@ -103,17 +111,18 @@ public class MainControl {
 	}
 
 	public void toGame(int numOfPlayers) {
-		//new GameControl
+		// new GameControl
 		gameControl = roomControl.getGameService();
-		
+		// 绘制gamePanel
 		currentPanel.setVisible(false);
 		this.gamePanel = new GamePanel(this, numOfPlayers, gameControl);
-		
-		gameControl.setPanel((GamePanel)gamePanel);
 		currentPanel = this.gamePanel;
 		frame.setContentPane(currentPanel);
 		currentPanel.setVisible(true);
 		frame.validate();
+		// 设定panel，开始游戏
+		gameControl.setPanel((GamePanel)gamePanel);
+		gameControl.turnChange();
 	}
 
 	public void toLobby() {
@@ -159,6 +168,12 @@ public class MainControl {
 		frame.setContentPane(currentPanel);
 		currentPanel.setVisible(true);
 		frame.validate();
+	}
+
+	// TODO 先写着 = =
+	public void toScore() {
+		roomControl.exit();
+		toStartMenu();
 	}
 
 	public void exit() {

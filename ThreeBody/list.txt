@@ -37,6 +37,7 @@
 /root/EL/src/model/operation/CoordinateGet.java
 /root/EL/src/model/operation/CoordinateGetFail.java
 /root/EL/src/model/operation/Description.java
+/root/EL/src/model/operation/GameOver.java
 /root/EL/src/model/operation/Lose.java
 /root/EL/src/model/operation/Operable.java
 /root/EL/src/model/operation/Operation.java

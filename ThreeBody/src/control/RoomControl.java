@@ -132,7 +132,7 @@ public class RoomControl {
 					e.printStackTrace();
 				}
 			}
-
+			// TODO 判断是否原玩家
 			if(room.isStart()){
 				mainControl.toGame(room.getSize());
 			}

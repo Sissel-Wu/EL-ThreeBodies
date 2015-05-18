@@ -16,5 +16,9 @@ public interface RMIGame extends Remote{
 	LinkedList<Player> getPlayers() throws RemoteException;
 	
 	R.info uploadOperation(String id,List<Operation> unhandled) throws RemoteException;
+	
+	R.info exitGame(Player player, boolean normal) throws RemoteException;
+	
+	int getGameState() throws RemoteException;
 
 }

@@ -51,7 +51,7 @@ public class RoomServer extends UnicastRemoteObject implements RMIRoom {
 			return R.info.INVALID;
 		}
 		room.setStart(true);
-		gameServer = new GameServer(room.getAccounts());
+		gameServer = new GameServer(this,room.getAccounts());
 		return R.info.SUCCESS;
 	}
 

@@ -1,5 +1,6 @@
 package server;
 
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
@@ -7,6 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.rmi.PortableRemoteObject;
 
 import model.Account;
 import model.Coordinate;
@@ -27,18 +31,37 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 	
 	private Map<String,LinkedList<Operation>> unhandledOperations;
 	private LinkedList<Player> players;
+	private RoomServer rs;
+	
+	/*
+	 * 离开游戏的人
+	 */
+	private Map<Account,Boolean> gameFinish;
+	
+	/*
+	 * 游戏进行状态，1为进行中，0为结束，-1为有人强退
+	 */
+	private int gameState;
 
-	protected GameServer(List<Account> accounts) throws RemoteException {
+	protected GameServer(RoomServer rs,List<Account> accounts) throws RemoteException {
 		super();
+		
+		this.rs = rs;
+		
+		// 初始化gameState
+		gameState = 1;
+		
 		// 初始化unhandled
 		unhandledOperations = new HashMap<String,LinkedList<Operation>>();
 		for (Account account : accounts) {
 			unhandledOperations.put(account.getId(), new LinkedList<Operation>());
 		}
+		
 		// 初始化players，随机搭配
 		players = new LinkedList<Player>();
 		RandomCombiner rc = new RandomCombiner(accounts.size());
 		rc.addColumn(accounts.toArray());
+		
 		// 角色数量分配
 		switch(accounts.size()){
 		case 3:
@@ -57,6 +80,12 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 			Role rl = (Role)records[1];
 			Coordinate cd = (Coordinate)records[2];
 			players.add(new Player(ac,rl,cd,false));
+		}
+		
+		// 初始化gameFinish
+		gameFinish = new HashMap<Account, Boolean>();
+		for (Account account : accounts) {
+			gameFinish.put(account, false);
 		}
 	}
 	
@@ -81,6 +110,75 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 	@Override
 	public LinkedList<Player> getPlayers() throws RemoteException {
 		return players;
+	}
+
+	@Override
+	public info exitGame(Player player, boolean correct) throws RemoteException {
+		// TODO 妈的先随便返回一个
+		if(gameState == -1 || gameState == 0){
+			return R.info.NOT_EXISTED;
+		}
+		
+		// 强退的情况
+		Set<Account> accounts = gameFinish.keySet();
+		if(!correct){
+			gameState = -1;
+			// 找到强退的，扣他分 = =
+			for (Account account : accounts) {
+				if(account.getId().equals(player.getAccount().getId())){
+					account.setPoint(account.getPoint()-100);
+				}
+				// 全员退出
+				rs.exit(account.getId());
+			}
+			return R.info.INVALID;
+		}
+		// 正常退出
+		for (Account account : accounts) {
+			if(account.getId().equals(player.getAccount().getId())){
+				gameFinish.put(account, true);
+				rs.exit(account.getId());
+				// TODO 判断积分增减
+				if(player.isLost()){
+					account.setPoint(account.getPoint()-20);
+				}else{
+					account.setPoint(account.getPoint()+50);
+				}
+			}
+		}
+		// 判断游戏是否结束
+		for (Account account : accounts) {
+			if(!gameFinish.get(account)){
+				// 没结束返回SUCCESS
+				return R.info.SUCCESS;
+			}
+		}
+		gameState = 0;
+		closeThisLater();
+		return R.info.NOT_EXISTED;
+	}
+	
+	private void closeThisLater(){
+		// 20s后unexport
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					try {
+						PortableRemoteObject.unexportObject(GameServer.this);
+					} catch (NoSuchObjectException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		}).start();
+	}
+
+	@Override
+	public int getGameState() throws RemoteException {
+		return this.gameState;
 	}
 
 }

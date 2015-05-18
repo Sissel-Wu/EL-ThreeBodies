@@ -47,6 +47,7 @@ public class GamePanel  extends JPanel{
 	//双缓冲机制
 		private Image iBuffer;  
 		private Graphics gBuffer;
+		
 	private JButton btnCardSophon;
 	private JButton btnCardSillySophon;
 	private JButton btnCardWholeBlock;
@@ -56,13 +57,17 @@ public class GamePanel  extends JPanel{
 	private JButton btnCardResourcePotion;
 	private JButton btnCardResourceGambling;
 	private JButton btnPriviledgeGetRole;
+	
 	private boolean isAbleToPress;
+	
 	private JButton btnBroadcast;
 	private JButton btnHistory;
 	private JButton btnMessage;
+	
 	private JLabel labelRole;
 	private JLabel numOfBout;
 	private JLabel numOfRound;
+	
 	private JButton btnTurnEnd;
 	
 	private int NumOfPlayer;
@@ -99,8 +104,7 @@ public class GamePanel  extends JPanel{
 			}
 		}
 		this.setLayout(null);
-		if(GameDTO.getInstance().getWhoseTurn().getAccount().getId()
-				.equals(GameDTO.getInstance().getUser().getAccount().getId())){
+		if(gameDTO.getWhoseTurn() == gameDTO.getUser()){
 			isAbleToPress=true;
 		}else{
 			isAbleToPress=false;
@@ -121,12 +125,18 @@ public class GamePanel  extends JPanel{
 		}else{
 			isAbleToPress=false;
 		}
-		this.removeAll();
-		this.initComonent();
-		this.initEnemyLocation();
-		this.initPrompt();
-		this.createEnemy();
-		this.createCoordinatePanel();
+//		this.removeAll();
+//		this.initComonent();
+//		this.initEnemyLocation();
+//		this.initPrompt();
+//		this.createEnemy();
+//		this.createCoordinatePanel();
+		
+		this.numOfBout.setText("现在回合数："+GameDTO.getInstance().getBout());
+		this.numOfRound.setText("现在轮次数："+GameDTO.getInstance().getRound());
+		this.refreshRoleImage();
+		this.panelTech.repaint();
+		this.panelResource.repaint();
 	}
 	
 	private void initPrompt() {
@@ -396,7 +406,7 @@ public class GamePanel  extends JPanel{
 		
 		this.labelRole = new JLabel(new ImageIcon("images/img1.jpg"));
 		this.labelRole.setBounds(100,375,100,100);
-		this.initRoleImage();
+		this.refreshRoleImage();
 		this.add(labelRole);
 		
 		this.numOfBout = new JLabel("现在回合数："+GameDTO.getInstance().getBout());
@@ -414,11 +424,9 @@ public class GamePanel  extends JPanel{
 		this.add(panelTech);
 		this.add(panelResource);
 		this.add(panelCountDown);
-		
-		
 	}
 
-	private void initRoleImage() {
+	private void refreshRoleImage() {
 		Role roleName = GameDTO.getInstance().getUser().getRole();
 		if(roleName.toString().equals("地球")){
 			Image Img_earth = new ImageIcon("images/earth.png").getImage();
