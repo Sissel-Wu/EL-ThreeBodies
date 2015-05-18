@@ -23,7 +23,7 @@ public class CountDownPanel extends JPanel {
 	public void paint(Graphics g) {
 		Image IMG_MAIN = new ImageIcon("images/timer.png").getImage();
 		// 绘制游戏界面
-		g.drawImage(IMG_MAIN, 0, 0, null);
+		g.drawImage(IMG_MAIN, 0, 0,125,125, null);
 		FrameUtil.drawNumberLeftPad(18, 44, gameDTO.getCountdowns(), 3, g);
 	}
 }
