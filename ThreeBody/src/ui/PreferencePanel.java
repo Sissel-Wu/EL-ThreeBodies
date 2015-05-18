@@ -23,6 +23,11 @@ public class PreferencePanel extends JPanel{
 	private JButton btnVolumnUp;
 	private JButton btnVolumnDown;
 	private JButton btnReturn;
+	private JButton btnBGM1;
+	private JButton btnBGM2;
+	private JButton btnBGM3;
+	private JButton btnBG1;
+	private JButton btnBG2;
 	private JLabel labelVolume;
 	private MainControl mainControl;
 	private float volume=Media.getBgmPlayer().getVolume();
@@ -138,7 +143,7 @@ public class PreferencePanel extends JPanel{
 	
 	@Override
 	public void paintComponent(Graphics g) {
-		Image IMG_MAIN = new ImageIcon("images/img1.jpg").getImage();
+		Image IMG_MAIN = new ImageIcon("images/模糊preference.png").getImage();
 		// ������Ϸ����
 		g.drawImage(IMG_MAIN, 0, 0, 1158, 650, null);
 	}
