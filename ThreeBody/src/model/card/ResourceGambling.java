@@ -1,13 +1,13 @@
 package model.card;
 
 import java.util.List;
-import java.util.Random;
 
+import model.Player;
+import model.operation.Description;
 import model.operation.Operation;
 import model.operation.ResourceChange;
 import model.operation.ResourceChange.Type;
-
-
+import dto.GameDTO;
 
 /*
  * 获取用户自行输入的资源数
@@ -19,31 +19,42 @@ public class ResourceGambling extends Card {
 	 * default
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private boolean success;
 
-	public ResourceGambling(String operator, String receiver, int requiredResource) {
+	public ResourceGambling(String operator, String receiver,
+			int requiredResource,boolean success) {
 		super(operator, receiver);
-		this.name = "赌博";
-		this.requiredResource=requiredResource;
+		this.name = "资源赌博";
+		this.requiredResource = requiredResource;
+		this.success = success;
 	}
 
 	@Override
-	public List<Operation> process(List<Operation> subOperations) {
-		//pay resources
-		ResourceChange rc=new ResourceChange(operator, receiver, Type.DECREASE, this.requiredResource);
+	public void process(List<Operation> subOperations) {
+
+		// pay resources
+		ResourceChange rc = new ResourceChange(operator, receiver,
+				Type.DECREASE, this.requiredResource);
 		subOperations.add(rc);
 		
-		//get 0 or 2 in random
-		int randNum=1;
-		while(randNum==1){
-			Random rand=new Random();
-			randNum=rand.nextInt(3);
+		if(success){
+			// description
+			Description description = new Description(operator, receiver, "赌博成功！");
+			subOperations.add(description);
+			ResourceChange rca = new ResourceChange(operator, receiver,
+					Type.INCREASE, 2 * (this.requiredResource));
+			subOperations.add(rca);
+		}else{
+			Description description = new Description(operator, receiver, "赌博失败！");
+			subOperations.add(description);
 		}
 		
-		//get resources
-		ResourceChange rc1=new ResourceChange(operator, receiver, Type.INCREASE, randNum*(this.requiredResource));
-		subOperations.add(rc1);
+		// setUsed
+		Player pOperator = this.findOperator(GameDTO.getInstance());
+		pOperator.setPrivilegeGamble(false);
 		
-		return subOperations;
+		pOperator.refreshCardUnavailable();
 	}
 
 }

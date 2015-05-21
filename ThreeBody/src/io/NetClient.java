@@ -16,24 +16,21 @@ public class NetClient {
 	private RMIAccountCenter rmiac;
 	private RMILobby rmilb;
 	private RMIImage rmii;
-	//TODO TEST
 	private RMIServerControl rmisc;
 	private static NetClient instance;
 	
-	private NetClient(){
-		try {
-			rmiac = (RMIAccountCenter)Naming.lookup("rmi://104.236.174.190/AccountCenter");
-			rmilb = (RMILobby)Naming.lookup("rmi://104.236.174.190/LobbyServer");
-			rmii = (RMIImage) Naming.lookup("rmi://104.236.174.190/ImgService");
-			rmisc = ((RMIServerControl)Naming.lookup("rmi://104.236.174.190/ServerControl"));
-		} catch (MalformedURLException | RemoteException | NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	private static boolean connected = false;
 	
-	public static NetClient getInstance(){
-		if(instance == null){
+	private NetClient() throws MalformedURLException, RemoteException, NotBoundException{
+		rmiac = (RMIAccountCenter)Naming.lookup("rmi://104.236.174.190/AccountCenter");
+		rmilb = (RMILobby)Naming.lookup("rmi://104.236.174.190/LobbyServer");
+		rmii = (RMIImage) Naming.lookup("rmi://104.236.174.190/ImgService");
+		rmisc = ((RMIServerControl)Naming.lookup("rmi://104.236.174.190/ServerControl"));
+		connected = true;
+	}		
+	
+	public static NetClient getInstance() throws MalformedURLException, RemoteException, NotBoundException{
+		if(!connected){
 			instance = new NetClient();
 		}
 		return instance;

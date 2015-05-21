@@ -42,7 +42,7 @@ public class Account implements Serializable{
     	this.id = id;
     	this.head = null;
     	this.rank = -1;
-    	this.point = 1000;
+    	this.point = 1400;
     	this.totalGames = 0;
     	this.wins = 0;
     	this.losts = 0;
@@ -79,7 +79,6 @@ public class Account implements Serializable{
 	public Image getHead() {
 //		if(head == null){
 //			if(id.equals(AccountDTO.getInstance().getId())){
-//				// TODO windows目录符号
 //				head = new ImageIcon("userdata\\head.png").getImage();
 //			}else{
 //				head = new ImageIcon("tmp\\"+id+".png").getImage();

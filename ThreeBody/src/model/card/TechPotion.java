@@ -2,9 +2,11 @@ package model.card;
 
 import java.util.List;
 
+import model.Player;
 import model.operation.Operation;
 import config.CardConfig;
 import config.GameConfig;
+import dto.GameDTO;
 import model.operation.ResourceChange;
 import model.operation.ResourceChange.Type;
 import model.operation.TechChange;
@@ -32,17 +34,24 @@ public class TechPotion extends Card{
 	}
 
 	@Override
-	public List<Operation> process(List<Operation> subOperations) {
+	public void process(List<Operation> subOperations) {
 		
 		//pay  resources
 		ResourceChange rc=new ResourceChange(operator, receiver, Type.DECREASE, this.requiredResource);
 		subOperations.add(rc);
 		
 		//get techPoint
-		TechChange tc=new TechChange(operator, receiver, TechChange.Type.INCREASE, this.requiredTechPoint);
+		TechChange tc=new TechChange(operator, receiver, TechChange.Type.INCREASE, 30);
 		subOperations.add(tc);
 		
-		return subOperations;
+		// description is not necessary
+		
+		// setUsed
+		Player pOperator = this.findOperator(GameDTO.getInstance());
+		pOperator.setPrivilegeTechnology(false);
+		
+		pOperator.refreshCardUnavailable();
+		
 	}
 	
 }

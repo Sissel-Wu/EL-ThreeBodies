@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import model.Information;
 import model.operation.Operable;
@@ -71,9 +72,8 @@ public class GameControl {
 			default:
 				System.out.println("exit game unsuccessfully");
 			}
-			FrameUtil.sendMessageByFrame("游戏结束", "游戏结束，5秒后转跳");
-			System.out.println("游戏结束，5秒后转跳");
-			new Thread(new Runnable(){
+			FrameUtil.sendMessageByPullDown(gamePanel, "游戏结束，5秒后转跳", 4);
+			SwingUtilities.invokeLater(new Runnable(){
 				public void run(){
 					try {
 						Thread.sleep(5000);
@@ -82,7 +82,7 @@ public class GameControl {
 					}
 					MainControl.getInstance().toScore(gameDTO.getUser().isLost());;
 				}
-			}).start();
+			});
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -178,9 +178,14 @@ public class GameControl {
 	} // syncThread
 	
 	private synchronized void upload() throws RemoteException{
+		LinkedList<Operation> unsynced = new LinkedList<Operation>();
+		unsynced.addAll(gameDTO.getUnSyncOperations());
 		// 上传unhandledOperations
-		rmig.uploadOperation(gameDTO.getUser().getAccount().getId(), gameDTO.getUnSyncOperations());
-		gameDTO.setSynced();
+		if (unsynced.size() != 0){
+			System.out.println("now 上传 "+unsynced.size()+"operation");
+			rmig.uploadOperation(gameDTO.getUser().getAccount().getId(), unsynced);
+			gameDTO.setSynced();
+		}
 	}
 		
 	private class TimeThread extends Thread{
@@ -216,6 +221,7 @@ public class GameControl {
 	public synchronized void turnChange(){
 		// 这个判断加上synchronized可以防止玩家按 和 倒计时线程冲突
 		if(gameDTO.getUser() == gameDTO.getWhoseTurn()){
+			
 			Operation operation = new TurnChange(AccountDTO.getInstance().getId(),null);
 			gameDTO.depositUnSyncOperation(operation);
 			List<Operation> operations = new LinkedList<Operation>();

@@ -35,15 +35,21 @@ public class SillySophon extends Card {
 		this.lifetime = cardList.get(3).getLifetime();
 		this.requiredResource = cardList.get(3).getRequiredResource();
 		this.requiredTechPoint = cardList.get(3).getRequiredTechPoint();
+		this.name = "人造智子";
 	}
 
 	@Override
-	public List<Operation> process(List<Operation> subOperations) {
+	public void process(List<Operation> subOperations) {
 		GameDTO dto = GameDTO.getInstance();
-
+		
 		// 得到操作者与被操作者
 		Player pOperator = this.findOperator(dto);
 		Player pReceiver = this.findReceiver(dto);
+
+		// setUsed
+		pOperator.getUsedCards().add(this.getClass());
+
+		pOperator.refreshCardUnavailable();
 
 		// 消耗资源
 		ResourceChange rc = new ResourceChange(operator, receiver,
@@ -57,13 +63,13 @@ public class SillySophon extends Card {
 		// 或取失败后描述操作
 		if(result == Coordinate.PROTECTED){
 			subOperations.add(new CoordinateGetFail(operator, receiver));
-			return subOperations;
+			return;
 		}
 		
 		// 或取成功后描述操作
 		StringBuilder sb = new StringBuilder();
 		sb.append(operator);
-		sb.append("对"+receiver+"进行观测，发现3个可疑坐标:");
+		sb.append("对"+receiver+"第"+(position+1)+"个坐标进行观测，发现3个可疑坐标:");
 		for(int i:set){
 			sb.append(i+",");
 		}
@@ -83,7 +89,6 @@ public class SillySophon extends Card {
 			subOperations.add(cgf);
 		}
 		
-		return subOperations;
 	}
 
 }

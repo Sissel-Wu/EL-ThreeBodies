@@ -28,7 +28,10 @@ public abstract class Card implements Serializable{
     	this.receiver = receiver;
     }
    
-    public abstract List<Operation> process(List<Operation> subOperations);
+    public abstract void process(List<Operation> subOperations);
+    public void after(List<Operation> subOperations){}
+    public void before(List<Operation> subOperations){}
+    public void processEachRound(List<Operation> subOperations){};
     
     public String getName() {
 		return name;
@@ -44,6 +47,14 @@ public abstract class Card implements Serializable{
 	
 	public int getLifetime() {
 		return lifetime;
+	}
+	
+	public String getOperator(){
+		return operator;
+	}
+	
+	public String getReceiver(){
+		return receiver;
 	}
 	
 	protected Player findOperator(GameDTO dto){

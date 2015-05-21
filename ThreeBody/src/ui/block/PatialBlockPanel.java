@@ -5,18 +5,18 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import control.GameControl;
-import dto.GameDTO;
-import model.card.PatialBlock;
+import model.card.PartialBlock;
 import model.operation.CardUse;
 import ui.FrameUtil;
+import ui.component.SquareButton;
+import control.GameControl;
+import dto.GameDTO;
 
 public class PatialBlockPanel extends JPanel {
 
@@ -43,28 +43,28 @@ public class PatialBlockPanel extends JPanel {
 		
 		this.btnCoordinateOne = new JButton();
 		this.btnCoordinateOne.setBounds(11, 16, 99, 60);
-		this.btnCoordinateOne.setFont(new Font("黑体", Font.BOLD, 60));
+		this.btnCoordinateOne.setFont(new Font("宋体", Font.BOLD, 60));
 		this.btnCoordinateOne.setContentAreaFilled(false);
 		this.btnCoordinateOne.addMouseListener(new CoordinateOneListener());
 		
 		
 		this.btnCoordinateTwo = new JButton();
 		this.btnCoordinateTwo.setBounds(120, 16, 99, 60);
-		this.btnCoordinateTwo.setFont(new Font("黑体", Font.BOLD, 60));
+		this.btnCoordinateTwo.setFont(new Font("宋体", Font.BOLD, 60));
 		this.btnCoordinateTwo.setContentAreaFilled(false);
 		this.btnCoordinateTwo.addMouseListener(new CoordinateTwoListener());
 		
 		
 		this.btnCoordinateThree = new JButton();
 		this.btnCoordinateThree.setBounds(229, 16, 99, 60);
-		this.btnCoordinateThree.setFont(new Font("黑体", Font.BOLD, 60));
+		this.btnCoordinateThree.setFont(new Font("宋体", Font.BOLD, 60));
 		this.btnCoordinateThree.setContentAreaFilled(false);
 		this.btnCoordinateThree.addMouseListener(new CoordinateThreeListener());
 		
 		
 		this.btnCoordinateFour = new JButton();
 		this.btnCoordinateFour.setBounds(339, 16, 99, 60);
-		this.btnCoordinateFour.setFont(new Font("黑体", Font.BOLD, 60));
+		this.btnCoordinateFour.setFont(new Font("宋体", Font.BOLD, 60));
 		this.btnCoordinateFour.setContentAreaFilled(false);
 		this.btnCoordinateFour.addMouseListener(new CoordinateFourListener());
 		
@@ -74,10 +74,9 @@ public class PatialBlockPanel extends JPanel {
 		this.add(btnCoordinateFour);
 		this.setPicture(coordinate);
 		
-		
-		
-		this.btnOk = new JButton(new ImageIcon("images/btnOk.png"));
+		this.btnOk = new SquareButton("images/btnOk.png");
 		this.btnOk.setContentAreaFilled(false);
+		this.btnOk.setBorderPainted(false);
 		this.btnOk.setBounds(190, 125, 60,30);
 		this.btnOk.addMouseListener(new OkListener());
 		this.add(btnOk);
@@ -89,7 +88,7 @@ public class PatialBlockPanel extends JPanel {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			String id = GameDTO.getInstance().getUser().getAccount().getId();
-			PatialBlock pb = new PatialBlock(id, id, coordinate);
+			PartialBlock pb = new PartialBlock(id, id, coordinate);
 			CardUse cardUsePb=new CardUse(id, id, pb);
 			GameControl.getInstance().doOperation(cardUsePb);
 			patialBlock.setVisible(false);

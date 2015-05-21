@@ -1,5 +1,9 @@
 package control;
 
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+
 import io.NetClient;
 
 import javax.swing.JFrame;
@@ -7,6 +11,7 @@ import javax.swing.JPanel;
 
 import ui.AboutUsPanel;
 import ui.AnimatePanel;
+import ui.FrameUtil;
 import ui.MainFrame;
 import ui.PreferencePanel;
 import ui.RoomPanel;
@@ -23,7 +28,7 @@ public class MainControl {
 	
 	private static MainControl instance;
 
-	private JPanel currentPanel = null;
+	public JPanel currentPanel = null;
 	public JFrame frame = null;
 	private JPanel startMenuPanel = null;
 	private JPanel gamePanel = null;
@@ -45,18 +50,23 @@ public class MainControl {
 	
 	public static void main(String[] args) {
 
-		MainControl mc = new MainControl();
+		final MainControl mc = new MainControl();
 		
 		mc.accountControl = new AccountControl(mc);
 		String id = AccountDTO.getInstance().getId();
 		
 		new Thread(new Runnable(){
 			public void run(){
-				NetClient.getInstance();
+				try {
+					NetClient.getInstance();
+				} catch (MalformedURLException | RemoteException
+						| NotBoundException e) {
+					FrameUtil.sendMessageByPullDown(mc.currentPanel, "网络连接出错");
+				}
 			}
 		}).start();
 		
-		if(!id.equals("本地玩家")){
+		if(!id.equals("未登录")){
 //			if (mc.accountControl.loginByTransientID(id) == R.info.SUCCESS) {
 //				mc.connected = true;
 //			}
@@ -115,7 +125,7 @@ public class MainControl {
 		gameControl = roomControl.getGameService();
 		// 绘制gamePanel
 		currentPanel.setVisible(false);
-		this.gamePanel = new GamePanel(this, numOfPlayers, gameControl);
+		this.gamePanel = new GamePanel(gameControl);
 		currentPanel = this.gamePanel;
 		frame.setContentPane(currentPanel);
 		currentPanel.setVisible(true);

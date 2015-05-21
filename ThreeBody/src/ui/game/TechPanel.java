@@ -15,7 +15,7 @@ public class TechPanel extends JPanel {
 	
 	public TechPanel() {
 		this.setLayout(null);
-		setBounds(100, 510, 140, 32);
+		setBounds(30, 230, 140, 32);
 		this.setOpaque(false);
 	}
 	

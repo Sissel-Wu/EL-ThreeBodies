@@ -1,5 +1,6 @@
 package ui.game;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -15,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
-import model.Information;
 import model.Player;
 import dto.GameDTO;
 
@@ -40,14 +40,15 @@ public class HistoryPanel extends JPanel{
 	}
 
 	private void initComonent() {
-		model = new DefaultListModel<>();
+		model = new DefaultListModel<String>();
 		
-		this.history = new JList<>(model);
+		this.history = new JList<String>(model);
 		
 		this.history.setBounds(80, 30, 560, 80);
-		history.setFont(new Font("黑体", Font.BOLD, 20));
+		history.setFont(new Font("宋体", Font.BOLD, 20));
 		history.setVisibleRowCount(4);
 		history.setVisible(true);
+		history.setOpaque(false);
 		
 		JScrollPane scroller = new JScrollPane(history);
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -79,11 +80,13 @@ public class HistoryPanel extends JPanel{
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			String[] infos = GameDTO.getInstance().getInformations();
-			for (int i = model.size(); i < infos.length; i++) {
+			for (String string : infos) {
+				System.out.println(string);
+			}
+			model.clear();
+			for (int i = 0; i < infos.length; i++) {
 				model.addElement(infos[i]);
 			}
-			GamePanel gp = (GamePanel)getParent();
-			gp.repaint();
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {

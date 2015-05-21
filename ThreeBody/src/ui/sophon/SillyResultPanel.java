@@ -16,6 +16,7 @@ import dto.AccountDTO;
 import model.card.SillySophon;
 import model.operation.CardUse;
 import ui.FrameUtil;
+import ui.component.SquareButton;
 
 public class SillyResultPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
@@ -54,7 +55,7 @@ public class SillyResultPanel extends JPanel{
 		
 		this.resultOne = new JButton();
 		this.resultOne.setBounds(11, 16, 99, 60);
-		resultOne.setFont(new Font("黑体", Font.BOLD, 60));
+		resultOne.setFont(new Font("宋体", Font.BOLD, 60));
 		resultOne.setContentAreaFilled(false);
 		resultOne.setBorderPainted(false);
 		resultOne.addMouseListener(new ResultOneListener());
@@ -62,7 +63,7 @@ public class SillyResultPanel extends JPanel{
 		
 		this.resultTwo = new JButton();
 		this.resultTwo.setBounds(170, 16, 99, 60);
-		resultTwo.setFont(new Font("黑体", Font.BOLD, 60));
+		resultTwo.setFont(new Font("宋体", Font.BOLD, 60));
 		resultTwo.setContentAreaFilled(false);
 		resultTwo.setBorderPainted(false);
 		resultTwo.addMouseListener(new ResultTwoListener());
@@ -70,7 +71,7 @@ public class SillyResultPanel extends JPanel{
 		
 		this.resultThree = new JButton();
 		this.resultThree.setBounds(329, 16, 99, 60);
-		resultThree.setFont(new Font("黑体", Font.BOLD, 60));
+		resultThree.setFont(new Font("宋体", Font.BOLD, 60));
 		resultThree.setContentAreaFilled(false);
 		resultThree.setBorderPainted(false);
 		resultThree.addMouseListener(new ResultThreeListener());
@@ -81,7 +82,7 @@ public class SillyResultPanel extends JPanel{
 		this.setPicture(coordinate);
 		
 		
-		this.btnReturn = new JButton(new ImageIcon("images/btnOk.png"));
+		this.btnReturn = new SquareButton("images/btnOk.png");
 		this.btnReturn.setContentAreaFilled(false);
 		this.btnReturn.setBounds(190, 125, 60,30);
 		btnReturn.addMouseListener(new ReturnListener());
@@ -111,7 +112,7 @@ public class SillyResultPanel extends JPanel{
 			SillySophon ss = new SillySophon(id, receiverName, position, possibleList, possibleList[coordinate]);
 			CardUse cardUse = new CardUse(id, receiverName, ss);
 			GameControl.getInstance().doOperation(cardUse);
-			
+			sophonFinder.setVisible(false);
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {

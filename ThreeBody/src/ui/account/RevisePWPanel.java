@@ -4,7 +4,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
 import ui.FrameUtil;
+import ui.component.SquareButton;
 import control.AccountControl;
 
 public class RevisePWPanel extends JPanel{
@@ -28,24 +28,28 @@ public class RevisePWPanel extends JPanel{
 	private JLabel pwConfirmLabel;
 	private JFrame frame;
 	private AccountControl accountControl;
+	private AccountPanel ap;
 	
-	public RevisePWPanel(JFrame frame,AccountControl accountControl) {
+	public RevisePWPanel(JFrame frame,AccountControl accountControl,AccountPanel ap) {
 		this.accountControl = accountControl;
 		this.setLayout(null);
 		this.frame=frame;
+		this.ap = ap;
 		this.initComonent();
 		
 	}
 	private void initComonent() {
-		this.btnCancel = new JButton(new ImageIcon("images/logcancel.png"));
+		this.btnCancel = new SquareButton("images/logcancel.png");
 		this.btnCancel.setBounds(220, 220, 80, 40);
 		btnCancel.setContentAreaFilled(false);
+		btnCancel.setBorderPainted(false);
 		btnCancel.addMouseListener(new CancelListener());
 		this.add(btnCancel);
 		
-		this.btnRevise = new JButton(new ImageIcon("images/pwRevise.png"));
+		this.btnRevise = new SquareButton("images/pwRevise.png");
 		this.btnRevise.setBounds(100, 220, 80, 40);
 		btnRevise.setContentAreaFilled(false);
+		btnRevise.setBorderPainted(false);
 		btnRevise.addMouseListener(new ReviseListener());
 		this.add(btnRevise);
 		
@@ -87,20 +91,19 @@ public class RevisePWPanel extends JPanel{
 	}
 	
 	class ReviseListener extends MouseAdapter {
-
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(!pwNewField.getText().equals(pwConfirmField.getText())){
-				FrameUtil.sendMessageByFrame("两次输入的密码不一致", "两次输入的密码不一致");
+				FrameUtil.sendMessageByPullDown(ap, "两次输入的密码不一致");
 				return;
 			}
 			switch(accountControl.editPassword(pwOldField.getText(), pwNewField.getText())){
 			case SUCCESS:
-				FrameUtil.sendMessageByFrame("修改成功", "修改成功");
+				FrameUtil.sendMessageByPullDown(ap, "修改成功");
 				frame.setVisible(false);
 				break;
 			case INVALID:
-				FrameUtil.sendMessageByFrame("修改失败", "原密码不正确");
+				FrameUtil.sendMessageByPullDown(ap, "原密码不正确");
 				frame.setVisible(false);
 				break;
 			}

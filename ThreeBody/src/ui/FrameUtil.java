@@ -9,6 +9,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import ui.component.PullDownPanel;
+
 public class FrameUtil {
 	public static final Image NUMBER =  new ImageIcon("images/num.png").getImage();
 	static int IMG_NUMBER_W=NUMBER.getWidth(null)/10;
@@ -54,9 +56,22 @@ public class FrameUtil {
 		drawNumberLeftPad(323, 28,k,4, g);
 	}
 	
+	public static void sendMessageByPullDown(JPanel panel, String message){
+		new PullDownPanel(panel, message, 2);
+	}
+	
+	public static void sendMessageByPullDown(JPanel panel, String message, double duration){
+		new PullDownPanel(panel, message, duration);
+	}
+	
 	public static void sendMessageByFrame(String frameName,String message){
+		sendMessageByFrame(frameName, message, 2);
+	}
+	
+	public static void sendMessageByFrame(String frameName,String message,double duration){
 		InformFrame successInformFrame = new InformFrame(frameName, 300,200); 
-		JPanel successIn = new MessageByFramePanel(successInformFrame,message);
+		successInformFrame.setUndecorated(true);
+		JPanel successIn = new MessageByFramePanel(successInformFrame,message,duration);
 		successInformFrame.add(successIn);
 	}
 }

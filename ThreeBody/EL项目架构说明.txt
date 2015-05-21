@@ -20,7 +20,7 @@ util：工具类包。OperationTranslator负责将Operation转换成文字消息
 
 Operation模型：
 一个Operation由from（执行玩家），to（被选择玩家），type（操作类型），extra（其他信息）operable（是否可执行）组成。
-当用户通过控件完成操作时，一个Operation对象生成，放入GameDTO的unhandledOperations中，GameControl通过访问这个List，执行相应方法。若from不是本地玩家，通过联网发送unhandledOperations给服务器，再由服务器分发给其他联机的客户端。
+当用户通过控件完成操作时，一个Operation对象生成，放入GameDTO的unhandledOperations中，GameControl通过访问这个List，执行相应方法。若from不是未登录，通过联网发送unhandledOperations给服务器，再由服务器分发给其他联机的客户端。
 
 其次，util包中的OperationTranslator类可以将Operation信息转换成文字战报记录，或者生成通知中的信息。
 

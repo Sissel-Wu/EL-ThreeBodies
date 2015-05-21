@@ -21,7 +21,7 @@
 /root/EL/src/model/Account.java
 /root/EL/src/model/card/Card.java
 /root/EL/src/model/card/NoBroadcasting.java
-/root/EL/src/model/card/PatialBlock.java
+/root/EL/src/model/card/PartialBlock.java
 /root/EL/src/model/card/ResourceGambling.java
 /root/EL/src/model/card/ResourcePotion.java
 /root/EL/src/model/card/SillySophon.java
@@ -73,6 +73,8 @@
 /root/EL/src/ui/AnimatePanel.java
 /root/EL/src/ui/block/PatialBlockFrame.java
 /root/EL/src/ui/block/PatialBlockPanel.java
+/root/EL/src/ui/component/LengthDocument.java
+/root/EL/src/ui/component/YellowTransparentTextField.java
 /root/EL/src/ui/FrameUtil.java
 /root/EL/src/ui/game/BroadcastPanel.java
 /root/EL/src/ui/game/CountDownPanel.java

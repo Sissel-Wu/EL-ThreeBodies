@@ -23,13 +23,20 @@ public class Broadcast extends Operation implements Operable{
 
 	@Override
 	public List<Operation> process() {
-		//如果某个坐标与广播的坐标相同
-		//该坐标对应玩家就输了，通过设定域实现
 		GameDTO dto = GameDTO.getInstance();
+		
+		// setUsed
+		Player pOperator = dto.findPlayerByID(operator);
+		pOperator.setBroadcastable(false);
+		
+		// 如果某个坐标与广播的坐标相同
+		// 1.该玩家本来就输了
+		// 2.该坐标对应玩家输
 		List<Operation> subOperations = null;
-		for(Player player:dto.getPlayers()){
-			if(player.getCoordinate().equals(coordinate)){
-				Lose lose = new Lose(null,null,player);
+		
+		for (Player player : dto.getPlayers()) {
+			if (player.getCoordinate().equals(coordinate) && !player.isLost()) {
+				Lose lose = new Lose(null, null, player);
 				subOperations = new LinkedList<Operation>();
 				subOperations.add(lose);
 			}

@@ -1,8 +1,8 @@
 package dto;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import model.Information;
 import model.Player;
@@ -31,31 +31,26 @@ public class GameDTO {
     private int bout;
     
     /*
-     * 轮次，所有玩家均完成一次操作即为增加一轮
-     */
-    private int round;
-    
-    /*
      * 倒计时
      */
     private int countdowns;
  
     /*
-     * 本地玩家
+     * 本地的玩家
      */
     private Player user;
     /*
      * 历史消息记录
      */
-    private List<Information> informations;
+    private Queue<Information> informations;
     /*
      * 历史操作记录
      */
-    private List<Operation> historyOperations;
+    private Queue<Operation> historyOperations;
     /*
      * 待同步操作
      */
-    private List<Operation> unSyncOperations;
+    private Queue<Operation> unSyncOperations;
     /*
      * 游戏是否结束
      */
@@ -73,9 +68,9 @@ public class GameDTO {
     			user = player;
     		}
     	}
-    	informations = new LinkedList<Information>();
-    	historyOperations = new LinkedList<Operation>();
-    	unSyncOperations = new LinkedList<Operation>();
+    	informations = new ConcurrentLinkedQueue<Information>();
+    	historyOperations = new ConcurrentLinkedQueue<Operation>();
+    	unSyncOperations = new ConcurrentLinkedQueue<Operation>();
     	bout = 0;
     	whoseTurn = this.players.get(0);
     	gameOver = false;
@@ -91,19 +86,20 @@ public class GameDTO {
     	return dto;
     }
     
-    public void depositHistoryOperation(Operation operation){
+    public synchronized void depositHistoryOperation(Operation operation){
     	this.historyOperations.add(operation);
     }
     
     public synchronized void depositInformation(Information br){
     	this.informations.add(br);
+    	System.out.println("now size+"+informations.size());
     }
     
-    public void depositUnSyncOperation(Operation operation){
+    public synchronized void depositUnSyncOperation(Operation operation){
     	this.unSyncOperations.add(operation);
     }
     
-    public void setSynced(){
+    public synchronized void setSynced(){
     	this.unSyncOperations.clear();
     }
 
@@ -124,20 +120,12 @@ public class GameDTO {
 		return result;
 	}
 	
-	public int getBout() {
+	public synchronized int getBout() {
 		return bout;
 	}
 
-	public void setBout(int bout) {
+	public synchronized void setBout(int bout) {
 		this.bout = bout;
-	}
-
-	public int getRound() {
-		return round;
-	}
-
-	public void setRound(int round) {
-		this.round = round;
 	}
 
 	public Player getUser() {
@@ -146,13 +134,15 @@ public class GameDTO {
 
 	public synchronized String[] getInformations(){
 		String[] infos = new String[informations.size()];
-		for (int i = 0; i < infos.length; i++) {
-			infos[i] = informations.get(i).getContent();
+		int i = 0;
+		for (Information information : informations) {
+			infos[i] = information.getContent();
+			i++;
 		}
 		return infos;
 	}
 
-	public List<Operation> getHistoryOperations() {
+	public synchronized Queue<Operation> getHistoryOperations() {
 		return historyOperations;
 	}
 	
@@ -164,15 +154,15 @@ public class GameDTO {
 		this.gameOver = gameOver;
 	}
 
-	public Player getWhoseTurn() {
+	public synchronized Player getWhoseTurn() {
 		return whoseTurn;
 	}
 
-	public void setWhoseTurn(Player whoseTurn) {
+	public synchronized void setWhoseTurn(Player whoseTurn) {
 		this.whoseTurn = whoseTurn;
 	}
 
-	public List<Operation> getUnSyncOperations() {
+	public synchronized Queue<Operation> getUnSyncOperations() {
 		return unSyncOperations;
 	}
 

@@ -1,6 +1,5 @@
 package ui.game;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -21,6 +20,8 @@ import model.card.NoBroadcasting;
 import model.operation.CardUse;
 import model.operation.Operation;
 import model.operation.Priviledge_GetRole;
+import ui.component.SquareButton;
+import util.R;
 import control.GameControl;
 import dto.AccountDTO;
 import dto.GameDTO;
@@ -45,14 +46,14 @@ public class SelectEnemyPanel extends JPanel {
 		this.initComonent(message);
 	}
 	private void initComonent(String message) {
-		this.btnOK = new JButton(new ImageIcon("images/btnOk.png"));
+		this.btnOK = new SquareButton("images/btnOk.png");
 		this.btnOK.setContentAreaFilled(false);
 		this.btnOK.setBounds(120, 132,60, 30);
 		btnOK.addMouseListener(new OKListener());
 		this.add(btnOK);
 		
 		msgLabel = new JLabel();
-		msgLabel.setForeground(Color.YELLOW);
+		msgLabel.setForeground(R.color.LIGHT_YELLOW);
 		msgLabel.setText(message);
 		msgLabel.setFont(new Font("宋体", Font.BOLD, 20));
 		msgLabel.setBounds(60,0,180,80);

@@ -3,10 +3,13 @@ package model;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import dto.GameDTO;
+import model.card.Card;
 import model.role.Role;
+import dto.GameDTO;
 
 public class Player implements Serializable {
 	
@@ -22,17 +25,33 @@ public class Player implements Serializable {
     private Role role;
     private Coordinate coordinate;
     /*
-     * 是否可以使用特权
+     * 是否可以使用特权取得身份
      */
-    private boolean privilegeAvailable;
+    private boolean privilegeGetRole;
+    /*
+     * 是否可以使用特权赌博
+     */
+    private boolean privilegeGamble;
+    /*
+     * 是否可以使用特权爆发资源
+     */
+    private boolean privilegeResource;
+    /*
+     * 是否可以使用特权赌博
+     */
+    private boolean privilegeTechnology;
     /*
      * 是否是AI
      */
     private boolean AI;
     /*
-     * 是否可以使用广播
+     * 广播是否已经被使用(once a turn)
      */
     private boolean broadcastable;
+    /*
+     * 是否可以使用消息(once a turn)
+     */
+    private boolean messageable;
     /*
      * 是否已经败北
      */
@@ -45,6 +64,18 @@ public class Player implements Serializable {
      * 已经获知的其他玩家的身份
      */
     private HashMap<Player,Role> foundRoles;
+    /*
+     * 不能使用的卡牌,包括已经用的和仍在持续的，主要给UI用
+     */
+    private HashSet<Class<? extends Card>> unavailableCards; 
+    /*
+     * 本回合已经使用过的卡
+     */
+    private HashSet<Class<? extends Card>> usedCards; 
+    /*
+     * 持续型的卡牌
+     */
+    private HashMap<Card,Integer> durableCards;
     /*
      * 资源，科技点
      */
@@ -63,9 +94,17 @@ public class Player implements Serializable {
 		resource = this.role.getInitialResource();
 		techPoint = this.role.getInitialTechPoint();
 		
-		privilegeAvailable = true;
+		privilegeGetRole = true;
+		privilegeGamble = true;
+		privilegeResource = true;
+		privilegeTechnology = true;
 		lost = false;
 		broadcastable = true;
+		messageable = true;
+		
+		durableCards = new HashMap<Card, Integer>();
+		unavailableCards = new HashSet<Class<? extends Card>>();
+		usedCards = new HashSet<Class<? extends Card>>();
 	}
     
     public void findCoordinate(Player player,int position,int value){
@@ -80,7 +119,6 @@ public class Player implements Serializable {
     	foundCoordinates = new HashMap<Player, Coordinate>();
     	foundRoles = new HashMap<Player, Role>();
     	// make四个都为UNKNOWN的坐标
-    	
     	for(Player player : GameDTO.getInstance().getPlayers()){
     		int uk = Coordinate.UNKNOWN;
         	int[] uks = new int[Coordinate.DIMENSIONS];
@@ -90,6 +128,15 @@ public class Player implements Serializable {
     			foundRoles.put(player, null);
     		}
     	}
+    }
+    
+    // 
+    public void refreshCardUnavailable(){
+    	unavailableCards.clear();
+    	unavailableCards.addAll(usedCards);
+        for(Entry<Card,Integer> entry:durableCards.entrySet()){
+        	unavailableCards.add( entry.getKey().getClass());
+        }
     }
 
 	/*
@@ -111,8 +158,8 @@ public class Player implements Serializable {
 		return coordinate;
 	}
 
-	public boolean isPrivilegeAvailable() {
-		return privilegeAvailable;
+	public boolean isPrivilegeGetRole() {
+		return privilegeGetRole;
 	}
 
 	public boolean isLost() {
@@ -131,8 +178,8 @@ public class Player implements Serializable {
 		this.role = role;
 	}
 
-	public void setPrivilegeAvailable(boolean privilegeAvailable) {
-		this.privilegeAvailable = privilegeAvailable;
+	public void setPrivilegeGetRole(boolean privilegeAvailable) {
+		this.privilegeGetRole = privilegeAvailable;
 	}
 
 	public void setLost(boolean lost) {
@@ -150,9 +197,9 @@ public class Player implements Serializable {
 	public boolean isBroadcastable() {
 		return broadcastable;
 	}
-
-	public void setBroadcastable(boolean broadcast) {
-		this.broadcastable = broadcast;
+	
+	public void setBroadcastable(boolean broadcastable){
+		this.broadcastable = broadcastable;
 	}
 
 	public Map<Player, Coordinate> getFoundCoordinates() {
@@ -162,5 +209,49 @@ public class Player implements Serializable {
 	public Map<Player, Role> getFoundRoles() {
 		return foundRoles;
 	}
-    
+
+	public HashSet<Class<? extends Card>> getUnavailableCards() {
+		return unavailableCards;
+	}
+	
+	public Map<Card,Integer> getDurableCards() {
+		return durableCards;
+	}
+
+	public HashSet<Class<? extends Card>> getUsedCards() {
+		return usedCards;
+	}
+
+	public boolean isMessageable() {
+		return messageable;
+	}
+
+	public void setMessageable(boolean messageable) {
+		this.messageable = messageable;
+	}
+
+	public boolean isPrivilegeGamble() {
+		return privilegeGamble;
+	}
+
+	public void setPrivilegeGamble(boolean privilegeGamble) {
+		this.privilegeGamble = privilegeGamble;
+	}
+
+	public boolean isPrivilegeResource() {
+		return privilegeResource;
+	}
+
+	public void setPrivilegeResource(boolean privilegeResource) {
+		this.privilegeResource = privilegeResource;
+	}
+
+	public boolean isPrivilegeTechnology() {
+		return privilegeTechnology;
+	}
+
+	public void setPrivilegeTechnology(boolean privilegeTechnology) {
+		this.privilegeTechnology = privilegeTechnology;
+	}
+
 }

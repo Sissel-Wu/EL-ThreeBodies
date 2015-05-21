@@ -18,6 +18,7 @@ import model.Player;
 import model.card.SillySophon;
 import model.card.Sophon;
 import model.operation.CardUse;
+import ui.component.SquareButton;
 import util.SillySophonHelper;
 import control.GameControl;
 import dto.GameDTO;
@@ -58,25 +59,25 @@ public class SophonFinderPanel extends JPanel{
 		
 		this.btnCoordinateOne = new JButton();
 		this.btnCoordinateOne.setBounds(11, 16, 99, 60);
-		btnCoordinateOne.setFont(new Font("黑体", Font.BOLD, 60));
+		btnCoordinateOne.setFont(new Font("宋体", Font.BOLD, 60));
 		btnCoordinateOne.setContentAreaFilled(false);
 		btnCoordinateOne.addMouseListener(new CoordinateOneListener());
 		
 		this.btnCoordinateTwo = new JButton();
 		this.btnCoordinateTwo.setBounds(120, 16, 99, 60);
-		btnCoordinateTwo.setFont(new Font("黑体", Font.BOLD, 60));
+		btnCoordinateTwo.setFont(new Font("宋体", Font.BOLD, 60));
 		btnCoordinateTwo.setContentAreaFilled(false);
 		btnCoordinateTwo.addMouseListener(new CoordinateTwoListener());
 		
 		this.btnCoordinateThree = new JButton();
 		this.btnCoordinateThree.setBounds(229, 16, 99, 60);
-		btnCoordinateThree.setFont(new Font("黑体", Font.BOLD, 60));
+		btnCoordinateThree.setFont(new Font("宋体", Font.BOLD, 60));
 		btnCoordinateThree.setContentAreaFilled(false);
 		btnCoordinateThree.addMouseListener(new CoordinateThreeListener());
 		
 		this.btnCoordinateFour = new JButton();
 		this.btnCoordinateFour.setBounds(339, 16, 99, 60);
-		btnCoordinateFour.setFont(new Font("黑体", Font.BOLD, 60));
+		btnCoordinateFour.setFont(new Font("宋体", Font.BOLD, 60));
 		btnCoordinateFour.setContentAreaFilled(false);
 		btnCoordinateFour.addMouseListener(new CoordinateFourListener());
 		
@@ -86,15 +87,17 @@ public class SophonFinderPanel extends JPanel{
 		this.add(btnCoordinateFour);
 		this.setPicture(position);
 		
-		this.btnOK = new JButton(new ImageIcon("images/find.png"));
+		this.btnOK = new SquareButton("images/find.png");
 		this.btnOK.setContentAreaFilled(false);
 		this.btnOK.setBounds(250, 125, 60, 30);
+		btnOK.setBorderPainted(false);
 		btnOK.addMouseListener(new FindListener());
 		this.add(btnOK);
 		
-		this.btnReturn = new JButton(new ImageIcon("images/littlecancel.png"));
+		this.btnReturn = new SquareButton("images/littlecancel.png");
 		this.btnReturn.setContentAreaFilled(false);
 		this.btnReturn.setBounds(335, 125, 60, 30);
+		btnReturn.setBorderPainted(false);
 		btnReturn.addMouseListener(new ReturnListener());
 		this.add(btnReturn);
 		
@@ -127,20 +130,6 @@ public class SophonFinderPanel extends JPanel{
 		
 		boolean jumpOrNot = true;
 		
-		private void jumpPanel() {
-			if(sophonFinderFrame.getTitle().equals("智子")){
-				setVisible(false);
-				sophonFinderFrame.setContentPane(resultPanel);
-				resultPanel.setVisible(true);	
-				sophonFinderFrame.validate();
-			}else if(sophonFinderFrame.getTitle().equals("人造智子")){
-				setVisible(false);
-				sophonFinderFrame.setContentPane(sillyResultPanel);
-				sillyResultPanel.setVisible(true);	
-				sophonFinderFrame.validate();
-			}
-			
-		}
 		private void useSophon() {
 			String id = user.getAccount().getId();
 			GameDTO dto = GameDTO.getInstance();
@@ -157,7 +146,7 @@ public class SophonFinderPanel extends JPanel{
 				if(value == Coordinate.PROTECTED){
 					jumpOrNot = false;
 					// 获取失败
-					SillySophon ss = new SillySophon(id, receiverName, -1, null, -1);
+					SillySophon ss = new SillySophon(id, receiverName, position, null, -1);
 					CardUse cardUse = new CardUse(id, receiverName, ss);
 					gameControl.doOperation(cardUse);
 				}else{
@@ -166,9 +155,19 @@ public class SophonFinderPanel extends JPanel{
 							receiverName,
 							position);
 				}
-//				SillySophon sillySophon  =new SillySophon(id, select.getSelectedItem().toString(), coordinate);
-//				CardUse cardSophon = new CardUse(user.getAccount().getId(), select.getSelectedItem().toString(), sillySophon);
-//				GameControl.getInstance().doOperation(cardSophon);
+			}
+		}
+		private void jumpPanel() {
+			if(sophonFinderFrame.getTitle().equals("智子")){
+				sophonFinderFrame.setVisible(false);
+				sophonFinderFrame.setContentPane(resultPanel);
+				resultPanel.setVisible(true);	
+				sophonFinderFrame.validate();
+			}else if(sophonFinderFrame.getTitle().equals("人造智子")){
+				setVisible(false);
+				sophonFinderFrame.setContentPane(sillyResultPanel);
+				sillyResultPanel.setVisible(true);	
+				sophonFinderFrame.validate();
 			}
 		}
 		@Override

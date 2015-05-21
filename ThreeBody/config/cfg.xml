@@ -2,19 +2,20 @@
 
 <game>
 	<cards >
-		<card  className="model.card.NoBroadcasting" lifetime="1" requiredResource="40" requiredTechPoint="50"/>
-		<card  className="model.card.PatialBlock" lifetime="3" requiredResource="30" requiredTechPoint="20" />
-		<card  className="model.card.ResourcePotion"  lifetime="1" requiredResource="30" requiredTechPoint="5"  />
-		<card  className="model.card.SillySophon" lifetime="1" requiredResource="25" requiredTechPoint="20" />
-		<card  className="model.card.Sophon" lifetime="1" requiredResource="40" requiredTechPoint="30" />
-		<card  className="model.card.TechPotion" lifetime="1" requiredResource="30" requiredTechPoint="5" />
-		<card  className="model.card.WholeBlock" lifetime="1" requiredResource="40" requiredTechPoint="30" />
+		<card  className="NoBroadcasting" lifetime="1" requiredResource="50" requiredTechPoint="70"/>
+		<card  className="PartialBlock" lifetime="3" requiredResource="60" requiredTechPoint="100" />
+		<card  className="ResourcePotion"  lifetime="1" requiredResource="0" requiredTechPoint="0"  />
+		<card  className="SillySophon" lifetime="0" requiredResource="30" requiredTechPoint="30" />
+		<card  className="Sophon" lifetime="0" requiredResource="50" requiredTechPoint="70" />
+		<card  className="TechPotion" lifetime="0" requiredResource="50" requiredTechPoint="0" />
+		<card  className="WholeBlock" lifetime="1" requiredResource="60" requiredTechPoint="100" />
+		<card  className="ResourceGambling" lifetime="0" requiredResource="0" requiredTechPoint="0" />
 	</cards>
 			
 	<roles>
-		<role className="model.role.Earth" initialResource="100" initialTechPoint="100" tchDevelopSpeed="20" rsrRestoreSpeed="30"/>
-		<role className="model.role.Unifier" initialResource="100" initialTechPoint="100" tchDevelopSpeed="15" rsrRestoreSpeed="30"/>
-		<role className="model.role.ThreeBody" initialResource="100" initialTechPoint="100" tchDevelopSpeed="0" rsrRestoreSpeed="30"/>
+		<role className="model.role.Earth" initialResource="60" initialTechPoint="10" tchDevelopSpeed="20" rsrRestoreSpeed="30"/>
+		<role className="model.role.Unifier" initialResource="80" initialTechPoint="100" tchDevelopSpeed="0" rsrRestoreSpeed="30"/>
+		<role className="model.role.ThreeBody" initialResource="60" initialTechPoint="30" tchDevelopSpeed="15" rsrRestoreSpeed="30"/>
 	</roles>
 
 </game>

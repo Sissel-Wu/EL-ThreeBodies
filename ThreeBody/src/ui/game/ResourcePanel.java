@@ -17,7 +17,7 @@ public class ResourcePanel extends JPanel {
 	
 	public ResourcePanel() {
 		this.setLayout(null);
-		setBounds(100, 478, 140, 32);
+		setBounds(30, 198, 140, 32);
 		this.setOpaque(false);
 	}	
 	

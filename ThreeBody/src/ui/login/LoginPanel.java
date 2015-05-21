@@ -16,7 +16,11 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import ui.FrameUtil;
+import ui.component.SquareButton;
+import ui.component.YellowTransparentTextField;
+import util.R;
 import control.AccountControl;
+import control.MainControl;
 
 public class LoginPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
@@ -38,30 +42,33 @@ public class LoginPanel extends JPanel{
 	}
 	private AccountControl accountControl;
 	private JPanel panelLogup;
-	public LoginPanel(JFrame loginFrame,AccountControl accountControl) {
+	private MainControl mc;
+	
+	public LoginPanel(MainControl mc, JFrame loginFrame,AccountControl accountControl) {
+		this.mc = mc;
 		this.accountControl = accountControl;
 		thisPanel=this;
 		this.setLayout(null);
 		this.loginFrame=loginFrame;
-		panelLogup = new LogupPanel(this,accountControl);
+		panelLogup = new LogupPanel(mc ,this,accountControl);
 		this.initComonent();
 	}
 	private void initComonent() {
-		this.btnlogin = new JButton(new ImageIcon("images/login.png"));
+		this.btnlogin = new SquareButton("images/login.png");
 		this.btnlogin.setBounds(220, 220, 80, 40);
 		btnlogin.setContentAreaFilled(false);
 		this.btnlogin.setBorderPainted(false);
 		btnlogin.addMouseListener(new LoginListener());
 		this.add(btnlogin);
 		
-		this.btnlogup = new JButton(new ImageIcon("images/logup.png"));
+		this.btnlogup = new SquareButton("images/logup.png");
 		this.btnlogup.setBounds(100, 220, 80, 40);
 		this.btnlogup.setBorderPainted(false);
 		btnlogup.setContentAreaFilled(false);
 		btnlogup.addMouseListener(new LogupListener());
 		this.add(btnlogup);
 		
-		idField = new JTextField();
+		idField = new YellowTransparentTextField(R.text.MAX_ACCOUNT_LENGTH);
 		idField.setBounds(100,60,240,30);
 		this.add(idField);
 		
@@ -104,11 +111,13 @@ public class LoginPanel extends JPanel{
 			String id = idField.getText();
 			String password = passwordField.getText();
 			
+			FrameUtil.sendMessageByPullDown(mc.currentPanel, "连线中...");
+			
 			// TODO 消息窗口
 			switch(accountControl.login(id, password)){
 			case SUCCESS:
 				loginFrame.setVisible(false);
-				FrameUtil.sendMessageByFrame("登录成功", "登录成功！");
+				FrameUtil.sendMessageByPullDown(mc.currentPanel, "欢迎回来，"+idField.getText());
 //				AccountDTO.getInstance().getId()
 				break;
 			case ALREADY_IN:

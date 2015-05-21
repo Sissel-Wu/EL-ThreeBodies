@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
@@ -21,32 +22,36 @@ import javax.swing.JPanel;
 import model.Coordinate;
 import model.Player;
 import model.card.Card;
+import model.card.NoBroadcasting;
+import model.card.PartialBlock;
 import model.card.ResourcePotion;
+import model.card.SillySophon;
+import model.card.Sophon;
 import model.card.TechPotion;
 import model.card.WholeBlock;
 import model.operation.CardUse;
 import model.operation.Operation;
-import model.operation.TurnChange;
 import model.role.Role;
 import ui.FrameUtil;
 import ui.InformFrame;
 import ui.block.PatialBlockFrame;
 import ui.block.PatialBlockPanel;
+import ui.component.BackButton;
+import ui.component.SquareButton;
 import ui.sophon.SophonFinderFrame;
 import ui.sophon.SophonFinderPanel;
+import util.R;
 import control.GameControl;
-import control.MainControl;
 import dto.AccountDTO;
 import dto.GameDTO;
 
 public class GamePanel  extends JPanel{
     private static final long serialVersionUID = 1L;
-    private MainControl mainControl;
 	
 	private JButton btnReturn;
-	//双缓冲机制
-		private Image iBuffer;  
-		private Graphics gBuffer;
+	// 双缓冲机制
+	private Image iBuffer;
+	private Graphics gBuffer;
 		
 	private JButton btnCardSophon;
 	private JButton btnCardSillySophon;
@@ -57,25 +62,23 @@ public class GamePanel  extends JPanel{
 	private JButton btnCardResourcePotion;
 	private JButton btnCardResourceGambling;
 	private JButton btnPriviledgeGetRole;
+	private JButton[] btnCards;
 	
-	private boolean isAbleToPress;
+	private boolean isMyTurn;
 	
 	private JButton btnBroadcast;
 	private JButton btnHistory;
 	private JButton btnMessage;
 	
-	private JLabel labelRole;
 	private JLabel numOfBout;
-	private JLabel numOfRound;
 	
 	private JButton btnTurnEnd;
 	
-	private int NumOfPlayer;
-	
-	private JPanel panelBroadcast= new BroadcastPanel();
-	private JPanel panelMessage= new MessagePanel();
+	private JPanel panelBroadcast= new BroadcastPanel(this);
+	private JPanel panelMessage= new MessagePanel(this);
 	private JPanel panelHistory= new HistoryPanel();
 	
+	private JPanel panelTurn = new TurnPanel();
 	private JPanel panelCountDown = new CountDownPanel();
 	private JPanel panelTech = new TechPanel();
 	private JPanel panelResource = new ResourcePanel();
@@ -94,7 +97,10 @@ public class GamePanel  extends JPanel{
 	private GameControl gameControl;
 	private GameDTO gameDTO;
 	
-	public GamePanel(MainControl mainControl,int NumOfPlayer,GameControl gameControl) {
+	private Map<String,Integer> cardTechList = R.card.cardTechList;
+	private Map<String,Integer> cardRsrList = R.card.cardRsrList;
+	
+	public GamePanel(GameControl gameControl) {
 		this.gameControl = gameControl;
 		this.gameDTO = GameDTO.getInstance();
 		// 初始化对方玩家
@@ -105,12 +111,10 @@ public class GamePanel  extends JPanel{
 		}
 		this.setLayout(null);
 		if(gameDTO.getWhoseTurn() == gameDTO.getUser()){
-			isAbleToPress=true;
+			isMyTurn=true;
 		}else{
-			isAbleToPress=false;
+			isMyTurn=false;
 		}
-		this.mainControl = mainControl;
-		this.NumOfPlayer=NumOfPlayer;
 		this.initComonent();
 		this.initEnemyLocation();
 		this.initPrompt();
@@ -121,20 +125,12 @@ public class GamePanel  extends JPanel{
 	
 	public void refresh() {
 		if(GameDTO.getInstance().getWhoseTurn()==user){
-			isAbleToPress=true;
+			isMyTurn=true;
 		}else{
-			isAbleToPress=false;
+			isMyTurn=false;
 		}
-//		this.removeAll();
-//		this.initComonent();
-//		this.initEnemyLocation();
-//		this.initPrompt();
-//		this.createEnemy();
-//		this.createCoordinatePanel();
 		
-		this.numOfBout.setText("现在回合数："+GameDTO.getInstance().getBout());
-		this.numOfRound.setText("现在轮次数："+GameDTO.getInstance().getRound());
-		this.refreshRoleImage();
+		this.panelTurn.repaint();
 		this.panelTech.repaint();
 		this.panelResource.repaint();
 	}
@@ -145,8 +141,8 @@ public class GamePanel  extends JPanel{
 		prompts[2]=new ImageIcon("images/psWholeBlockLabel.png");
 		prompts[3]=new ImageIcon("images/psPartialBlockLabel.png");
 		prompts[4]=new ImageIcon("images/psNoBroadcastLabel.png");
-		prompts[5]=new ImageIcon("images/psResourcePotionLabel.png");
-		prompts[6]=new ImageIcon("images/psTechPotionLabel.png");
+		prompts[5]=new ImageIcon("images/psTechPotionLabel.png");
+		prompts[6]=new ImageIcon("images/psResourcePotionLabel.png");
 		prompts[7]=new ImageIcon("images/psGambleLabel.png");
 		prompts[8]=new ImageIcon("images/psRoleGetLabel.png");
 		for (int i = 0; i < prompts.length; i++) {
@@ -180,7 +176,7 @@ public class GamePanel  extends JPanel{
 	 * 添加敌人
 	 */
 	private void createEnemy() {
-		for (int i = 0; i < NumOfPlayer-1; i++) {
+		for (int i = 0; i < gameDTO.getPlayers().size() -1; i++) {
 			enemyLabels[i] = new JLabel();
 			enemyLabels[i].setIcon(new ImageIcon("images/star07.gif"));
 			enemyLabels[i].setBounds(location.get(i));
@@ -202,11 +198,11 @@ public class GamePanel  extends JPanel{
 	}
 	
 	private void createCoordinatePanel() {
-		for (int i = 0; i < NumOfPlayer-1; i++) {
+		for (int i = 0; i < gameDTO.getPlayers().size()-1; i++) {
 			
 			coordinateOfEnemies[i] = new JLabel();
 			coordinateOfEnemies[i].setFont(new Font("宋体",Font.PLAIN,20));
-			coordinateOfEnemies[i].setForeground(Color.YELLOW);
+			coordinateOfEnemies[i].setForeground(R.color.LIGHT_YELLOW);
 			coordinateOfEnemies[i].setBackground(Color.DARK_GRAY);
 			coordinateOfEnemies[i].setOpaque(true);
 			Rectangle rec = location.get(i);
@@ -220,52 +216,36 @@ public class GamePanel  extends JPanel{
 	 * 初始化
 	 */
 	private void initComonent() {
-		
-		
-		
-		this.btnReturn = new JButton("返回");
-		this.btnReturn.setContentAreaFilled(false);
-		this.btnReturn.setBounds(20, 565, 120, 30);
-		this.btnReturn.setFont(new Font("黑体", Font.BOLD, 20));
-		this.btnReturn.setForeground(Color.YELLOW);
-		this.btnReturn.addMouseListener(new ReturnListener());
+		this.btnReturn = new BackButton(new ReturnListener());
 		this.add(btnReturn);
 		
-		this.btnBroadcast = new JButton("广播");
+		this.btnBroadcast = new JButton(new ImageIcon("images/广播.png"));
 		this.btnBroadcast.setContentAreaFilled(false);
 		this.btnBroadcast.setBorderPainted(false);
-		this.btnBroadcast.setBounds(250, 590, 100, 28);
-		this.btnBroadcast.setIcon(new ImageIcon("images/148.png"));
-		this.btnBroadcast.setFont(new Font("黑体", Font.BOLD, 15));
-		this.btnBroadcast.setForeground(Color.YELLOW);
+		this.btnBroadcast.setBounds(250, 590, 60, 30);
 		this.btnBroadcast.addMouseListener(new BroadcastListener());
 		this.add(btnBroadcast);
 		
-		this.btnHistory = new JButton("历史记录");
+		this.btnHistory = new JButton(new ImageIcon("images/历史记录.png"));
 		this.btnHistory.setContentAreaFilled(false);
 		this.btnHistory.setBorderPainted(false);
-		this.btnHistory.setBounds(503, 590, 140, 28);
-		this.btnHistory.setIcon(new ImageIcon("images/522.png"));
-		this.btnHistory.setFont(new Font("黑体", Font.BOLD, 15));
-		this.btnHistory.setForeground(Color.YELLOW);
+		this.btnHistory.setBounds(503, 590, 80, 30);
 		this.btnHistory.addMouseListener(new HistoryListener());
 		this.add(btnHistory);
 		
-		this.btnMessage = new JButton("留言");
+		this.btnMessage = new JButton(new ImageIcon("images/留言.png"));
 		this.btnMessage.setContentAreaFilled(false);
-		this.btnMessage.setBounds(806, 590, 100, 28);
+		this.btnMessage.setBounds(806, 590, 60, 30);
 		this.btnMessage.setBorderPainted(false);
-		this.btnMessage.setIcon(new ImageIcon("images/262.png"));
-		this.btnMessage.setFont(new Font("黑体", Font.BOLD, 15));
-		this.btnMessage.setForeground(Color.YELLOW);
 		this.btnMessage.addMouseListener(new MessageListener());
 		this.add(btnMessage);
 		
-		this.btnTurnEnd = new JButton("回合结束");
+		this.btnTurnEnd = new JButton(new ImageIcon("images/turnEnd.png"));
 		this.btnTurnEnd.setContentAreaFilled(false);
-		this.btnTurnEnd.setBounds(1000, 500, 150, 30);
-		this.btnTurnEnd.setFont(new Font("黑体", Font.BOLD, 15));
-		this.btnTurnEnd.setForeground(Color.YELLOW);
+		this.btnTurnEnd.setBorderPainted(false);
+		this.btnTurnEnd.setBounds(1000, 580, 80, 40);
+		this.btnTurnEnd.setFont(new Font("宋体", Font.BOLD, 15));
+		this.btnTurnEnd.setForeground(R.color.LIGHT_YELLOW);
 		this.btnTurnEnd.addMouseListener(new EndListener());
 		this.add(btnTurnEnd);
 		
@@ -274,12 +254,12 @@ public class GamePanel  extends JPanel{
 		this.btnCardSophon.setBorderPainted(false);
 		this.btnCardSophon.setBounds(1070, 30, 150, 30);
 		this.btnCardSophon.setIcon(new ImageIcon("images/78.png"));
-		if (isAbleToPress) {
-			this.btnCardSophon.setEnabled(true);
-		}else{
-			this.btnCardSophon.setEnabled(false);
-		}
-		this.btnCardSophon.setForeground(Color.YELLOW);
+//		if (isMyTurn) {
+//			this.btnCardSophon.setEnabled(true);
+//		}else{
+//			this.btnCardSophon.setEnabled(false);
+//		}
+		this.btnCardSophon.setForeground(R.color.LIGHT_YELLOW);
 		this.btnCardSophon.addMouseListener(new CardSophonListener());
 		this.add(btnCardSophon);
 		
@@ -287,14 +267,14 @@ public class GamePanel  extends JPanel{
 		this.btnCardSillySophon = new JButton("人造智子");
 		this.btnCardSillySophon.setContentAreaFilled(false);
 		this.btnCardSillySophon.setBounds(1070, 60, 150, 30);
-		if (isAbleToPress) {
-			this.btnCardSillySophon.setEnabled(true);
-		}else{
-			this.btnCardSillySophon.setEnabled(false);
-		}
+//		if (isMyTurn) {
+//			this.btnCardSillySophon.setEnabled(true);
+//		}else{
+//			this.btnCardSillySophon.setEnabled(false);
+//		}
 		this.btnCardSillySophon.setBorderPainted(false);
 		this.btnCardSillySophon.setIcon(new ImageIcon("images/240.png"));
-		this.btnCardSillySophon.setForeground(Color.YELLOW);
+		this.btnCardSillySophon.setForeground(R.color.LIGHT_YELLOW);
 		this.btnCardSillySophon.addMouseListener(new CardSillySophonListener());
 		this.add(btnCardSillySophon);
 		
@@ -302,13 +282,13 @@ public class GamePanel  extends JPanel{
 		this.btnCardWholeBlock.setContentAreaFilled(false);
 		this.btnCardWholeBlock.setBorderPainted(false);
 		this.btnCardWholeBlock.setIcon(new ImageIcon("images/288.png"));
-		if (isAbleToPress) {
-			this.btnCardWholeBlock.setEnabled(true);
-		}else{
-			this.btnCardWholeBlock.setEnabled(false);
-		}
+//		if (isMyTurn) {
+//			this.btnCardWholeBlock.setEnabled(true);
+//		}else{
+//			this.btnCardWholeBlock.setEnabled(false);
+//		}
 		this.btnCardWholeBlock.setBounds(1070, 90, 150, 30);
-		this.btnCardWholeBlock.setForeground(Color.YELLOW);
+		this.btnCardWholeBlock.setForeground(R.color.LIGHT_YELLOW);
 		this.btnCardWholeBlock.addMouseListener(new CardWholeBlockListener());
 		this.add(btnCardWholeBlock);
 		
@@ -316,13 +296,13 @@ public class GamePanel  extends JPanel{
 		this.btnCardPatialBlock.setContentAreaFilled(false);
 		this.btnCardPatialBlock.setBorderPainted(false);
 		this.btnCardPatialBlock.setIcon(new ImageIcon("images/36.png"));
-		if (isAbleToPress) {
-			this.btnCardPatialBlock.setEnabled(true);
-		}else{
-			this.btnCardPatialBlock.setEnabled(false);
-		}
+//		if (isMyTurn) {
+//			this.btnCardPatialBlock.setEnabled(true);
+//		}else{
+//			this.btnCardPatialBlock.setEnabled(false);
+//		}
 		this.btnCardPatialBlock.setBounds(1070, 120, 150, 30);
-		this.btnCardPatialBlock.setForeground(Color.YELLOW);
+		this.btnCardPatialBlock.setForeground(R.color.LIGHT_YELLOW);
 		this.btnCardPatialBlock.addMouseListener(new CardPatialBlockListener());
 		this.add(btnCardPatialBlock);
 		
@@ -330,13 +310,13 @@ public class GamePanel  extends JPanel{
 		this.btnCardNoBroadcasting.setContentAreaFilled(false);
 		this.btnCardNoBroadcasting.setBorderPainted(false);
 		this.btnCardNoBroadcasting.setIcon(new ImageIcon("images/268.png"));
-		if (isAbleToPress) {
-			this.btnCardNoBroadcasting.setEnabled(true);
-		}else{
-			this.btnCardNoBroadcasting.setEnabled(false);
-		}
+//		if (isMyTurn) {
+//			this.btnCardNoBroadcasting.setEnabled(true);
+//		}else{
+//			this.btnCardNoBroadcasting.setEnabled(false);
+//		}
 		this.btnCardNoBroadcasting.setBounds(1070, 150, 150, 30);
-		this.btnCardNoBroadcasting.setForeground(Color.YELLOW);
+		this.btnCardNoBroadcasting.setForeground(R.color.LIGHT_YELLOW);
 		this.btnCardNoBroadcasting.addMouseListener(new CardNoBroadcastingListener());
 		this.add(btnCardNoBroadcasting);
 		
@@ -344,13 +324,13 @@ public class GamePanel  extends JPanel{
 		this.btnCardTechPotion.setContentAreaFilled(false);
 		this.btnCardTechPotion.setBorderPainted(false);
 		this.btnCardTechPotion.setIcon(new ImageIcon("images/20.png"));
-		if (isAbleToPress) {
-			this.btnCardTechPotion.setEnabled(true);
-		}else{
-			this.btnCardTechPotion.setEnabled(false);
-		}
+//		if (isMyTurn) {
+//			this.btnCardTechPotion.setEnabled(true);
+//		}else{
+//			this.btnCardTechPotion.setEnabled(false);
+//		}
 		this.btnCardTechPotion.setBounds(1070, 180, 150, 30);
-		this.btnCardTechPotion.setForeground(Color.YELLOW);
+		this.btnCardTechPotion.setForeground(R.color.LIGHT_YELLOW);
 		this.btnCardTechPotion.addMouseListener(new CardTechPotionListener());
 		this.add(btnCardTechPotion);
 		
@@ -358,13 +338,13 @@ public class GamePanel  extends JPanel{
 		this.btnCardResourcePotion.setContentAreaFilled(false);
 		this.btnCardResourcePotion.setBorderPainted(false);
 		this.btnCardResourcePotion.setIcon(new ImageIcon("images/112.png"));
-		if (isAbleToPress) {
-			this.btnCardResourcePotion.setEnabled(true);
-		}else{
-			this.btnCardResourcePotion.setEnabled(false);
-		}
+//		if (isMyTurn) {
+//			this.btnCardResourcePotion.setEnabled(true);
+//		}else{
+//			this.btnCardResourcePotion.setEnabled(false);
+//		}
 		this.btnCardResourcePotion.setBounds(1070, 210, 150, 30);
-		this.btnCardResourcePotion.setForeground(Color.YELLOW);
+		this.btnCardResourcePotion.setForeground(R.color.LIGHT_YELLOW);
 		this.btnCardResourcePotion.addMouseListener(new CardResourcePotionListener());
 		this.add(btnCardResourcePotion);
 		
@@ -372,13 +352,13 @@ public class GamePanel  extends JPanel{
 		this.btnCardResourceGambling.setContentAreaFilled(false);
 		this.btnCardResourceGambling.setBorderPainted(false);
 		this.btnCardResourceGambling.setIcon(new ImageIcon("images/16.png"));
-		if (isAbleToPress) {
-			this.btnCardResourceGambling.setEnabled(true);
-		}else{
-			this.btnCardResourceGambling.setEnabled(false);
-		}
+//		if (isMyTurn) {
+//			this.btnCardResourceGambling.setEnabled(true);
+//		}else{
+//			this.btnCardResourceGambling.setEnabled(false);
+//		}
 		this.btnCardResourceGambling.setBounds(1070, 240, 150, 30);
-		this.btnCardResourceGambling.setForeground(Color.YELLOW);
+		this.btnCardResourceGambling.setForeground(R.color.LIGHT_YELLOW);
 		this.btnCardResourceGambling.addMouseListener(new CardResourceGamblingListener());
 		this.add(btnCardResourceGambling);
 		
@@ -386,67 +366,52 @@ public class GamePanel  extends JPanel{
 		this.btnPriviledgeGetRole.setContentAreaFilled(false);
 		this.btnPriviledgeGetRole.setBorderPainted(false);
 		this.btnPriviledgeGetRole.setIcon(new ImageIcon("images/164.png"));
-		if (isAbleToPress) {
-			this.btnPriviledgeGetRole.setEnabled(true);
-		}else{
-			this.btnPriviledgeGetRole.setEnabled(false);
-		}
+//		if (isMyTurn) {
+//			this.btnPriviledgeGetRole.setEnabled(true);
+//		}else{
+//			this.btnPriviledgeGetRole.setEnabled(false);
+//		}
 		this.btnPriviledgeGetRole.setBounds(1070, 270, 150, 30);
-		this.btnPriviledgeGetRole.setForeground(Color.YELLOW);
+		this.btnPriviledgeGetRole.setForeground(R.color.LIGHT_YELLOW);
 		this.btnPriviledgeGetRole.addMouseListener(new PriviledgeGetRoleListener());
 		this.add(btnPriviledgeGetRole);
 		
 		this.resourceString = new JLabel(new ImageIcon("images/resource.png"));
-		this.resourceString.setBounds(100,480,60,30);
+		this.resourceString.setBounds(30,200,60,30);
 		this.add(resourceString);
 		
 		this.techString = new JLabel(new ImageIcon("images/tech.png"));
-		this.techString.setBounds(100,510,60,30);
+		this.techString.setBounds(30,230,60,30);
 		this.add(techString);
 		
-		this.labelRole = new JLabel(new ImageIcon("images/img1.jpg"));
-		this.labelRole.setBounds(100,375,100,100);
-		this.refreshRoleImage();
-		this.add(labelRole);
-		
-		this.numOfBout = new JLabel("现在回合数："+GameDTO.getInstance().getBout());
-		this.numOfBout.setForeground(Color.YELLOW);
-		this.numOfBout.setFont(new Font("黑体",Font.BOLD,20));
-		this.numOfBout.setBounds(180, 40,500,30);
+		this.numOfBout = new JLabel(new ImageIcon("images/回合.png"));
+		this.numOfBout.setBounds(30, 165,60,30);
 		this.add(numOfBout);
 		
-		this.numOfRound = new JLabel("现在轮次数："+GameDTO.getInstance().getRound());
-		this.numOfRound.setForeground(Color.YELLOW);
-		this.numOfRound.setFont(new Font("黑体",Font.BOLD,20));
-		this.numOfRound.setBounds(180, 70,500,30);
-		this.add(numOfRound);
-
 		this.add(panelTech);
+		this.add(panelTurn);
 		this.add(panelResource);
 		this.add(panelCountDown);
+		
+		this.add(panelHistory);
+		this.add(panelMessage);
+		this.add(panelBroadcast);
+		panelHistory.setVisible(false);
+		panelMessage.setVisible(false);
+		panelBroadcast.setVisible(false);
+		
+		btnCards = new JButton[9];
+		btnCards[0] = this.btnCardNoBroadcasting;
+		btnCards[1] = this.btnCardPatialBlock;
+		btnCards[2] = this.btnCardResourceGambling;
+		btnCards[3] = this.btnCardResourcePotion;
+		btnCards[4] = this.btnCardSillySophon;
+		btnCards[5] = this.btnCardSophon;
+		btnCards[6] = this.btnCardTechPotion;
+		btnCards[7] = this.btnCardWholeBlock;
+		btnCards[8] = this.btnPriviledgeGetRole;
 	}
 
-	private void refreshRoleImage() {
-		Role roleName = GameDTO.getInstance().getUser().getRole();
-		if(roleName.toString().equals("地球")){
-			Image Img_earth = new ImageIcon("images/earth.png").getImage();
-			Img_earth = Img_earth.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-			labelRole.setIcon(new ImageIcon(Img_earth));
-			return;
-		}
-		if(roleName.toString().equals("三体")){
-			Image Img_threeBody = new ImageIcon("images/threeBody.png").getImage();
-			Img_threeBody = Img_threeBody.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-			labelRole.setIcon(new ImageIcon(Img_threeBody));
-			return;
-		}
-		if(roleName.toString().equals("归一者")){
-			Image Img_unifier = new ImageIcon("images/unifier.png").getImage();
-			Img_unifier = Img_unifier.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-			labelRole.setIcon(new ImageIcon(Img_unifier));
-			return;
-		}
-	}
 	public void update(Graphics scr)
 	{
 	    if(iBuffer==null)
@@ -480,7 +445,7 @@ public class GamePanel  extends JPanel{
 				System.out.println("--"+"科技："+player.getTechPoint());
 				System.out.println("--"+"坐标："+player.getCoordinate().toString());
 				System.out.println("--"+"保护情况"+player.getCoordinate().getProtectingState());
-				if(player.isPrivilegeAvailable()){
+				if(player.isPrivilegeGetRole()){
 					System.out.println("--可以用特权");
 				}else{
 					System.out.println("--不可以用特权");
@@ -519,13 +484,25 @@ public class GamePanel  extends JPanel{
 		Rectangle rec = btnCardSophon.getBounds();
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (isAbleToPress) {
-				initSophon();
+			if (!isMyTurn) {
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
 			}
-			
+			if (user.getUnavailableCards().contains(Sophon.class)){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "已经使用过这个卡片！");
+				return;
+			}
+			if (user.getTechPoint() < cardTechList.get("Sophon")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "科技不足！");	
+				return;
+			}
+			if (user.getResource() < cardRsrList.get("Sophon")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "资源不足！");
+				return;
+			}
+			initSophon();
 		}
 		private void initSophon() {
-			
 			JFrame sophonFinderFrame = new SophonFinderFrame("智子");
 			JPanel finder = new SophonFinderPanel(sophonFinderFrame,gameControl);
 			sophonFinderFrame.setContentPane(finder);
@@ -567,11 +544,23 @@ public class GamePanel  extends JPanel{
 		Rectangle rec = btnCardSillySophon.getBounds();
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (isAbleToPress) {
-				initSillySophon();
+			if (!isMyTurn) {
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
 			}
-			
-			
+			if (gameDTO.getUser().getUnavailableCards().contains(SillySophon.class)){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "已经使用过这个卡片！");
+				return;
+			}
+			if (user.getTechPoint() < cardTechList.get("SillySophon")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "科技不足！");	
+				return;
+			}
+			if (user.getResource() < cardRsrList.get("SillySophon")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "资源不足！");
+				return;
+			}
+			initSillySophon();
 		}
 		private void initSillySophon() {
 			
@@ -621,14 +610,27 @@ public class GamePanel  extends JPanel{
 		Rectangle rec = btnCardWholeBlock.getBounds();
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (isAbleToPress) {
-				FrameUtil.sendMessageByFrame("全局黑域", "保护所有坐标一轮");
-				String id = AccountDTO.getInstance().getId();
-				Card wholeBlock = new WholeBlock(id, null);
-				Operation cardUse = new CardUse(id,null,wholeBlock);
-				GameControl.getInstance().doOperation(cardUse);
+			if (!isMyTurn) {
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
 			}
-			
+			if (gameDTO.getUser().getUnavailableCards().contains(WholeBlock.class)){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "已经使用过这个卡片！");
+				return;
+			}
+			if (user.getTechPoint() < cardTechList.get("WholeBlock")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "科技不足！");	
+				return;
+			}
+			if (user.getResource() < cardRsrList.get("WholeBlock")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "资源不足！");
+				return;
+			}
+			FrameUtil.sendMessageByPullDown(GamePanel.this, "保护所有坐标一轮");
+			String id = AccountDTO.getInstance().getId();
+			Card wholeBlock = new WholeBlock(id, null);
+			Operation cardUse = new CardUse(id,null,wholeBlock);
+			GameControl.getInstance().doOperation(cardUse);
 		}
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -671,13 +673,26 @@ public class GamePanel  extends JPanel{
 		Rectangle rec = btnCardPatialBlock.getBounds();
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (isAbleToPress) {
-				JFrame patialBlock = new PatialBlockFrame();
-				JPanel block = new PatialBlockPanel(patialBlock);
-				patialBlock.setContentPane(block);
+			if (!isMyTurn) {
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
 			}
+			if (gameDTO.getUser().getUnavailableCards().contains(PartialBlock.class)){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "已经使用过这个卡片！");
+				return;
+			}
+			if (user.getTechPoint() < cardTechList.get("PartialBlock")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "科技不足！");	
+				return;
+			}
+			if (user.getResource() < cardRsrList.get("PartialBlock")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "资源不足！");
+				return;
+			}
+			JFrame patialBlock = new PatialBlockFrame();
+			JPanel block = new PatialBlockPanel(patialBlock);
+			patialBlock.setContentPane(block);
 			initPatialBlock();
-			
 		}
 		private void initPatialBlock() {
 			
@@ -725,12 +740,26 @@ public class GamePanel  extends JPanel{
 		Rectangle rec = btnCardNoBroadcasting.getBounds();
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (isAbleToPress) {
-				JFrame iframe = new InformFrame("电波干扰", 300, 200);
-				JPanel selectEnemyPanel = new SelectEnemyPanel(iframe,"选择要干扰的敌人");
-				iframe.add(selectEnemyPanel);
+			if (!isMyTurn) {
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
 			}
-			
+			if (gameDTO.getUser().getUnavailableCards().contains(NoBroadcasting.class)){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "已经使用过这个卡片！");
+				return;
+			}
+			if (user.getTechPoint() < cardTechList.get("NoBroadcasting")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "科技不足！");
+				return;
+			}
+			if (user.getResource() < cardRsrList.get("NoBroadcasting")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "资源不足！");
+				return;
+			}
+			FrameUtil.sendMessageByPullDown(GamePanel.this, "干扰成功！");
+			JFrame iframe = new InformFrame("电波干扰", 300, 200);
+			JPanel selectEnemyPanel = new SelectEnemyPanel(iframe,"选择要干扰的敌人");
+			iframe.add(selectEnemyPanel);
 		}
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -773,10 +802,24 @@ public class GamePanel  extends JPanel{
 		Rectangle rec = btnCardTechPotion.getBounds();
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (isAbleToPress) {
-				useTechPotion();
+			if (!isMyTurn) {
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
 			}
-			
+			if (!gameDTO.getUser().isPrivilegeTechnology()){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "已经使用过这个卡片！");
+				return;
+			}
+			if (user.getTechPoint() < cardTechList.get("TechPotion")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "科技不足！");	
+				return;
+			}
+			if (user.getResource() < cardRsrList.get("TechPotion")){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "资源不足！");
+				return;
+			}
+			FrameUtil.sendMessageByPullDown(GamePanel.this, "科技革命！");
+			useTechPotion();
 		}
 		private void useTechPotion() {
 			
@@ -824,14 +867,20 @@ public class GamePanel  extends JPanel{
 		Rectangle rec = btnCardResourcePotion.getBounds();
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (isAbleToPress) {
-				String id = AccountDTO.getInstance().getId();
-				Card resourcePotion = new ResourcePotion(id, null);
-				Operation cardUse = new CardUse(id,null,resourcePotion);
-				GameControl.getInstance().doOperation(cardUse);
-				repaint();
+			if (!isMyTurn) {
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
 			}
-			
+			if (!gameDTO.getUser().isPrivilegeResource()){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "已经使用过这个卡片！");
+				return;
+			}
+			FrameUtil.sendMessageByPullDown(GamePanel.this, "资源爆发！");
+			String id = AccountDTO.getInstance().getId();
+			Card resourcePotion = new ResourcePotion(id, null);
+			Operation cardUse = new CardUse(id,null,resourcePotion);
+			GameControl.getInstance().doOperation(cardUse);
+			repaint();
 		}
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -874,12 +923,19 @@ public class GamePanel  extends JPanel{
 		Rectangle rec = btnCardResourceGambling.getBounds();
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if (isAbleToPress) {
+			if (!isMyTurn) {
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
+			}
+			if (!gameDTO.getUser().isPrivilegeGamble()){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "已经使用过这个卡片！");
+				return;
+			}
+			if (isMyTurn) {
 				JFrame iframe = new InformFrame("资源赌博", 300, 200);
-				JPanel gamblePanel = new GamblePanel(iframe,"输入要赌博的资源");
+				JPanel gamblePanel = new GamblePanel(GamePanel.this,iframe,"输入要赌博的资源");
 				iframe.add(gamblePanel);
 			}
-			
 		}
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -922,12 +978,21 @@ public class GamePanel  extends JPanel{
 		Rectangle rec = btnPriviledgeGetRole.getBounds();
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(isAbleToPress){
-				JFrame iframe = new InformFrame("特权_身份探知", 300, 200);
-				JPanel selectEnemyPanel = new SelectEnemyPanel(iframe,"选择要探知的敌人");
-				iframe.add(selectEnemyPanel);
+			if (!isMyTurn) {
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
 			}
-			
+			if(gameDTO.getPlayers().size() == 3){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "三人局不支持身份查找");
+				return;
+			}
+			if (!gameDTO.getUser().isPrivilegeGetRole()){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "已经使用过这个卡片！");
+				return;
+			}
+			JFrame iframe = new InformFrame("特权_身份探知", 300, 200);
+			JPanel selectEnemyPanel = new SelectEnemyPanel(iframe,"选择要探知的敌人");
+			iframe.add(selectEnemyPanel);
 		}
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -959,28 +1024,26 @@ public class GamePanel  extends JPanel{
 	class BroadcastListener extends MouseAdapter  {
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			if(panelBroadcast.isVisible()){
+				panelBroadcast.setVisible(false);
+				GamePanel.this.repaint();
+			}
 			panelBroadcast.setVisible(true);
 			panelMessage.setVisible(false);
 			panelHistory.setVisible(false);
-			add(panelBroadcast);
-			repaint();
 		}
 	}
 	
 	class HistoryListener extends MouseAdapter  {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			/**
-			 * 很HeHe的解决方式
-			 */
-			add(panelBroadcast);
-			add(panelMessage);
-			repaint();
+			if(panelHistory.isVisible()){
+				panelHistory.setVisible(false);
+				GamePanel.this.repaint();
+			}
 			panelMessage.setVisible(false);
 			panelBroadcast.setVisible(false);
 			panelHistory.setVisible(true);
-			add(panelHistory);
-			repaint();
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
@@ -990,11 +1053,13 @@ public class GamePanel  extends JPanel{
 	class MessageListener extends MouseAdapter  {
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			if(panelMessage.isVisible()){
+				panelMessage.setVisible(false);
+				GamePanel.this.repaint();
+			}
 			panelBroadcast.setVisible(false);
 			panelHistory.setVisible(false);
 			panelMessage.setVisible(true);
-			add(panelMessage);
-			repaint();
 		}
 	}
 	
@@ -1013,10 +1078,32 @@ public class GamePanel  extends JPanel{
 		}
 	}
 	
-	class EndListener extends MouseAdapter {
+	class EndListener implements MouseListener{
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			if(!(GameDTO.getInstance().getWhoseTurn()==user)){
+				FrameUtil.sendMessageByPullDown(GamePanel.this, "不是您的回合");
+				return;
+			}
 			GameControl.getInstance().turnChange();
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			btnTurnEnd.setIcon(new ImageIcon("images/turnEnd2.png"));
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			btnTurnEnd.setIcon(new ImageIcon("images/turnEnd.png"));
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
 		}
 	}
 
@@ -1040,6 +1127,4 @@ public class GamePanel  extends JPanel{
     public JPanel getCountdownPanel(){
     	return this.panelCountDown;
     }
-
-	
 }

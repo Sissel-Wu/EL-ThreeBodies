@@ -5,7 +5,7 @@ import java.awt.Image;
 import model.Account;
 
 /**
- * 假如account为空，除了ID返回 “本地玩家” ， 其他都返回null
+ * 假如account为空，除了ID返回 “未登录” ， 其他都返回null
  * @author Sissel
  *
  */
@@ -43,7 +43,7 @@ public class AccountDTO {
 	}
 	
 	public String getId() {
-		return account == null ? "本地玩家" : account.getId();
+		return account == null ? "未登录" : account.getId();
 	}
 	public Image getHead() {
 		return account == null ? null : account.getHead();

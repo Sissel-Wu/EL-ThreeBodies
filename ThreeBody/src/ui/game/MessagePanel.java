@@ -1,6 +1,5 @@
 package ui.game;
 
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -15,8 +14,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import model.Player;
-import model.operation.Operation;
 import model.operation.SendMessage;
+import ui.FrameUtil;
+import ui.component.SquareButton;
+import ui.component.YellowTransparentTextField;
 import control.GameControl;
 import dto.AccountDTO;
 import dto.GameDTO;
@@ -28,12 +29,13 @@ public class MessagePanel  extends JPanel{
 		private JButton btnSend;
 		private JButton btnReturn;
 		private JComboBox<String> select;
-		private boolean isAbleToPress=true;
+		private GamePanel gp;
 		
 		List<Player> players=null;
 		Player user;
 
-		public MessagePanel() {
+		public MessagePanel(GamePanel gp) {
+			this.gp = gp;
 			this.setLayout(null);
 			setBounds(231, 435, 695, 215);
 			players= GameDTO.getInstance().getPlayers();
@@ -42,21 +44,19 @@ public class MessagePanel  extends JPanel{
 		}
 
 		private void initComonent() {
-			this.message = new JTextField();
+			this.message = new YellowTransparentTextField(20);;
 			this.message.setBounds(80, 32, 560, 30);
-			message.setFont(new Font("黑体", Font.BOLD, 30));
+			message.setFont(new Font("宋体", Font.BOLD, 30));
 			this.add(message);
 			
-			
-			
-			this.btnSend = new JButton(new ImageIcon("images/btnbroadcast.png"));
+			this.btnSend = new SquareButton("images/btnbroadcast.png");
 			this.btnSend.setContentAreaFilled(false);
 			this.btnSend.setBounds(360, 95, 120, 60);
 			this.btnSend.setBorderPainted(false);
 			btnSend.addMouseListener(new SendMessageListener());
 			this.add(btnSend);
 			
-			this.btnReturn = new JButton(new ImageIcon("images/btnbroadcastcancel.png"));
+			this.btnReturn = new SquareButton("images/btnbroadcastcancel.png");
 			this.btnReturn.setContentAreaFilled(false);
 			this.btnReturn.setBounds(520, 95, 120, 60);
 			this.btnReturn.setBorderPainted(false);
@@ -91,6 +91,14 @@ public class MessagePanel  extends JPanel{
 		class SendMessageListener extends MouseAdapter {
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				if(!(GameDTO.getInstance().getWhoseTurn()==user)){
+					FrameUtil.sendMessageByPullDown(gp, "不是您的回合");
+					return;
+				}
+				if(!user.isMessageable()){
+					FrameUtil.sendMessageByPullDown(gp, "不能使用消息");
+					return;
+				}
 				String receiver = (String)select.getSelectedItem();
 				String messageStr=message.getText();
 				SendMessage operation = new SendMessage(AccountDTO.getInstance().getId(), receiver,messageStr);
@@ -104,16 +112,5 @@ public class MessagePanel  extends JPanel{
 			// 绘制游戏界面
 			g.drawImage(IMG_MAIN, 0, 0,695,215, null);
 		}
-		 private void ableToPress(Component c){
-				
-				c.setEnabled(isAbleToPress);
-			}
-			private void unableToPress(Component c){
-				isAbleToPress=false;
-				c.setEnabled(isAbleToPress);
-			}
-			private void changeIsAbleToPress(Component c) {
-				c.setEnabled(!c.isEnabled());
-			}
 		
 }

@@ -2,12 +2,13 @@ package model.card;
 
 import java.util.List;
 
+import model.Player;
 import model.operation.Operation;
-import config.CardConfig;
-import config.GameConfig;
 import model.operation.ResourceChange;
 import model.operation.TechChange;
-
+import config.CardConfig;
+import config.GameConfig;
+import dto.GameDTO;
 
 /*
  *资源药水 
@@ -22,29 +23,44 @@ public class ResourcePotion extends Card {
 
 	public ResourcePotion(String operator, String receiver) {
 		super(operator, receiver);
-		
-		GameConfig gc=new GameConfig();
-		List<CardConfig> cardList=gc.getCardsConfig();
-		this.lifetime=cardList.get(2).getLifetime();
-		this.requiredResource=cardList.get(2).getRequiredResource();
-		this.requiredTechPoint=cardList.get(2).getRequiredTechPoint();
-		
+
+		GameConfig gc = new GameConfig();
+		List<CardConfig> cardList = gc.getCardsConfig();
+		this.lifetime = cardList.get(2).getLifetime();
+		this.requiredResource = cardList.get(2).getRequiredResource();
+		this.requiredTechPoint = cardList.get(2).getRequiredTechPoint();
+
 		this.name = "资源爆发";
 	}
 
 	@Override
-	public List<Operation> process(List<Operation> subOperations) {
-		
-		//pay techPoint
-		TechChange tc=new TechChange(operator, receiver, TechChange.Type.DECREASE, this.requiredTechPoint);
-		subOperations.add(tc);
-		
-		//get resources
-		ResourceChange rc=new ResourceChange(operator, receiver, ResourceChange.Type.INCREASE, this.requiredResource);
+	public void process(List<Operation> subOperations) {
+		Player pOperator = this.findOperator(GameDTO.getInstance());
+
+		// get resources
+		ResourceChange rc = new ResourceChange(operator, receiver,
+				ResourceChange.Type.INCREASE, (int)(pOperator.getResource()*0.5));
 		subOperations.add(rc);
-		
-		return subOperations;
+
+		// description is not needed
+
+		// setDuring
+		pOperator.getDurableCards().put(this, this.lifetime);
+
+		// setUsed
+		pOperator.setPrivilegeResource(false);
+
+		pOperator.refreshCardUnavailable();
 	}
-	
-	
+
+	@Override
+	public void after(List<Operation> subOperations) {
+		Player pOperator = GameDTO.getInstance().findPlayerByID(operator);
+
+		// pay techPoint
+		TechChange tc = new TechChange(operator, receiver,
+				TechChange.Type.DECREASE, pOperator.getRole().getTchDevelopSpeed());
+		subOperations.add(tc);
+	}
+
 }

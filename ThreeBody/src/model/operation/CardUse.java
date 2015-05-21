@@ -37,7 +37,8 @@ public class CardUse extends Operation implements Operable{
 	@Override
 	public List<Operation> process() {
 		List<Operation> subOperations = new LinkedList<Operation>();
-		return card.process(subOperations);
+		card.process(subOperations);
+		return subOperations;
 	}
 
 }

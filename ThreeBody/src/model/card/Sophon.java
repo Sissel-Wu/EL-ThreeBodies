@@ -41,7 +41,7 @@ public class Sophon extends Card {
 		super(operator, receiver);
 		// TODO 游戏平衡配置
 		this.position = position;
-		this.name = "智子";
+		this.name = "三体智子";
 		GameConfig gc = new GameConfig();
 		List<CardConfig> cardList = gc.getCardsConfig();
 		this.lifetime = cardList.get(4).getLifetime();
@@ -50,13 +50,18 @@ public class Sophon extends Card {
 	}
 
 	@Override
-	public List<Operation> process(List<Operation> subOperations) {
+	public void process(List<Operation> subOperations) {
 
 		GameDTO dto = GameDTO.getInstance();
 
 		// 得到操作者与被操作者
 		Player pOperator = this.findOperator(dto);
 		Player pReceiver = this.findReceiver(dto);
+		
+		// setUsed
+		pOperator.getUsedCards().add(this.getClass());
+
+		pOperator.refreshCardUnavailable();
 
 		// 消耗相应的资源，通过放置新Operation来实现
 		ResourceChange rc = new ResourceChange(operator, receiver,
@@ -64,12 +69,12 @@ public class Sophon extends Card {
 		subOperations.add(rc);
 		
 		// 描述
-		Description dsc = new Description(operator, receiver, "观测了"+receiver+"的第"+position+"个坐标");
+		Description dsc = new Description(operator, receiver, "观测了"+receiver+"的第"+(position+1)+"个坐标");
 		subOperations.add(dsc);
 
 		// 执行获取坐标操作
 		Coordinate coordinate = pReceiver.getCoordinate();
-		int result = coordinate.getCoordinateElement(position);
+		int result = coordinate.probeCoordinateElement(position);
 		
 		// 反馈
 		if (result == Coordinate.PROTECTED) {
@@ -80,8 +85,7 @@ public class Sophon extends Card {
 			CoordinateGet cg = new CoordinateGet(operator, receiver, position, result);
 			subOperations.add(cg);
 		}
-
-		return subOperations;
+		
 	}
 
 }

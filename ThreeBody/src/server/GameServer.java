@@ -17,6 +17,8 @@ import model.Coordinate;
 import model.Player;
 import model.operation.Operation;
 import model.role.Role;
+import model.role.ThreeBody;
+import model.role.Unifier;
 import server.interfaces.RMIGame;
 import util.R;
 import util.R.info;
@@ -87,6 +89,11 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 		for (Account account : accounts) {
 			gameFinish.put(account, false);
 		}
+		
+		// 所有人游戏次数加1
+		for (Account account : accounts) {
+			account.setTotalGames(account.getTotalGames()+1);
+		}
 	}
 	
 	@Override
@@ -114,7 +121,6 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 
 	@Override
 	public info exitGame(Player player, boolean correct) throws RemoteException {
-		// TODO 妈的先随便返回一个
 		if(gameState == -1 || gameState == 0){
 			return R.info.NOT_EXISTED;
 		}
@@ -123,7 +129,7 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 		Set<Account> accounts = gameFinish.keySet();
 		if(!correct){
 			gameState = -1;
-			// 找到强退的，扣他分 = =
+			// 找到强退的，扣他100分 = =
 			for (Account account : accounts) {
 				if(account.getId().equals(player.getAccount().getId())){
 					account.setPoint(account.getPoint()-100);
@@ -138,11 +144,24 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 			if(account.getId().equals(player.getAccount().getId())){
 				gameFinish.put(account, true);
 				rs.exit(account.getId());
-				// TODO 判断积分增减
+				// 输了扣20,败数+1
 				if(player.isLost()){
 					account.setPoint(account.getPoint()-20);
+					account.setLosts(account.getLosts()+1);
 				}else{
+					// 归一者额外加分80
+					if(player.getRole() instanceof Unifier){
+						account.setPoint(account.getPoint()+80);
+						account.setWins(account.getWins()+1);
+						continue;
+					}
+					// 三体存活但是没侵占地球不得分
+					if(player.getRole() instanceof ThreeBody){
+						continue;
+					}
+					// 其他加50分
 					account.setPoint(account.getPoint()+50);
+					account.setWins(account.getWins()+1);
 				}
 			}
 		}

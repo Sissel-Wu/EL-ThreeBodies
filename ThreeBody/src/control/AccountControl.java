@@ -3,11 +3,14 @@ package control;
 import io.NetClient;
 import io.UserData;
 
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import model.Account;
 import server.interfaces.RMIAccount;
 import server.interfaces.RMIAccountCenter;
+import ui.FrameUtil;
 import util.R;
 import dto.AccountDTO;
 
@@ -214,7 +217,12 @@ public class AccountControl {
     
     private void setUpRMIAC(){
     	if(this.rmiac == null){
-    		rmiac = NetClient.getInstance().getAccountCenter();
+    		try {
+				rmiac = NetClient.getInstance().getAccountCenter();
+			} catch (MalformedURLException | RemoteException
+					| NotBoundException e) {
+				FrameUtil.sendMessageByPullDown(mainControl.currentPanel, "网络连接出错");
+			}
     	}
     }
 

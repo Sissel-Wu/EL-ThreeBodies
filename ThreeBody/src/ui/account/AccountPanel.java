@@ -1,6 +1,5 @@
 package ui.account;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -16,6 +15,9 @@ import javax.swing.JPanel;
 
 import ui.FrameUtil;
 import ui.InformFrame;
+import ui.component.BackButton;
+import ui.component.SquareButton;
+import util.R;
 import control.AccountControl;
 import control.MainControl;
 import dto.AccountDTO;
@@ -29,8 +31,8 @@ public class AccountPanel extends JPanel{
 	private JLabel labelHead;
 	private JLabel psPoint;
 	private JLabel labelPoint;
-	private JLabel psRank;
-	private JLabel labelRank;
+//	private JLabel psRank;
+//	private JLabel labelRank;
 	private JLabel psTotalGames;
 	private JLabel labelTotalGames;
 	private JLabel psWins;
@@ -52,19 +54,20 @@ public class AccountPanel extends JPanel{
 	}
 	private void init() {
 		psId = new JLabel();
-		psId.setBounds(400,140,120,60);
+		psId.setBounds(400,90,120,60);
 		psId.setIcon(new ImageIcon("images/accountId.png"));
 		this.add(psId);
 		
 		labelId = new JLabel();
-		labelId.setBounds(440,200,160,60);
+		labelId.setBounds(370,150,180,60);
+		labelId.setHorizontalAlignment(JLabel.CENTER);
 		labelId.setFont(new Font("宋体",Font.PLAIN,60));
-		labelId.setForeground(Color.YELLOW);
+		labelId.setForeground(R.color.LIGHT_YELLOW);
 		labelId.setText(accountDTO.getId());
 		this.add(labelId);
 		
 		labelHead = new JLabel();
-		labelHead.setBounds(600,120,150,150);
+		labelHead.setBounds(600,70,150,150);
 		if(accountDTO.getHead()!=null){
 			Image headImage=accountDTO.getHead();
 			headImage=headImage.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
@@ -78,89 +81,91 @@ public class AccountPanel extends JPanel{
 		this.add(labelHead);
 		
 		psPoint = new JLabel();
-		psPoint.setBounds(400,300,60,30);
+		psPoint.setBounds(390,270,60,30);
 		psPoint.setIcon(new ImageIcon("images/accountpoint.png"));
 		this.add(psPoint);
 		
 		labelPoint = new JLabel();
-		labelPoint.setBounds(690,300,60,30);
+		labelPoint.setBounds(690,270,60,30);
 		labelPoint.setFont(new Font("宋体",Font.PLAIN,30));
-		labelPoint.setForeground(Color.YELLOW);
+		labelPoint.setForeground(R.color.LIGHT_YELLOW);
 		labelPoint.setText(accountDTO.getPoint()+"");
+		labelPoint.setHorizontalAlignment(JLabel.RIGHT);
 		this.add(labelPoint);
 		
-		psRank = new JLabel();
-		psRank.setBounds(400,350,60,30);
-		psRank.setIcon(new ImageIcon("images/accountlevel.png"));
-		this.add(psRank);
-		
-		labelRank = new JLabel();
-		labelRank.setBounds(690,350,60,30);
-		labelRank.setFont(new Font("宋体",Font.PLAIN,30));
-		labelRank.setForeground(Color.YELLOW);
-		labelRank.setText(accountDTO.getRank()+"");
-		this.add(labelRank);;
+		//TODO MD 排名不写了 = =
+//		psRank = new JLabel();
+//		psRank.setBounds(400,350,60,30);
+//		psRank.setIcon(new ImageIcon("images/accountlevel.png"));
+//		this.add(psRank);
+//		
+//		labelRank = new JLabel();
+//		labelRank.setBounds(690,350,60,30);
+//		labelRank.setFont(new Font("宋体",Font.PLAIN,30));
+//		labelRank.setForeground(R.color.LIGHT_YELLOW);
+//		labelRank.setText(accountDTO.getRank()+"");
+//		this.add(labelRank);;
 		
 		psTotalGames = new JLabel();
-		psTotalGames.setBounds(400,400,80,30);
+		psTotalGames.setBounds(400,320,80,30);
 		psTotalGames.setIcon(new ImageIcon("images/accounttotalgames.png"));
 		this.add(psTotalGames);
 		
 		labelTotalGames = new JLabel();
-		labelTotalGames.setBounds(690,400,60,30);
+		labelTotalGames.setBounds(690,320,60,30);
 		labelTotalGames.setFont(new Font("宋体",Font.PLAIN,30));
-		labelTotalGames.setForeground(Color.YELLOW);
+		labelTotalGames.setForeground(R.color.LIGHT_YELLOW);
 		labelTotalGames.setText(accountDTO.getTotalGames()+"");
+		labelTotalGames.setHorizontalAlignment(JLabel.RIGHT);
 		this.add(labelTotalGames);
 		
 		
 		psWins = new JLabel();
-		psWins.setBounds(400,450,80,30);
+		psWins.setBounds(400,370,80,30);
 		psWins.setIcon(new ImageIcon("images/accountwins.png"));
 		this.add(psWins);
 		
 		labelWins = new JLabel();
-		labelWins.setBounds(690,450,60,30);
+		labelWins.setBounds(690,370,60,30);
 		labelWins.setFont(new Font("宋体",Font.PLAIN,30));
-		labelWins.setForeground(Color.YELLOW);
+		labelWins.setForeground(R.color.LIGHT_YELLOW);
 		labelWins.setText(accountDTO.getWins()+"");
+		labelWins.setHorizontalAlignment(JLabel.RIGHT);
 		this.add(labelWins);
 		
 		
 		psLosts = new JLabel();
-		psLosts.setBounds(400,500,80,30);
+		psLosts.setBounds(400,420,80,30);
 		psLosts.setIcon(new ImageIcon("images/accountloses.png"));
 		this.add(psLosts);
 		
 		
 		labelLosts = new JLabel();
-		labelLosts.setBounds(690,500,60,30);
+		labelLosts.setBounds(690,420,60,30);
 		labelLosts.setFont(new Font("宋体",Font.PLAIN,30));
-		labelLosts.setForeground(Color.YELLOW);
+		labelLosts.setForeground(R.color.LIGHT_YELLOW);
 		labelLosts.setText(accountDTO.getLosts()+"");
+		labelLosts.setHorizontalAlignment(JLabel.RIGHT);
 		this.add(labelLosts);
 		
-		this.btnReturn = new JButton("返回");
-		this.btnReturn.setContentAreaFilled(false);
-		this.btnReturn.setBounds(950, 515, 100, 30);
-		btnReturn.setFont(new Font("黑体", Font.BOLD, 20));
-		btnReturn.setForeground(Color.YELLOW);
-		btnReturn.addMouseListener(new ReturnListener());
+		this.btnReturn = new BackButton(new ReturnListener());
 		this.add(btnReturn);
 		
-		this.btnLogout = new JButton("登出");
+		this.btnLogout = new SquareButton("images/logOut.png");
 		this.btnLogout.setContentAreaFilled(false);
-		this.btnLogout.setBounds(950, 470, 100, 30);
-		btnLogout.setFont(new Font("黑体", Font.BOLD, 20));
-		btnLogout.setForeground(Color.YELLOW);
+		this.btnLogout.setBounds(670, 510, 100, 40);
+		this.btnLogout.setBorderPainted(false);
+		btnLogout.setFont(new Font("宋体", Font.BOLD, 20));
+		btnLogout.setForeground(R.color.LIGHT_YELLOW);
 		btnLogout.addMouseListener(new LogOutListener());
 		this.add(btnLogout);
 		
-		this.btnRevisePW = new JButton("修改密码");
+		this.btnRevisePW = new SquareButton("images/修改密码.png");
 		this.btnRevisePW.setContentAreaFilled(false);
-		this.btnRevisePW.setBounds(50, 515, 120, 30);
-		btnRevisePW.setFont(new Font("黑体", Font.BOLD, 20));
-		btnRevisePW.setForeground(Color.YELLOW);
+		this.btnRevisePW.setBounds(400, 510, 120, 40);
+		this.btnRevisePW.setBorderPainted(false);
+		btnRevisePW.setFont(new Font("宋体", Font.BOLD, 20));
+		btnRevisePW.setForeground(R.color.LIGHT_YELLOW);
 		btnRevisePW.addMouseListener(new RevisePWListener());
 		this.add(btnRevisePW);
 		
@@ -168,7 +173,6 @@ public class AccountPanel extends JPanel{
 	@Override
 	public void paintComponent(Graphics g) {
 		Image IMG_MAIN = new ImageIcon("images/模糊背景.jpg").getImage();
-		// ������Ϸ����
 		g.drawImage(IMG_MAIN, 0, 0, 1158, 650, null);
 	}
 	
@@ -202,12 +206,13 @@ public class AccountPanel extends JPanel{
 		}
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			FrameUtil.sendMessageByPullDown(AccountPanel.this, "登出中...");
 			switch(accountControl.logoutAndClear()){
 			case SUCCESS:
-				FrameUtil.sendMessageByFrame("登出成功", "登出成功，本地缓存已删除");
+				FrameUtil.sendMessageByPullDown(AccountPanel.this, "登出成功，本地缓存已删除");
 				break;
 			default:
-				FrameUtil.sendMessageByFrame("登出失败", "登出失败 T_T");
+				FrameUtil.sendMessageByPullDown(AccountPanel.this, "登出失败 T_T");
 			}
 		}
 		@Override
@@ -229,7 +234,7 @@ public class AccountPanel extends JPanel{
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			InformFrame revisePWFrame = new InformFrame("修改密码", 400, 300);
-			RevisePWPanel revisePWpanel = new RevisePWPanel(revisePWFrame, accountControl);
+			RevisePWPanel revisePWpanel = new RevisePWPanel(revisePWFrame, accountControl,AccountPanel.this);
 			revisePWFrame.add(revisePWpanel);
 		}
 		@Override

@@ -1,7 +1,12 @@
 package model.operation;
 
+import java.util.List;
 
-public class SendMessage extends Operation {
+import model.Player;
+import dto.GameDTO;
+
+
+public class SendMessage extends Operation implements Operable{
 
 	/**
 	 * default
@@ -24,6 +29,14 @@ public class SendMessage extends Operation {
 	public String toReceiver(){
 		
 		return this.operator+"向"+this.receiver+"发送了一条消息： "+msg;
+	}
+
+	@Override
+	public List<Operation> process() {
+		Player pOperator = GameDTO.getInstance().findPlayerByID(operator);
+		pOperator.setMessageable(false);
+		
+		return null;
 	}
 	
 }

@@ -2,11 +2,14 @@ package control;
 
 import io.NetClient;
 
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 
 import model.Room;
 import server.interfaces.RMILobby;
+import ui.FrameUtil;
 import ui.lobby.LobbyPanel;
 import util.R;
 import dto.AccountDTO;
@@ -103,7 +106,12 @@ public class LobbyControl {
     
     private void setUpRMILB(){
     	if(rmilb == null){
-    		rmilb = NetClient.getInstance().getLobbyServer();
+    		try {
+				rmilb = NetClient.getInstance().getLobbyServer();
+			} catch (MalformedURLException | RemoteException
+					| NotBoundException e) {
+				FrameUtil.sendMessageByPullDown(mainControl.currentPanel, "网络连接出错");
+			}
     	}
     }
     

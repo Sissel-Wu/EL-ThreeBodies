@@ -14,7 +14,11 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import ui.FrameUtil;
+import ui.component.SquareButton;
+import ui.component.YellowTransparentTextField;
+import util.R;
 import control.AccountControl;
+import control.MainControl;
 
 public class LogupPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -31,8 +35,10 @@ public class LogupPanel extends JPanel {
 	private JLabel codeLabel;
 	private LoginPanel panelLogin;
 	private AccountControl accountControl;
+	private MainControl mc;
 	
-	public LogupPanel(LoginPanel panelLogin,AccountControl accountControl) {
+	public LogupPanel(MainControl mc, LoginPanel panelLogin,AccountControl accountControl) {
+		this.mc = mc;
 		this.accountControl = accountControl;
 		this.setLayout(null);
 		this.panelLogin=panelLogin;
@@ -41,19 +47,19 @@ public class LogupPanel extends JPanel {
 		
 	}
 	private void initComonent() {
-		this.btnCancel = new JButton(new ImageIcon("images/logcancel.png"));
+		this.btnCancel = new SquareButton("images/logcancel.png");
 		this.btnCancel.setBounds(220, 220, 80, 40);
 		btnCancel.setContentAreaFilled(false);
 		btnCancel.addMouseListener(new CancelListener());
 		this.add(btnCancel);
 		
-		this.btnlogup = new JButton(new ImageIcon("images/logup.png"));
+		this.btnlogup = new SquareButton("images/logup.png");
 		this.btnlogup.setBounds(100, 220, 80, 40);
 		btnlogup.setContentAreaFilled(false);
 		btnlogup.addMouseListener(new LogupListener());
 		this.add(btnlogup);
 		
-		idField = new JTextField();
+		idField = new YellowTransparentTextField(R.text.MAX_ACCOUNT_LENGTH);
 		idField.setBounds(105,40,240,30);
 		this.add(idField);
 		
@@ -137,13 +143,13 @@ public class LogupPanel extends JPanel {
 				// TODO 消息窗口
 				switch(accountControl.logUp(id, password, invitationID)){
 				case SUCCESS:
-					FrameUtil.sendMessageByFrame("登录成功", "登录成功！");
+					FrameUtil.sendMessageByPullDown(mc.currentPanel, "注册成功！");
 					break;
 				case ALREADY_EXISTED:
-					FrameUtil.sendMessageByFrame("账户已存在", "账户已存在！");
+					FrameUtil.sendMessageByPullDown(mc.currentPanel, "账户已存在！");
 					break;
 				case NOT_EXISTED:
-					FrameUtil.sendMessageByFrame("邀请码不正确", "邀请码不正确！");
+					FrameUtil.sendMessageByPullDown(mc.currentPanel, "邀请码不正确！");
 					break;
 				}
 				

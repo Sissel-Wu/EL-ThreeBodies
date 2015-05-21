@@ -107,7 +107,7 @@ public class Coordinate implements Serializable{
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < DIMENSIONS; i++) {
 			if(sequence[i] == Coordinate.UNKNOWN){
-				sb.append("不明-");
+				sb.append("?-");
 			}else{
 				sb.append(sequence[i]+"-");
 			}

@@ -1,6 +1,5 @@
 package ui.lobby;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 
@@ -9,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import model.Room;
+import util.R;
 
 public class ButtonPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -31,10 +31,9 @@ public class ButtonPanel extends JPanel {
 		this.add(idLabel);
 		
 		nameLabel = new JLabel(room.getName());
-		nameLabel.setForeground(Color.YELLOW);
-		nameLabel.setBounds(125,5,175,30);
+		nameLabel.setForeground(R.color.LIGHT_YELLOW);
+		nameLabel.setBounds(185,5,175,30);
 		this.add(nameLabel);
-		
 		
 		sizeStrLabel = new JLabel();
 		sizeStrLabel.setBounds(20,45,80,30);
@@ -42,8 +41,8 @@ public class ButtonPanel extends JPanel {
 		this.add(sizeStrLabel);
 		
 		sizeLabel = new JLabel(room.getSize()+"人");
-		sizeLabel.setForeground(Color.YELLOW);
-		sizeLabel.setBounds(125,45,175,30);
+		sizeLabel.setForeground(R.color.LIGHT_YELLOW);
+		sizeLabel.setBounds(185,45,175,30);
 		this.add(sizeLabel);
 		
 		numStrLabel = new JLabel();
@@ -52,14 +51,15 @@ public class ButtonPanel extends JPanel {
 		this.add(numStrLabel);
 		
 		numLabel = new JLabel(room.getAccounts().size()+"人");
-		numLabel.setForeground(Color.YELLOW);
-		numLabel.setBounds(125,85,175,30);
+		numLabel.setForeground(R.color.LIGHT_YELLOW);
+		numLabel.setBounds(185,85,175,30);
 		this.add(numLabel);
 		
 	}
+
 	public void paintComponent(Graphics g) {
 		Image img = new ImageIcon("images/img1.jpg").getImage();
 		g.drawImage(img, 0, 0, null);
-		}
-	
+	}
+
 }

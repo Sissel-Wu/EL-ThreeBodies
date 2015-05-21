@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import ui.FrameUtil;
+import ui.component.SquareButton;
 import control.LobbyControl;
 import control.MainControl;
 
@@ -28,13 +29,15 @@ public class CreateRoomPanel extends JPanel{
 	private JComboBox<String> select;
 	private JButton btnOk;
 	private JButton btnCancel;
+	private LobbyPanel lobbyPanel;
 	
 	MainControl mainControl;
 
-	public CreateRoomPanel(JFrame createRoomFrame,LobbyControl lobbyControl,MainControl mainControl) {
+	public CreateRoomPanel(LobbyPanel lobbyPanel, JFrame createRoomFrame,LobbyControl lobbyControl,MainControl mainControl) {
 		this.lobbyControl = lobbyControl;
 		this.createRoomFrame = createRoomFrame;
 		this.mainControl = mainControl;
+		this.lobbyPanel = lobbyPanel;
 		
 		this.setLayout(null);
 		this.initComonent();
@@ -62,16 +65,18 @@ public class CreateRoomPanel extends JPanel{
 		select.addItem("8人房间");
 		this.add(select);
 		
-		this.btnOk = new JButton(new ImageIcon("images/roomcreate.png"));
+		this.btnOk = new SquareButton("images/roomcreate.png");
 		this.btnOk.setBounds(100, 220, 80, 40);
 		btnOk.setContentAreaFilled(false);
 		btnOk.addMouseListener(new CreateListener());
+		btnOk.setBorderPainted(false);
 		this.add(btnOk);
 		
-		this.btnCancel = new JButton(new ImageIcon("images/roomcancel.png"));
+		this.btnCancel = new SquareButton("images/roomcancel.png");
 		this.btnCancel.setBounds(220, 220, 80, 40);
 		btnCancel.setContentAreaFilled(false);
 		btnCancel.addMouseListener(new CancelListener());
+		btnCancel.setBorderPainted(false);
 		this.add(btnCancel);
 		
 	}
@@ -99,17 +104,17 @@ public class CreateRoomPanel extends JPanel{
 			}
 			// 房间名不为空
 			if(idField.getText().equals("")){
-				FrameUtil.sendMessageByFrame("房间名不能为空", "房间名不能为空");
+				FrameUtil.sendMessageByPullDown(lobbyPanel, "房间名不能为空");
 				return;
 			}
 			// 创建房间
 			switch(lobbyControl.createRoom(idField.getText(), size)){
 			case ALREADY_EXISTED:
-				FrameUtil.sendMessageByFrame("房间名已使用", "房间名已使用");
+				FrameUtil.sendMessageByPullDown(lobbyPanel, "房间名已使用");
 				break;
 			case SUCCESS:
 				createRoomFrame.setVisible(false);
-				FrameUtil.sendMessageByFrame("创建成功", "创建成功");
+				FrameUtil.sendMessageByPullDown(lobbyPanel, "创建成功");;
 				lobbyControl.changeEntered();
 				mainControl.toRoom(idField.getText());
 				break;

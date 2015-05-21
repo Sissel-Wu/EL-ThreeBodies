@@ -55,6 +55,10 @@ public class Room implements Serializable{
 		if(size == accounts.size()){
 			return R.info.ROOM_FULL;
 		}
+		// 游戏已经开始
+		if(this.start){
+			return R.info.INVALID;
+		}
 		ready.put(account.getId(), false);
 		accounts.add(account);
 		return R.info.SUCCESS;

@@ -30,20 +30,19 @@ public class Lose extends Operation implements Operable{
 		
 		// 判断地球方和归一者方哪边赢
 		
-		// 地球胜利
-		boolean enemyleft = true;
+		// 只剩下地球
+		boolean enemyleft = false;
 		for (Player player : players) {
 			if(player.getRole().toString() != "地球" && !player.isLost()){
-				break;
+				enemyleft = true;
 			}
-			enemyleft = false;
 		}
 		if(!enemyleft){
 			List<Operation> sub = new LinkedList<Operation>();
 			sub.add(new GameOver(operator, receiver));
 			return sub;
 		}
-		// 归一者胜利
+		// 只剩下归一者
 		boolean unifierWin = true;
 		for (Player player:players){
 			if(player.getRole().toString() != "归一者" && !player.isLost()){
@@ -52,6 +51,19 @@ public class Lose extends Operation implements Operable{
 			}
 		}
 		if(unifierWin){
+			List<Operation> sub = new LinkedList<Operation>();
+			sub.add(new GameOver(operator, receiver));
+			return sub;
+		}
+		// 只剩下三体
+		boolean tbLeft = true;
+		for (Player player:players){
+			if(player.getRole().toString() != "三体" && !player.isLost()){
+				tbLeft = false;
+				break;
+			}
+		}
+		if(tbLeft){
 			List<Operation> sub = new LinkedList<Operation>();
 			sub.add(new GameOver(operator, receiver));
 			return sub;

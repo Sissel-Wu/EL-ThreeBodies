@@ -21,7 +21,6 @@ public class InformFrame extends JFrame {
 	    	//窗口居中
 	    	FrameUtil.setFrameCenter(this);
 //	    	this.setContentPane(panel);
-	    	this.setUndecorated(true);
 	    	//默认窗口为显示
 	    	this.setVisible(true);
 		}

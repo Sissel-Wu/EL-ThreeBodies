@@ -75,7 +75,7 @@ public class ImageDownloader {
 	}
 	
 	private void setUpRMII(){
-		rmii = NetClient.getInstance().getImageServer();
+//		rmii = NetClient.getInstance().getImageServer();
 	}
 
 }

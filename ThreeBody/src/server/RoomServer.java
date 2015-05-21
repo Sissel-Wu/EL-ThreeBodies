@@ -60,6 +60,7 @@ public class RoomServer extends UnicastRemoteObject implements RMIRoom {
 		room.exit(this.searchAccountByID(id));
 		// 当房间空掉时，this的生命周期结束
 		if(room.getAccounts().size() == 0){
+			gameServer = null;
 			this.lobbyServer.deleteRoom(room);
 			PortableRemoteObject.unexportObject(this);
 		}

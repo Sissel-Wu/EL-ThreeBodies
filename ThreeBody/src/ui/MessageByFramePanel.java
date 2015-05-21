@@ -1,6 +1,5 @@
 package ui;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -8,34 +7,37 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import util.R;
 
 public class MessageByFramePanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private JFrame frame;
 	private JLabel msgLabel;
-	private TwoSecondCloseFrameThread tscf;
+	private double duration;
 	/**
 	 * 
 	 * @param successInformFrame 
 	 */
 	public MessageByFramePanel(InformFrame successInformFrame,String message) {
-		this.setLayout(null);
-		this.frame=successInformFrame;
-		this.initComonent(message);
-		this.tscf = new TwoSecondCloseFrameThread();
-		this.tscf.start();
+		this(successInformFrame,message,2);
 	}
 	
-	private void initComonent(String message) {
-
-		
+	public MessageByFramePanel(InformFrame successInformFrame,String message,double duration){
+		this.setLayout(null);
+		this.duration = duration;
+		this.frame=successInformFrame;
+		this.initComponent(message);
+		new Thread(new TwoSecondCloseFrameThread()).start();
+	}
+	
+	private void initComponent(String message) {
 		msgLabel = new JLabel(message,JLabel.CENTER);
-		msgLabel.setForeground(Color.YELLOW);
-		msgLabel.setFont(new Font("汉仪菱心体简", Font.PLAIN, 20));
+		msgLabel.setForeground(R.color.LIGHT_YELLOW);
+		msgLabel.setFont(new Font("华文细黑", Font.PLAIN, 20));
 		msgLabel.setBounds(0,0,300,200);
 		this.add(msgLabel);
 	}
@@ -52,11 +54,11 @@ public class MessageByFramePanel extends JPanel{
 		// 绘制游戏界面
 		g.drawImage(IMG_MAIN, 0, 0,300,200, null);
 	}
-	private class TwoSecondCloseFrameThread extends Thread{
+	private class TwoSecondCloseFrameThread implements Runnable{
 		@Override
 		public void run() {
 			try {
-				Thread.sleep(2000);
+				Thread.sleep((int)(duration * 1000));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
