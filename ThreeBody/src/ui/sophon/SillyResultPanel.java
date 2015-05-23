@@ -82,7 +82,7 @@ public class SillyResultPanel extends JPanel{
 		this.setPicture(coordinate);
 		
 		
-		this.btnReturn = new SquareButton("images/btnOk.png");
+		this.btnReturn = new JButton(new ImageIcon("images/btnOk.png"));
 		this.btnReturn.setContentAreaFilled(false);
 		this.btnReturn.setBounds(190, 125, 60,30);
 		btnReturn.addMouseListener(new ReturnListener());
@@ -104,10 +104,6 @@ public class SillyResultPanel extends JPanel{
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			setVisible(false);
-			// TODO resultPanel
-//			sophonFinder.setContentPane(resultPanel);
-//			resultPanel.setVisible(true);	
-//			sophonFinder.validate();
 			String id = AccountDTO.getInstance().getId();
 			SillySophon ss = new SillySophon(id, receiverName, position, possibleList, possibleList[coordinate]);
 			CardUse cardUse = new CardUse(id, receiverName, ss);
@@ -116,10 +112,11 @@ public class SillyResultPanel extends JPanel{
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			btnReturn.setIcon(new ImageIcon("images/btnOk2.png"));
 		}
 		@Override
 		public void mouseExited(MouseEvent e) {
-			
+			btnReturn.setIcon(new ImageIcon("images/btnOk.png"));
 		}
 	}
 	class ResultOneListener implements MouseListener {

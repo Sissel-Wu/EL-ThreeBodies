@@ -3,6 +3,8 @@ package model.operation;
 import java.util.LinkedList;
 import java.util.List;
 
+import ui.FrameUtil;
+import ui.game.GamePanel;
 import model.Player;
 import dto.GameDTO;
 
@@ -23,6 +25,9 @@ public class Lose extends Operation implements Operable{
 	@Override
 	public List<Operation> process() {
 		player.setLost(true);
+		
+		FrameUtil.sendMessageByPullDown(GamePanel.instance, 
+				this.player.getAccount().getId()+"已阵亡！");
 		
 		// 判断游戏是否结束
 		GameDTO gameDTO = GameDTO.getInstance();

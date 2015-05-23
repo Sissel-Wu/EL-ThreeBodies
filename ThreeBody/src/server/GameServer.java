@@ -136,6 +136,7 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 				}
 				// 全员退出
 				rs.exit(account.getId());
+				closeThisLater();
 			}
 			return R.info.INVALID;
 		}
@@ -183,7 +184,7 @@ public class GameServer extends UnicastRemoteObject implements RMIGame{
 			@Override
 			public void run() {
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(20000);
 				} catch (InterruptedException e) {
 					try {
 						PortableRemoteObject.unexportObject(GameServer.this);

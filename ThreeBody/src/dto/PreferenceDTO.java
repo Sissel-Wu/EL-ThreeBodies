@@ -1,10 +1,10 @@
 package dto;
 
-import java.io.Serializable;
+import io.UserData;
 
-import util.R;
-import ai.AI;
-import ai.AI.level;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Serializable;
 
 public class PreferenceDTO implements Serializable {
 
@@ -19,93 +19,117 @@ public class PreferenceDTO implements Serializable {
 	private static PreferenceDTO instance;
 
 	/*
-	 * 用户设置,aiLevel,language,resolution数值含义参考R类
+	 * 特效开关
 	 */
-	private boolean musicSwitch;
-	private boolean effectSwitch;
-	private AI.level aiLevel;
-	private R.language language;
-	/*
-	 * 分辨率
-	 */
-	private R.resolution resolution;
+	private boolean effectOn;
 	/*
 	 * 音量
 	 */
-	private int volume;
-
+	private double volume;
+	/*
+	 * BGM
+	 */
+	private String bgm;
+	/*
+	 * BGM目录
+	 */
+	private String[] bgmList = new String[]{
+			"A Little Story",
+			"Cornfield Chase",
+			"Paris"
+	};
+	/*
+	 * 是否自动登录
+	 */
+	private boolean autoLogin;
+	
 	public static PreferenceDTO getInstance() {
 		return instance;
 	}
 
 	public static void init() {
-		instance = new PreferenceDTO(true, true, AI.level.NORMAL,
-				R.language.SIMPLIFIED_CHINESE, R.resolution.NORMAL, 40);
+		if(instance != null){
+			return;
+		}
+		try {
+			instance = UserData.loadPreference();
+		} catch (FileNotFoundException e) {
+			instance = new PreferenceDTO(true, 0.25, "Paris", false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void save(){
+		UserData.savePreference(this);
 	}
 
-	public static void init(PreferenceDTO old) {
-		instance = old;
-	}
-
-	public PreferenceDTO(boolean musicSwitch, boolean effectSwitch,
-			level aiLevel, util.R.language language,
-			util.R.resolution resolution, int volume) {
-		this.musicSwitch = musicSwitch;
-		this.effectSwitch = effectSwitch;
-		this.aiLevel = aiLevel;
-		this.language = language;
-		this.resolution = resolution;
+	public PreferenceDTO(boolean effectSwitch,double volume,String bgm,boolean autoLogin) {
+		this.effectOn = effectSwitch;
 		this.volume = volume;
+		this.bgm = bgm;
+		this.autoLogin = autoLogin;
 	}
 
 	/*
 	 * getters and setters
 	 */
-	public boolean isMusicSwitch() {
-		return musicSwitch;
+	public boolean isEffectOn() {
+		return effectOn;
 	}
 
-	public void setMusicSwitch(boolean musicSwitch) {
-		this.musicSwitch = musicSwitch;
+	public void setEffectOn(boolean effectSwitch) {
+		this.effectOn = effectSwitch;
 	}
 
-	public boolean isEffectSwitch() {
-		return effectSwitch;
-	}
-
-	public void setEffectSwitch(boolean effectSwitch) {
-		this.effectSwitch = effectSwitch;
-	}
-
-	public AI.level getAiLevel() {
-		return aiLevel;
-	}
-
-	public void setAiLevel(AI.level aiLevel) {
-		this.aiLevel = aiLevel;
-	}
-
-	public R.language getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(R.language language) {
-		this.language = language;
-	}
-
-	public R.resolution getResolution() {
-		return resolution;
-	}
-
-	public void setResolution(R.resolution resolution) {
-		this.resolution = resolution;
-	}
-
-	public int getVolume() {
+	public double getVolume() {
 		return volume;
 	}
 
-	public void setVolume(int volume) {
+	public void setVolume(double volume) {
 		this.volume = volume;
 	}
+
+	public String getBgm() {
+		return bgm;
+	}
+
+	public void setBgm(String bgm) {
+		this.bgm = bgm;
+	}
+	
+	public void preBGM() {
+		for (int i = 0; i < bgmList.length; i++) {
+			if (bgmList[i].equals(bgm)) {
+				if (i == bgmList.length - 1) {
+					bgm = bgmList[0];
+				} else {
+					bgm = bgmList[i + 1];
+				}
+				break;
+			}
+		}
+	}
+
+	public void nextBGM() {
+		for (int i = 0; i < bgmList.length; i++) {
+			if (bgmList[i].equals(bgm)) {
+				if (i == 0) {
+					bgm = bgmList[bgmList.length - 1];
+				} else {
+					bgm = bgmList[i - 1];
+				}
+				break;
+			}
+		}
+	}
+
+	public boolean isAutoLogin() {
+		return autoLogin;
+	}
+
+	public void setAutoLogin(boolean autoLogin) {
+		this.autoLogin = autoLogin;
+	}
+	
 }

@@ -2,6 +2,8 @@ package model.card;
 
 import java.util.List;
 
+import ui.FrameUtil;
+import ui.game.GamePanel;
 import config.CardConfig;
 import config.GameConfig;
 import model.Coordinate;
@@ -11,6 +13,7 @@ import model.operation.CoordinateGetFail;
 import model.operation.Description;
 import model.operation.Operation;
 import model.operation.ResourceChange;
+import dto.AccountDTO;
 import dto.GameDTO;
 
 public class SillySophon extends Card {
@@ -69,7 +72,7 @@ public class SillySophon extends Card {
 		// 或取成功后描述操作
 		StringBuilder sb = new StringBuilder();
 		sb.append(operator);
-		sb.append("对"+receiver+"第"+(position+1)+"个坐标进行观测，发现3个可疑坐标:");
+		sb.append("对"+receiver+"第"+(position+1)+"个坐标观测，发现可疑坐标:");
 		for(int i:set){
 			sb.append(i+",");
 		}
@@ -81,10 +84,16 @@ public class SillySophon extends Card {
 		subOperations.add(description);
 		
 		if(result == guess){
+			if(operator.equals(AccountDTO.getInstance().getId())){
+				FrameUtil.sendMessageByPullDown(GamePanel.instance, "坐标获取成功");
+			}
 			pOperator.findCoordinate(pReceiver, position, result);
 			CoordinateGet cg = new CoordinateGet(operator, receiver, position, result);
 			subOperations.add(cg);
 		}else{
+			if(operator.equals(AccountDTO.getInstance().getId())){
+				FrameUtil.sendMessageByPullDown(GamePanel.instance, "坐标获取失败");
+			}
 			CoordinateGetFail cgf = new CoordinateGetFail(operator, receiver);
 			subOperations.add(cgf);
 		}

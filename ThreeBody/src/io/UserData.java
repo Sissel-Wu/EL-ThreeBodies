@@ -35,20 +35,16 @@ public class UserData {
 		}
 	}
 	
-	public static PreferenceDTO loadPreference(){
+	public static PreferenceDTO loadPreference() throws FileNotFoundException, IOException{
 		PreferenceDTO localData = null;
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
 					new File(prefURL)));
 			localData = (PreferenceDTO) ois.readObject();
 			ois.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} 
 		return localData;
 	}
 

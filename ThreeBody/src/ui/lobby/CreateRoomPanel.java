@@ -65,14 +65,14 @@ public class CreateRoomPanel extends JPanel{
 		select.addItem("8人房间");
 		this.add(select);
 		
-		this.btnOk = new SquareButton("images/roomcreate.png");
+		this.btnOk = new JButton(new ImageIcon("images/roomcreate.png"));
 		this.btnOk.setBounds(100, 220, 80, 40);
 		btnOk.setContentAreaFilled(false);
 		btnOk.addMouseListener(new CreateListener());
 		btnOk.setBorderPainted(false);
 		this.add(btnOk);
 		
-		this.btnCancel = new SquareButton("images/roomcancel.png");
+		this.btnCancel = new JButton(new ImageIcon("images/roomcancel.png"));
 		this.btnCancel.setBounds(220, 220, 80, 40);
 		btnCancel.setContentAreaFilled(false);
 		btnCancel.addMouseListener(new CancelListener());
@@ -87,6 +87,18 @@ public class CreateRoomPanel extends JPanel{
 	}
 
 	class CreateListener extends MouseAdapter {
+		
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			btnOk.setIcon(new ImageIcon("images/roomcreate2.png"));
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			btnOk.setIcon(new ImageIcon("images/roomcreate.png"));
+		}
+
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			// 选择的房间人数
@@ -114,7 +126,6 @@ public class CreateRoomPanel extends JPanel{
 				break;
 			case SUCCESS:
 				createRoomFrame.setVisible(false);
-				FrameUtil.sendMessageByPullDown(lobbyPanel, "创建成功");;
 				lobbyControl.changeEntered();
 				mainControl.toRoom(idField.getText());
 				break;
@@ -125,6 +136,17 @@ public class CreateRoomPanel extends JPanel{
 	}
 	
 	class CancelListener extends MouseAdapter {
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			btnCancel.setIcon(new ImageIcon("images/roomcancel2.png"));
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			btnCancel.setIcon(new ImageIcon("images/roomcancel.png"));
+		}
+
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			createRoomFrame.setVisible(false);

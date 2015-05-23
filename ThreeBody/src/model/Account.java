@@ -1,6 +1,5 @@
 package model;
 
-import java.awt.Image;
 import java.io.Serializable;
 
 public class Account implements Serializable{
@@ -15,9 +14,9 @@ public class Account implements Serializable{
 	 */
 	private String id;
     /*
-     * 头像
+     * 头像文件地址
      */
-    private transient Image head;
+    private String head;
     /*
      * 积分
      */
@@ -52,7 +51,7 @@ public class Account implements Serializable{
      * 构造方法，从Database恢复时调用，只需要ID，密码存放在服务器端，不需要放在客户端
      */
     public Account(String id, int point, int totalGames, int wins,
-			int losts, String regions, Image head) {
+			int losts, String regions, String head) {
 		this.id = id;
 		this.head = head;
 		this.point = point;
@@ -63,6 +62,7 @@ public class Account implements Serializable{
 	}
     
     public void synchronize(Account acc){
+    	this.id = acc.id;
     	this.rank = acc.rank;
     	this.point = acc.point;
     	this.totalGames = acc.totalGames;
@@ -76,20 +76,10 @@ public class Account implements Serializable{
 	public String getId() {
 		return id;
 	}
-	public Image getHead() {
-//		if(head == null){
-//			if(id.equals(AccountDTO.getInstance().getId())){
-//				head = new ImageIcon("userdata\\head.png").getImage();
-//			}else{
-//				head = new ImageIcon("tmp\\"+id+".png").getImage();
-//				if(head == null){
-//					
-//				}
-//			}
-//		}
+	public String getHead() {
 		return head;
 	}
-	public void setHead(Image head) {
+	public void setHead(String head) {
 		this.head = head;
 	}
 	public int getPoint() {

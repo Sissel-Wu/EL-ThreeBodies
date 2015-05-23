@@ -12,4 +12,6 @@ hs_err_pid*
 
 /ThreeBody/bin/
 
+/ThreeBody/opening/
+
 *.dat

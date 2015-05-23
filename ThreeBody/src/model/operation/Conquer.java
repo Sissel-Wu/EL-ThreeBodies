@@ -3,9 +3,12 @@ package model.operation;
 import java.util.LinkedList;
 import java.util.List;
 
+import ui.FrameUtil;
+import ui.game.GamePanel;
 import model.Coordinate;
 import model.Player;
 import model.role.Earth;
+import dto.AccountDTO;
 import dto.GameDTO;
 
 public class Conquer extends Operation implements Operable{
@@ -34,9 +37,15 @@ public class Conquer extends Operation implements Operable{
 				// 先判断该玩家是否已经退场
 				subOperations = new LinkedList<Operation>();
 				if(player.isLost() || !(player.getRole() instanceof Earth)){
+					if(operator.equals(AccountDTO.getInstance().getId())){
+						FrameUtil.sendMessageByPullDown(GamePanel.instance, "侵略失败");
+					}
 					Description description = new Description(operator, receiver, "侵略失败");
 					subOperations.add(description);
 					return subOperations;
+				}
+				if(operator.equals(AccountDTO.getInstance().getId())){
+					FrameUtil.sendMessageByPullDown(GamePanel.instance, "侵略成功");
 				}
 				// 改变角色
 				CharacterChange cc = new CharacterChange(operator, null);
