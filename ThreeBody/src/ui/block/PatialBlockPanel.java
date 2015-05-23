@@ -74,7 +74,7 @@ public class PatialBlockPanel extends JPanel {
 		this.add(btnCoordinateFour);
 		this.setPicture(coordinate);
 		
-		this.btnOk = new JButton(new ImageIcon("images/btnOk.png"));
+		this.btnOk = new SquareButton("images/btnOk.png");
 		this.btnOk.setContentAreaFilled(false);
 		this.btnOk.setBorderPainted(false);
 		this.btnOk.setBounds(190, 125, 60,30);
@@ -92,16 +92,6 @@ public class PatialBlockPanel extends JPanel {
 			CardUse cardUsePb=new CardUse(id, id, pb);
 			GameControl.getInstance().doOperation(cardUsePb);
 			patialBlock.setVisible(false);
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			btnOk.setIcon(new ImageIcon("images/btnOk2.png"));
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {			
-			btnOk.setIcon(new ImageIcon("images/btnOk.png"));
 		}
 	}
 	
@@ -155,12 +145,11 @@ public class PatialBlockPanel extends JPanel {
 			btnCoordinateFour.setIcon(new ImageIcon("images/select.png"));
 		}
 	}
-
 	public void paintComponent(Graphics g) {
 		Image img = new ImageIcon("images/img1.jpg").getImage();
 		g.drawImage(img, 0, 0, null);
-		FrameUtil.drawCoordinate(123, 156, 502, 666, g);
-	}
+		FrameUtil.drawCoordinate(123,156,502,666,g);
+		}
 	
 }
 

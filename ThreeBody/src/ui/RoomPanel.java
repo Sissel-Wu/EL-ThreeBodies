@@ -1,7 +1,5 @@
 package ui;
 
-import io.ImageHelper;
-
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -9,7 +7,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,8 +64,6 @@ public class RoomPanel extends JPanel{
 		this.initLocation();
 		this.initComponent();
 		this.initAccountsInfo();
-		
-		// 启动线程刷新头像
 	}
 	
 	public void refresh() {
@@ -90,19 +85,6 @@ public class RoomPanel extends JPanel{
 			initPlayer(i);
 		}
 	}
-	
-	private ImageIcon getAccountHead(Account acc){
-		File file = new File("tmp");
-		for(File f:file.listFiles()){
-			if(f.getName().equals(acc.getId()+".jpg")){
-				return new ImageIcon("tmp/"+acc.getId()+".jpg");
-			}else if(f.getName().equals(acc.getId()+".png")){
-				return new ImageIcon("tmp/"+acc.getId()+".png");
-			}
-		}
-		System.out.println("start download");
-		return new ImageHelper().downloadHeadByID(acc.getId());
-	}
 		
 	private void initPlayer(int i) {
 		Rectangle rect=locations.get(i);
@@ -119,19 +101,14 @@ public class RoomPanel extends JPanel{
 		labelId.setText(accounts.get(i).getId());
 		
 		labelHead = new JLabel();
-		labelHead.setBounds(rect.x+80,rect.y+5,50,50);
-		
-		if (accounts.get(i).getHead() == null){
+		labelHead.setBounds(rect.x+90,rect.y+15,30,30);
+		if(accounts.get(i).getHead()!=null){
+			Image headImage=accounts.get(i).getHead();
+			headImage=headImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+			labelHead.setIcon(new ImageIcon(headImage));
+		}else{
 			Image headImage = new ImageIcon("images/headtest.jpg").getImage();
-			headImage = headImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-			labelHead.setIcon(new ImageIcon(headImage));
-		}else if (accounts.get(i).getId().equals(AccountDTO.getInstance().getId())) { //本地玩家自己
-			Image headImage = AccountDTO.getInstance().getHead();
-			headImage = headImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-			labelHead.setIcon(new ImageIcon(headImage));
-		} else { //其他玩家
-			Image headImage = getAccountHead(accounts.get(i)).getImage();
-			headImage = headImage.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+			headImage=headImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 			labelHead.setIcon(new ImageIcon(headImage));
 		}
 		

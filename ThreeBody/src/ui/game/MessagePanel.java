@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import model.Player;
 import model.operation.SendMessage;
 import ui.FrameUtil;
+import ui.component.SquareButton;
 import ui.component.YellowTransparentTextField;
 import control.GameControl;
 import dto.AccountDTO;
@@ -48,14 +49,14 @@ public class MessagePanel  extends JPanel{
 			message.setFont(new Font("宋体", Font.BOLD, 30));
 			this.add(message);
 			
-			this.btnSend = new JButton(new ImageIcon("images/btnbroadcast.png"));
+			this.btnSend = new SquareButton("images/btnbroadcast.png");
 			this.btnSend.setContentAreaFilled(false);
 			this.btnSend.setBounds(360, 95, 120, 60);
 			this.btnSend.setBorderPainted(false);
 			btnSend.addMouseListener(new SendMessageListener());
 			this.add(btnSend);
 			
-			this.btnReturn = new JButton(new ImageIcon("images/btnbroadcastcancel.png"));
+			this.btnReturn = new SquareButton("images/btnbroadcastcancel.png");
 			this.btnReturn.setContentAreaFilled(false);
 			this.btnReturn.setBounds(520, 95, 120, 60);
 			this.btnReturn.setBorderPainted(false);
@@ -86,17 +87,6 @@ public class MessagePanel  extends JPanel{
 			public void mouseReleased(MouseEvent e) {
 				setVisible(false);
 			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnReturn.setIcon(new ImageIcon("images/btnbroadcastcancel2.png"));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnReturn.setIcon(new ImageIcon("images/btnbroadcastcancel.png"));
-			}
-			
 		}
 		class SendMessageListener extends MouseAdapter {
 			@Override
@@ -114,18 +104,6 @@ public class MessagePanel  extends JPanel{
 				SendMessage operation = new SendMessage(AccountDTO.getInstance().getId(), receiver,messageStr);
 				GameControl.getInstance().doOperation(operation);
 			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnSend.setIcon(new ImageIcon("images/btnbroadcast2.png"));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnSend.setIcon(new ImageIcon("images/btnbroadcast.png"));
-			}
-			
-			
 		}
 
 		@Override

@@ -16,7 +16,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import ui.FrameUtil;
-import ui.StartMenuPanel;
+import ui.component.SquareButton;
 import ui.component.YellowTransparentTextField;
 import util.R;
 import control.AccountControl;
@@ -42,12 +42,10 @@ public class LoginPanel extends JPanel{
 	}
 	private AccountControl accountControl;
 	private JPanel panelLogup;
-	private StartMenuPanel smp;
 	private MainControl mc;
 	
-	public LoginPanel(StartMenuPanel smp, MainControl mc, JFrame loginFrame,AccountControl accountControl) {
+	public LoginPanel(MainControl mc, JFrame loginFrame,AccountControl accountControl) {
 		this.mc = mc;
-		this.smp = smp;
 		this.accountControl = accountControl;
 		thisPanel=this;
 		this.setLayout(null);
@@ -56,14 +54,14 @@ public class LoginPanel extends JPanel{
 		this.initComonent();
 	}
 	private void initComonent() {
-		this.btnlogin = new JButton(new ImageIcon("images/login.png"));
+		this.btnlogin = new SquareButton("images/login.png");
 		this.btnlogin.setBounds(220, 220, 80, 40);
 		btnlogin.setContentAreaFilled(false);
 		this.btnlogin.setBorderPainted(false);
 		btnlogin.addMouseListener(new LoginListener());
 		this.add(btnlogin);
 		
-		this.btnlogup = new JButton(new ImageIcon("images/logup.png"));
+		this.btnlogup = new SquareButton("images/logup.png");
 		this.btnlogup.setBounds(100, 220, 80, 40);
 		this.btnlogup.setBorderPainted(false);
 		btnlogup.setContentAreaFilled(false);
@@ -103,21 +101,24 @@ public class LoginPanel extends JPanel{
 
 		}
 		
+		 private void setGif() {
+			 loadingLabel.setIcon(new ImageIcon("images/loading2.gif"));
+				add(loadingLabel);
+				loginFrame.setContentPane(thisPanel);
+		}
+
 		private void login() {
 			String id = idField.getText();
 			String password = passwordField.getText();
 			
-			if(id != null && !id.equals("")){
-				FrameUtil.sendMessageByPullDown(smp, "连线中...");
-			}else{
-				return;
-			}
+			FrameUtil.sendMessageByPullDown(mc.currentPanel, "连线中...");
 			
 			// TODO 消息窗口
 			switch(accountControl.login(id, password)){
 			case SUCCESS:
 				loginFrame.setVisible(false);
-				FrameUtil.sendMessageByPullDown(smp, "欢迎回来，"+idField.getText());
+				FrameUtil.sendMessageByPullDown(mc.currentPanel, "欢迎回来，"+idField.getText());
+//				AccountDTO.getInstance().getId()
 				break;
 			case ALREADY_IN:
 				errorMsgLabel.setText("账户已在别处登录");
@@ -145,15 +146,15 @@ public class LoginPanel extends JPanel{
 		}
 		@Override
 		public void mouseReleased(MouseEvent e) {
+//			setGif();
 			login();
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			btnlogin.setIcon(new ImageIcon("images/login2.png"));
 		}
 		@Override
 		public void mouseExited(MouseEvent e) {
-			btnlogin.setIcon(new ImageIcon("images/login.png"));
+			
 		}
 	}
 	
@@ -178,11 +179,10 @@ public class LoginPanel extends JPanel{
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			btnlogup.setIcon(new ImageIcon("images/logup2.png"));
 		}
 		@Override
 		public void mouseExited(MouseEvent e) {
-			btnlogup.setIcon(new ImageIcon("images/logup.png"));
+			
 		}
 	}
 	
@@ -203,5 +203,5 @@ public class LoginPanel extends JPanel{
 	public void paintComponent(Graphics g) {
 		Image img = new ImageIcon("images/img1.jpg").getImage();
 		g.drawImage(img, 0, 0, null);
-	}
+		}
 }

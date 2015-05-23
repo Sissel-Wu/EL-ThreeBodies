@@ -2,8 +2,6 @@ package model.card;
 
 import java.util.List;
 
-import ui.FrameUtil;
-import ui.game.GamePanel;
 import model.Coordinate;
 import model.Player;
 import model.operation.CoordinateGet;
@@ -13,7 +11,6 @@ import model.operation.Operation;
 import model.operation.ResourceChange;
 import config.CardConfig;
 import config.GameConfig;
-import dto.AccountDTO;
 import dto.GameDTO;
 
 /**
@@ -81,15 +78,9 @@ public class Sophon extends Card {
 		
 		// 反馈
 		if (result == Coordinate.PROTECTED) {
-			if(operator.equals(AccountDTO.getInstance().getId())){
-				FrameUtil.sendMessageByPullDown(GamePanel.instance, "坐标获取失败");
-			}
 			CoordinateGetFail cgf = new CoordinateGetFail(operator, receiver);
 			subOperations.add(cgf);
 		} else {
-			if(operator.equals(AccountDTO.getInstance().getId())){
-				FrameUtil.sendMessageByPullDown(GamePanel.instance, "坐标获取成功");
-			}
 			pOperator.findCoordinate(pReceiver, position, result);
 			CoordinateGet cg = new CoordinateGet(operator, receiver, position, result);
 			subOperations.add(cg);

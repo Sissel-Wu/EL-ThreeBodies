@@ -3,7 +3,6 @@ import java.io.File;
 
 import saint.media.MidiPlayer;
 import saint.media.SimplePlayer;
-import dto.PreferenceDTO;
 /**
  * 
  * @author СY
@@ -14,8 +13,6 @@ public class Media{
 	private static SimplePlayer bgmPlayer = null;
 	private static SimplePlayer soundPlayer = null;
 	private static MidiPlayer midiPlayer = null;
-	
-	private static PreferenceDTO pdto = PreferenceDTO.getInstance();
 	
 	public static void playBGM(String name) {
 		if (bgmPlayer!=null){
@@ -36,7 +33,6 @@ public class Media{
 		}
 
 		try{
-			bgmPlayer.setVolume((float)(pdto.getVolume()));
 			bgmPlayer.play();	
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -55,7 +51,6 @@ public class Media{
 		}
 
 		try{
-			soundPlayer.setVolume((float)(pdto.getVolume()));
 			soundPlayer.play();	
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -74,7 +69,6 @@ public class Media{
 		}
 
 		try{
-			midiPlayer.setVolume((float)(pdto.getVolume()));
 			midiPlayer.play();	
 		}catch (Exception e) {
 			e.printStackTrace();

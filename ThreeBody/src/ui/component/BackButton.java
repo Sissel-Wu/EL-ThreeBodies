@@ -6,9 +6,6 @@ import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import ui.sound.Media;
-import ui.sound.Sound;
-
 public class BackButton extends JButton implements MouseListener{
 
 	/**
@@ -58,8 +55,6 @@ public class BackButton extends JButton implements MouseListener{
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		Media.playSound(Sound.enter);
-		
 		this.setBounds(0, 542, 90, 88);
 		this.setIcon(before);
 		ml.mouseReleased(e);

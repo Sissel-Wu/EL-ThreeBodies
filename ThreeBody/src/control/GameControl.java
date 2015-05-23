@@ -14,7 +14,6 @@ import model.operation.TurnChange;
 import server.interfaces.RMIGame;
 import ui.FrameUtil;
 import ui.game.GamePanel;
-import util.R.info;
 import dto.AccountDTO;
 import dto.GameDTO;
 
@@ -62,20 +61,11 @@ public class GameControl {
 		new TimeThread().start();
 	}
 	
-	public info exitGame(boolean isNormal){
-		try {
-			return rmig.exitGame(gameDTO.getUser(), isNormal);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
 	public void gameOver() {
 		try {
 			upload();
 			gameDTO.setGameOver(true);
-			switch(this.exitGame(true)){
+			switch(rmig.exitGame(gameDTO.getUser(), true)){
 			case SUCCESS:
 				System.out.println("exit game successfully");
 				break;
@@ -93,7 +83,6 @@ public class GameControl {
 					MainControl.getInstance().toScore(gameDTO.getUser().isLost());;
 				}
 			});
-			instance = null;
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -172,25 +161,18 @@ public class GameControl {
 		public void run() {
 			try {
 				while(!gameDTO.isGameOver()){
-					// 检查游戏状态
-					int state = rmig.getGameState();
-					if(state == -1){
-						FrameUtil.sendMessageByPullDown(gamePanel, "游戏状态不正常,3秒后转跳");
-						GameControl.this.exitGame(true);
-						gameDTO.setGameOver(true);
-						Thread.sleep(2500);
-						MainControl.getInstance().toStartMenu(false);
-						break;
-					}
 					upload();
 					// handle 同步过来的人家的 Operable
 					handleOperations(rmig.downloadOperation(id));
-					Thread.sleep(3000);
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (InterruptedException e2){
-				e2.printStackTrace();
 			} //while
 		} //run
 	} // syncThread
@@ -260,12 +242,6 @@ public class GameControl {
 				gamePanel.refresh();
 			}
 		}
-	}
-	
-	// 强退
-	public void rush(){
-		this.exitGame(false);
-		gameDTO.setGameOver(true);
 	}
 
 	

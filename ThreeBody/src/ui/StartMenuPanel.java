@@ -31,19 +31,22 @@ public class StartMenuPanel extends JPanel{
 	private JButton btnAboutUs;
 	private JButton btnExit;
 	private JButton btnHelp;
+	private JButton btnLogIn;
 	public JLabel labelLogIn;
-	private JLabel labelWelcome;
 	private MainControl mainControl;
+	public String accountId;
+	private Image opaque  = new ImageIcon("coNothing.png").getImage();
 	
-	public StartMenuPanel(boolean welcome,MainControl mainControl) {
+	public StartMenuPanel(MainControl mainControl) {
 		this.setLayout(null);
 		this.mainControl = mainControl;
-		this.initComonent(welcome);
+		this.accountId= AccountDTO.getInstance().getId();
+		this.initComonent();
 	}
 	
-	private void initComonent(boolean welcome) {
-		
-		this.btnStartGame = new JLabel(new ImageIcon("images/GameStart.gif"));
+	private void initComonent() {
+
+		this.btnStartGame = new JLabel(new ImageIcon("images/GameStart7.gif"));
 		this.btnStartGame.setBounds(523, 120, 260, 260);
 		this.btnStartGame.addMouseListener(new StartGameListener());
 		this.add(btnStartGame);
@@ -81,36 +84,24 @@ public class StartMenuPanel extends JPanel{
 		this.btnHelp.setContentAreaFilled(false);
 		this.btnHelp.setBounds(400, 236, 150, 150);
 		this.btnHelp.setBorderPainted(false);
-		this.btnHelp.setFocusable(false);
 		this.btnHelp.addMouseListener(new HelpListener());
 		this.add(btnHelp);
 		
-		this.labelLogIn = new JLabel(AccountDTO.getInstance().getId(),JLabel.CENTER);
+//		this.btnLogIn = new JButton();
+//		this.btnLogIn.setIcon(new ImageIcon("images/下拉.png"));
+//		this.btnLogIn.setBorderPainted(false);
+//		this.btnLogIn.setContentAreaFilled(false);
+//		this.btnLogIn.setBounds(-365, -35, 625, 80);
+//		this.btnLogIn.addMouseListener(new LogInListener());
+//		this.add(btnLogIn);
+		
+		this.labelLogIn = new JLabel(accountId,JLabel.CENTER);
 		this.labelLogIn.setBounds(0, 0, 260, 45);
 		this.labelLogIn.setForeground(R.color.LIGHT_YELLOW);
 		this.labelLogIn.setFont(new Font("华文细黑",Font.PLAIN,20));
+		this.labelLogIn.setVisible(true);
 		this.labelLogIn.addMouseListener(new LogInListener());
 		this.add(labelLogIn);
-		
-		if(welcome){
-			this.labelLogIn.setVisible(false);
-			this.btnStartGame.setVisible(false);
-			this.btnAboutUs.setVisible(false);
-			this.btnExit.setVisible(false);
-			this.btnHelp.setVisible(false);
-			this.btnOption.setVisible(false);
-			
-			this.labelWelcome = new JLabel(new ImageIcon("images/DARKFOREST1.gif"));
-			this.labelWelcome.setBounds(0, 0, 1158, 650);
-			this.labelWelcome.setVisible(true);
-			this.labelWelcome.addMouseListener(new MouseAdapter(){
-				@Override
-				public void mouseReleased(MouseEvent arg0) {
-					mainControl.toStartMenu(false);
-				}
-			});
-			this.add(labelWelcome);
-		}
 	}
 	@Override
 	public void paintComponent(Graphics g) {
@@ -119,10 +110,6 @@ public class StartMenuPanel extends JPanel{
 		
 		Image img = new ImageIcon("images/下拉.png").getImage();
 		g.drawImage(img, 0, 0, 260, 45, 0, 0, 625, 80, null);
-		
-		if(labelLogIn != null){
-			labelLogIn.setText(AccountDTO.getInstance().getId());
-		}
 	}
 
 	class StartGameListener extends MouseAdapter {
@@ -137,78 +124,29 @@ public class StartMenuPanel extends JPanel{
 		}
 	}
 	class OptionListener extends MouseAdapter {
+
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			Media.playSound(Sound.enter);
 			mainControl.toPreference();
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			Image option = new ImageIcon("images/Preference2.png").getImage();
-			option = option.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-			ImageIcon icon = new ImageIcon(option);
-			btnOption.setIcon(icon);
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			Image option = new ImageIcon("images/Preference.png").getImage();
-			option = option.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-			ImageIcon icon = new ImageIcon(option);
-			btnOption.setIcon(icon);
-		}
-		
-		
 	}
 	class AboutUsListener extends MouseAdapter {
+
+		
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			Media.playSound(Sound.enter);
+			Media.playBGM(Sound.career);
 			mainControl.toAboutUs();
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			Image option = new ImageIcon("images/AboutUs2.png").getImage();
-			option = option.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-			ImageIcon icon = new ImageIcon(option);
-			btnAboutUs.setIcon(icon);
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			Image option = new ImageIcon("images/AboutUs.png").getImage();
-			option = option.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-			ImageIcon icon = new ImageIcon(option);
-			btnAboutUs.setIcon(icon);
-		}
-		
-		
 	}
 	class ExitListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			Media.playSound(Sound.enter);
+			Media.playSound(Sound.goback);
 			mainControl.exit();
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			Image option = new ImageIcon("images/exit2.png").getImage();
-			option = option.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-			ImageIcon icon = new ImageIcon(option);
-			btnExit.setIcon(icon);
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			Image option = new ImageIcon("images/exit.png").getImage();
-			option = option.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-			ImageIcon icon = new ImageIcon(option);
-			btnExit.setIcon(icon);
-		}
-		
 	}
 	
 	class LogInListener extends MouseAdapter {
@@ -216,20 +154,18 @@ public class StartMenuPanel extends JPanel{
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			Media.playSound(Sound.choose);
-			if(mainControl.isConnecting()){
-				FrameUtil.sendMessageByPullDown(StartMenuPanel.this, "自动登录中");
-				return;
-			}
-			if(!mainControl.isConnected()){
+			if(AccountDTO.getInstance().getId() == "未登录"){
 				JFrame loginFrame = new LoginFrame();
-				JPanel loginPanel = new LoginPanel(StartMenuPanel.this ,mainControl, loginFrame,mainControl.accountControl);
+				JPanel loginPanel = new LoginPanel(mainControl, loginFrame,mainControl.accountControl);
 				loginFrame.setContentPane(loginPanel);
 				repaint();
 			}else{
 				if(mainControl.isConnected()){
 					mainControl.toAccount(AccountDTO.getInstance().getId());
+					System.out.println("Account界面，目前账号为："+AccountDTO.getInstance().getId()+" 已连接");
 				}else{
 					mainControl.toAccount(AccountDTO.getInstance().getId());
+					System.out.println("Account界面，目前账号为："+AccountDTO.getInstance().getId()+" 未连接");
 				}
 			}
 		}
@@ -238,23 +174,6 @@ public class StartMenuPanel extends JPanel{
 	class HelpListener extends MouseAdapter {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			mainControl.toTutorial();
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			Image option = new ImageIcon("images/Help2.png").getImage();
-			option = option.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-			ImageIcon icon = new ImageIcon(option);
-			btnHelp.setIcon(icon);
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			Image option = new ImageIcon("images/Help.png").getImage();
-			option = option.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-			ImageIcon icon = new ImageIcon(option);
-			btnHelp.setIcon(icon);
 		}
 	}
 }

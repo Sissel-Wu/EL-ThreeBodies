@@ -2,10 +2,7 @@ package model.operation;
 
 import java.util.List;
 
-import ui.FrameUtil;
-import ui.game.GamePanel;
 import model.Player;
-import dto.AccountDTO;
 import dto.GameDTO;
 
 
@@ -38,13 +35,6 @@ public class SendMessage extends Operation implements Operable{
 	public List<Operation> process() {
 		Player pOperator = GameDTO.getInstance().findPlayerByID(operator);
 		pOperator.setMessageable(false);
-		
-		if(receiver.equals(AccountDTO.getInstance().getId())){
-			FrameUtil.sendMessageByPullDown(GamePanel.instance, operator + "向你发了一条消息");
-		}
-		if(operator.equals(AccountDTO.getInstance().getId())){
-			FrameUtil.sendMessageByPullDown(GamePanel.instance, "发送成功!");
-		}
 		
 		return null;
 	}

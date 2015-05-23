@@ -1,10 +1,10 @@
 package control;
 
-import io.NetClient;
-
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+
+import io.NetClient;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 import ui.AboutUsPanel;
 import ui.AnimatePanel;
 import ui.FrameUtil;
-import ui.HelpPanel;
 import ui.MainFrame;
 import ui.PreferencePanel;
 import ui.RoomPanel;
@@ -23,9 +22,7 @@ import ui.game.GamePanel;
 import ui.lobby.LobbyPanel;
 import ui.sound.Media;
 import ui.sound.Sound;
-import util.R;
 import dto.AccountDTO;
-import dto.PreferenceDTO;
 
 public class MainControl {
 	
@@ -48,34 +45,19 @@ public class MainControl {
 	public RoomControl roomControl;
 	public GameControl gameControl;
 	
-	private volatile boolean connected = false;
-	private volatile boolean connecting = false;
+	private boolean connected = false;
+	
 	
 	public static void main(String[] args) {
 
 		final MainControl mc = new MainControl();
 		
-		instance = mc;
-		
-		// 初始化用户配置
-		PreferenceDTO.init();
-		
-		// 初始化账号控制
 		mc.accountControl = new AccountControl(mc);
+		String id = AccountDTO.getInstance().getId();
 		
-		// 开个线程联网，节约后面时间
 		new Thread(new Runnable(){
 			public void run(){
 				try {
-					// 下面代码的顺序很重要
-					String id = AccountDTO.getInstance().getId();
-					if(!id.equals("未登录") && PreferenceDTO.getInstance().isAutoLogin()){
-						mc.setConnecting(true);
-						if (mc.accountControl.loginByTransientID(id) == R.info.SUCCESS) {
-							mc.connected = true;
-							mc.connecting = false;
-						}
-					}
 					NetClient.getInstance();
 				} catch (MalformedURLException | RemoteException
 						| NotBoundException e) {
@@ -84,16 +66,18 @@ public class MainControl {
 			}
 		}).start();
 		
-		mc.frame = new MainFrame(mc);
-		
-		if(PreferenceDTO.getInstance().isEffectOn()){
-			mc.toAnimate("opening");
-		}else{
-			Media.playBGM(PreferenceDTO.getInstance().getBgm());
-			Media.getBgmPlayer().setVolume((float) PreferenceDTO.getInstance().getVolume());
-			mc.toStartMenu(true);
+		if(!id.equals("未登录")){
+//			if (mc.accountControl.loginByTransientID(id) == R.info.SUCCESS) {
+//				mc.connected = true;
+//			}
 		}
-
+		//TODO
+		mc.frame = new MainFrame(mc);
+		mc.toStartMenu();
+//		mc.toAnimate("opening");
+		Sound.load("BGM1");
+		Media.playBGM(Sound.BGM);
+		
 		instance = mc;
 	}
 	
@@ -101,8 +85,8 @@ public class MainControl {
 		return instance;
 	}
 
-	public void toStartMenu(boolean welcome) {
-		this.startMenuPanel = new StartMenuPanel(welcome,this);
+	public void toStartMenu() {
+		this.startMenuPanel = new StartMenuPanel(this);
 		if(currentPanel!=null&&currentPanel==lobbyPanel){
 			currentPanel.setVisible(false);	
 		}
@@ -113,17 +97,13 @@ public class MainControl {
 	}
 
 	public void toAnimate(String fileName) {
-		if(currentPanel != null){
-			currentPanel.setVisible(false);
-		}
+		currentPanel.setVisible(false);
 		this.animate = new AnimatePanel(fileName,this);
 		currentPanel = this.animate;
 		frame.setContentPane(currentPanel);
 		currentPanel.setVisible(true);
 		frame.validate();
-		
-//		animate.run();
-		new Thread(animate).start();
+		animate.run();
 	}
 
 	public void toPreference() {
@@ -138,22 +118,14 @@ public class MainControl {
 	}
 
 	public void toTutorial() {
-		currentPanel.setVisible(false);
-		HelpPanel hp = new HelpPanel(this);
-		currentPanel = hp;
-		frame.setContentPane(hp);
-		currentPanel.setVisible(true);
-		frame.validate();
 	}
 
 	public void toGame(int numOfPlayers) {
-		Media.stopBGM(Sound.BGM);
-		
 		// new GameControl
 		gameControl = roomControl.getGameService();
 		// 绘制gamePanel
 		currentPanel.setVisible(false);
-		this.gamePanel = new GamePanel(this,gameControl);
+		this.gamePanel = new GamePanel(gameControl);
 		currentPanel = this.gamePanel;
 		frame.setContentPane(currentPanel);
 		currentPanel.setVisible(true);
@@ -161,9 +133,6 @@ public class MainControl {
 		// 设定panel，开始游戏
 		gameControl.setPanel((GamePanel)gamePanel);
 		gameControl.turnChange();
-		
-		Sound.load("Cornfield Chase");
-		Media.playBGM(Sound.BGM);
 	}
 
 	public void toLobby() {
@@ -211,10 +180,13 @@ public class MainControl {
 		frame.validate();
 	}
 
+	// TODO 先写着 = =
+	public void toScore() {
+		roomControl.exit();
+		toStartMenu();
+	}
+
 	public void exit() {
-		if(gameControl != null){
-			gameControl.exitGame(false);
-		}
 		if(roomControl != null){
 			roomControl.exit();
 		}
@@ -225,6 +197,8 @@ public class MainControl {
 	}
 	
 	public void toScore(boolean isLost) {
+		roomControl.exit();
+		
 		currentPanel.setVisible(false);
 		this.score = new ScorePanel(isLost,this);
 		currentPanel = this.score;
@@ -239,14 +213,6 @@ public class MainControl {
 
 	public void setConnected(boolean connected) {
 		this.connected = connected;
-	}
-
-	public boolean isConnecting() {
-		return connecting;
-	}
-
-	public void setConnecting(boolean connecting) {
-		this.connecting = connecting;
 	}
 
 }

@@ -1,10 +1,8 @@
 package control;
 
-import io.ImageHelper;
 import io.NetClient;
 import io.UserData;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -36,6 +34,7 @@ public class AccountControl {
 		AccountDTO.initializeByLocalData(account);
 	}
     
+    // TODO 为了测试删了自动登陆
     public R.info logUp(String id,String password,String invitationID){
     	setUpRMIAC();
     	R.info feedback = null;
@@ -47,11 +46,11 @@ public class AccountControl {
 				mainControl.setConnected(true);
 				// 保存transientID
 				String transientID = rmiac.getTransientID(id);
-				UserData.saveTransientID(transientID);
+//				UserData.saveTransientID(transientID);
 				// 同步网络端的account
 				account = rmia.getAccount();
 				AccountDTO.synchronize(account);	
-				UserData.saveAccount(account);
+//				UserData.saveAccount(account);
 				// 开启检查连接的线程
 				new ConnectionChecker().start();
 			}
@@ -62,6 +61,7 @@ public class AccountControl {
     }
 
     // TODO 比较两端的不同
+    // TODO 为了测试删了自动登陆
 	public R.info login(String id,String password){
 		setUpRMIAC();
 		R.info feedback = null;
@@ -73,11 +73,11 @@ public class AccountControl {
 				mainControl.setConnected(true);
 				// 保存transientID
 				String transientID = rmiac.getTransientID(id);
-				UserData.saveTransientID(transientID);
+//				UserData.saveTransientID(transientID);
 				// 同步网络端的account
 				account = rmia.getAccount();
 				AccountDTO.synchronize(account);	
-				UserData.saveAccount(account);
+//				UserData.saveAccount(account);
 				// 开启检查连接的线程
 				new ConnectionChecker().start();
 			}
@@ -165,15 +165,10 @@ public class AccountControl {
     }
     
     /*
-     * 将变化上传到服务器端
+     * 将头像上传到服务器端
      */
-    public R.info uploadChange(){
+    public R.info uploadHead(){
     	setUpRMIAC();
-    	try {
-			return rmia.uploadChange(account);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
     	return null;
     }
     
@@ -187,12 +182,6 @@ public class AccountControl {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-    }
-    
-    public void uploadHead(){
-    	ImageHelper ih = new ImageHelper();
-    	System.out.println(account.getHead());
-		ih.uploadHead(account.getId(), new File(account.getHead()));
     }
     
     private class ConnectionChecker extends Thread{

@@ -1,7 +1,5 @@
 package ui.account;
 
-import io.ImageHelper;
-
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -18,10 +16,13 @@ import javax.swing.JPanel;
 import ui.FrameUtil;
 import ui.InformFrame;
 import ui.component.BackButton;
+import ui.component.SquareButton;
 import util.R;
 import control.AccountControl;
 import control.MainControl;
 import dto.AccountDTO;
+
+
 
 public class AccountPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
@@ -30,6 +31,8 @@ public class AccountPanel extends JPanel{
 	private JLabel labelHead;
 	private JLabel psPoint;
 	private JLabel labelPoint;
+//	private JLabel psRank;
+//	private JLabel labelRank;
 	private JLabel psTotalGames;
 	private JLabel labelTotalGames;
 	private JLabel psWins;
@@ -47,8 +50,6 @@ public class AccountPanel extends JPanel{
 		this.accountDTO = AccountDTO.getInstance();
 		this.mainControl=mainControl;
 		this.accountControl=accountControl;
-		accountControl.synchronize();
-		
 		init();
 	}
 	private void init() {
@@ -69,9 +70,6 @@ public class AccountPanel extends JPanel{
 		labelHead.setBounds(600,70,150,150);
 		if(accountDTO.getHead()!=null){
 			Image headImage=accountDTO.getHead();
-			if(headImage == null){
-				headImage = new ImageIcon("images/headtest.jpg").getImage();
-			}
 			headImage=headImage.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
 			labelHead.setIcon(new ImageIcon(headImage));
 		}else{
@@ -153,7 +151,7 @@ public class AccountPanel extends JPanel{
 		this.btnReturn = new BackButton(new ReturnListener());
 		this.add(btnReturn);
 		
-		this.btnLogout = new JButton(new ImageIcon("images/logOut.png"));
+		this.btnLogout = new SquareButton("images/logOut.png");
 		this.btnLogout.setContentAreaFilled(false);
 		this.btnLogout.setBounds(670, 510, 100, 40);
 		this.btnLogout.setBorderPainted(false);
@@ -162,7 +160,7 @@ public class AccountPanel extends JPanel{
 		btnLogout.addMouseListener(new LogOutListener());
 		this.add(btnLogout);
 		
-		this.btnRevisePW = new JButton(new ImageIcon("images/修改密码.png"));
+		this.btnRevisePW = new SquareButton("images/修改密码.png");
 		this.btnRevisePW.setContentAreaFilled(false);
 		this.btnRevisePW.setBounds(400, 510, 120, 40);
 		this.btnRevisePW.setBorderPainted(false);
@@ -188,7 +186,7 @@ public class AccountPanel extends JPanel{
 		}
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			mainControl.toStartMenu(false);
+			mainControl.toStartMenu();
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
@@ -212,7 +210,6 @@ public class AccountPanel extends JPanel{
 			switch(accountControl.logoutAndClear()){
 			case SUCCESS:
 				FrameUtil.sendMessageByPullDown(AccountPanel.this, "登出成功，本地缓存已删除");
-				mainControl.toStartMenu(false);
 				break;
 			default:
 				FrameUtil.sendMessageByPullDown(AccountPanel.this, "登出失败 T_T");
@@ -220,11 +217,9 @@ public class AccountPanel extends JPanel{
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			btnLogout.setIcon(new ImageIcon("images/logOut2.png"));
 		}
 		@Override
 		public void mouseExited(MouseEvent e) {
-			btnLogout.setIcon(new ImageIcon("images/logOut.png"));
 		}
 	}
 	
@@ -244,11 +239,9 @@ public class AccountPanel extends JPanel{
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			btnRevisePW.setIcon(new ImageIcon("images/修改密码2.png"));
 		}
 		@Override
 		public void mouseExited(MouseEvent e) {
-			btnRevisePW.setIcon(new ImageIcon("images/修改密码.png"));
 		}
 	}
 	
@@ -262,27 +255,13 @@ public class AccountPanel extends JPanel{
 		}
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			
 			JFileChooser jfc = new JFileChooser();
 			jfc.showOpenDialog(jfc);
 			File fileHead = jfc.getSelectedFile();
-			
-			// 只支持jpg和png格式
-			String fileName = fileHead.getName();
-			if (!(fileName.endsWith("png") || fileName.endsWith("jpg")
-					|| fileName.endsWith("JPG") || fileName.endsWith("PNG"))) {
-				FrameUtil.sendMessageByPullDown(AccountPanel.this, "暂时只支持jpg和png格式哟");
-				return;
-			}
-			
+			System.out.println(fileHead.getPath());
 			Image headImage = new ImageIcon(fileHead.getPath()).getImage();
 			headImage=headImage.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
 			labelHead.setIcon(new ImageIcon(headImage));
-			
-			accountDTO.setHead(fileHead);
-			FrameUtil.sendMessageByPullDown(AccountPanel.this, "头像上传中...");
-			accountControl.uploadChange();
-			accountControl.uploadHead();
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {

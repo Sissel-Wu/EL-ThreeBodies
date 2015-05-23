@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import model.Coordinate;
 import model.Player;
 import model.card.Card;
 import model.card.NoBroadcasting;
@@ -29,16 +31,17 @@ import model.card.TechPotion;
 import model.card.WholeBlock;
 import model.operation.CardUse;
 import model.operation.Operation;
+import model.role.Role;
 import ui.FrameUtil;
 import ui.InformFrame;
 import ui.block.PatialBlockFrame;
 import ui.block.PatialBlockPanel;
 import ui.component.BackButton;
+import ui.component.SquareButton;
 import ui.sophon.SophonFinderFrame;
 import ui.sophon.SophonFinderPanel;
 import util.R;
 import control.GameControl;
-import control.MainControl;
 import dto.AccountDTO;
 import dto.GameDTO;
 
@@ -92,16 +95,12 @@ public class GamePanel  extends JPanel{
 	private List<Player> enemies = new ArrayList<Player>();
 	private Player user = GameDTO.getInstance().getUser();
 	private GameControl gameControl;
-	private MainControl mainControl;
 	private GameDTO gameDTO;
-	
-	public static GamePanel instance; 
 	
 	private Map<String,Integer> cardTechList = R.card.cardTechList;
 	private Map<String,Integer> cardRsrList = R.card.cardRsrList;
 	
-	public GamePanel(MainControl mainControl, GameControl gameControl) {
-		this.mainControl = mainControl;
+	public GamePanel(GameControl gameControl) {
 		this.gameControl = gameControl;
 		this.gameDTO = GameDTO.getInstance();
 		// 初始化对方玩家
@@ -122,7 +121,6 @@ public class GamePanel  extends JPanel{
 		this.createEnemy();
 		this.createCoordinatePanel();
 		
-		instance = this;
 	}
 	
 	public void refresh() {
@@ -435,49 +433,44 @@ public class GamePanel  extends JPanel{
 	class ReturnListener extends MouseAdapter  {
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			JFrame frame = new InformFrame("强退警告", 450, 300);
-			JPanel bwp = new BackWarningPanel(frame, mainControl, gameControl);
-			frame.add(bwp);
-			bwp.setVisible(true);
-			
-			//调试用
-//			System.out.println(AccountDTO.getInstance().getId()+"端:");
-//			System.out.println("第"+gameDTO.getBout()+"回合");
-//			System.out.println("回合玩家："+gameDTO.getWhoseTurn().getAccount().getId());
-//			List<Player> players = gameDTO.getPlayers();
-//			for (Player player : players) {
-//				System.out.println("--"+player.getAccount().getId()+":");
-//				System.out.println("--"+player.getRole()+":");
-//				System.out.println("--"+"资源："+player.getResource());
-//				System.out.println("--"+"科技："+player.getTechPoint());
-//				System.out.println("--"+"坐标："+player.getCoordinate().toString());
-//				System.out.println("--"+"保护情况"+player.getCoordinate().getProtectingState());
-//				if(player.isPrivilegeGetRole()){
-//					System.out.println("--可以用特权");
-//				}else{
-//					System.out.println("--不可以用特权");
-//				}
-//				if(player.isBroadcastable()){
-//					System.out.println("--可以用广播");
-//				}else{
-//					System.out.println("--不能用广播");
-//				}
-//				if(player.isLost()){
-//					System.out.println("--已死");
-//				}else{
-//					System.out.println("--存活中");
-//				}
-//				System.out.println("----"+"发现坐标：");
-//				for(Entry<Player,Coordinate> entry:player.getFoundCoordinates().entrySet()){
-//					System.out.println("----"+entry.getKey().getAccount().getId()+":"+entry.getValue());
-//				}
-//				System.out.println("----"+"发现角色：");
-//				for(Entry<Player,Role> entry:player.getFoundRoles().entrySet()){
-//					System.out.println("----"+entry.getKey().getAccount().getId()+":"+entry.getValue());
-//				}
-//				System.out.println("---------------------------");
-//			}
-//			System.out.println("=======================================================================");
+			// TODO 测试
+			System.out.println(AccountDTO.getInstance().getId()+"端:");
+			System.out.println("第"+gameDTO.getBout()+"回合");
+			System.out.println("回合玩家："+gameDTO.getWhoseTurn().getAccount().getId());
+			List<Player> players = gameDTO.getPlayers();
+			for (Player player : players) {
+				System.out.println("--"+player.getAccount().getId()+":");
+				System.out.println("--"+player.getRole()+":");
+				System.out.println("--"+"资源："+player.getResource());
+				System.out.println("--"+"科技："+player.getTechPoint());
+				System.out.println("--"+"坐标："+player.getCoordinate().toString());
+				System.out.println("--"+"保护情况"+player.getCoordinate().getProtectingState());
+				if(player.isPrivilegeGetRole()){
+					System.out.println("--可以用特权");
+				}else{
+					System.out.println("--不可以用特权");
+				}
+				if(player.isBroadcastable()){
+					System.out.println("--可以用广播");
+				}else{
+					System.out.println("--不能用广播");
+				}
+				if(player.isLost()){
+					System.out.println("--已死");
+				}else{
+					System.out.println("--存活中");
+				}
+				System.out.println("----"+"发现坐标：");
+				for(Entry<Player,Coordinate> entry:player.getFoundCoordinates().entrySet()){
+					System.out.println("----"+entry.getKey().getAccount().getId()+":"+entry.getValue());
+				}
+				System.out.println("----"+"发现角色：");
+				for(Entry<Player,Role> entry:player.getFoundRoles().entrySet()){
+					System.out.println("----"+entry.getKey().getAccount().getId()+":"+entry.getValue());
+				}
+				System.out.println("---------------------------");
+			}
+			System.out.println("=======================================================================");
 		}
 	}
 	/**
@@ -763,8 +756,9 @@ public class GamePanel  extends JPanel{
 				FrameUtil.sendMessageByPullDown(GamePanel.this, "资源不足！");
 				return;
 			}
+			FrameUtil.sendMessageByPullDown(GamePanel.this, "干扰成功！");
 			JFrame iframe = new InformFrame("电波干扰", 300, 200);
-			JPanel selectEnemyPanel = new SelectEnemyPanel(GamePanel.this, iframe,"选择要干扰的敌人");
+			JPanel selectEnemyPanel = new SelectEnemyPanel(iframe,"选择要干扰的敌人");
 			iframe.add(selectEnemyPanel);
 		}
 		@Override
@@ -997,7 +991,7 @@ public class GamePanel  extends JPanel{
 				return;
 			}
 			JFrame iframe = new InformFrame("特权_身份探知", 300, 200);
-			JPanel selectEnemyPanel = new SelectEnemyPanel(GamePanel.this, iframe,"选择要探知的敌人");
+			JPanel selectEnemyPanel = new SelectEnemyPanel(iframe,"选择要探知的敌人");
 			iframe.add(selectEnemyPanel);
 		}
 		@Override

@@ -1,12 +1,8 @@
 package ui;
 
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import control.MainControl;
@@ -31,11 +27,6 @@ public class MainFrame extends JFrame {
 //    	this.setContentPane(panel);
     	//默认窗口为显示
     	this.setVisible(true);
-    	
-    	this.setIconImage(new ImageIcon("images/logo255.png").getImage());
-    	
-//    	Cursor coursor = Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon("images/arrow.png").getImage(),new Point(10,20), null);
-//    	this.setCursor(coursor);
     	
     	this.mc = mc;
     	

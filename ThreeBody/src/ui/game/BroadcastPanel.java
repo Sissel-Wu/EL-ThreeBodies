@@ -75,21 +75,21 @@ public class BroadcastPanel extends JPanel {
 		btnCoordinateFour.setFont(new Font("宋体", Font.BOLD, 60));
 		this.add(btnCoordinateFour);
 		
-		this.btnOK = new JButton(new ImageIcon("images/btnbroadcast.png"));
+		this.btnOK = new SquareButton("images/btnbroadcast.png");
 		this.btnOK.setContentAreaFilled(false);
 		this.btnOK.setBounds(380, 95, 120, 60);
 		this.btnOK.setBorderPainted(false);
 		btnOK.addMouseListener(new BroadcastListener());
 		this.add(btnOK);
 		
-		this.btnReturn = new JButton(new ImageIcon("images/btnbroadcastcancel.png"));
+		this.btnReturn = new SquareButton("images/btnbroadcastcancel.png");
 		this.btnReturn.setContentAreaFilled(false);
 		this.btnReturn.setBounds(520, 95, 120, 60);
 		this.btnReturn.setBorderPainted(false);
 		btnReturn.addMouseListener(new ReturnListener());
 		this.add(btnReturn);
 		
-		this.btnConquer = new JButton(new ImageIcon("images/conquer.png"));
+		this.btnConquer = new SquareButton("images/conquer.png");
 		this.btnConquer.setContentAreaFilled(false);
 		this.btnConquer.setBounds(240, 95, 120, 60);
 		this.btnConquer.setBorderPainted(false);
@@ -118,17 +118,6 @@ public class BroadcastPanel extends JPanel {
 		public void mouseReleased(MouseEvent e) {
 			setVisible(false);
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			btnReturn.setIcon(new ImageIcon("images/btnbroadcastcancel2.png"));
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			btnReturn.setIcon(new ImageIcon("images/btnbroadcastcancel.png"));
-		}
-		
 	}
 	
 	class BroadcastListener extends MouseAdapter {
@@ -156,18 +145,6 @@ public class BroadcastPanel extends JPanel {
 				FrameUtil.sendMessageByPullDown(gp, "坐标输入错误");
 			}
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			btnOK.setIcon(new ImageIcon("images/btnbroadcast2.png"));
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			btnOK.setIcon(new ImageIcon("images/btnbroadcast.png"));
-		}
-		
-		
 	}
 	
 	class ConquerListener extends MouseAdapter {
@@ -191,17 +168,6 @@ public class BroadcastPanel extends JPanel {
 				FrameUtil.sendMessageByPullDown(gp, "坐标输入错误");
 			}
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			btnConquer.setIcon(new ImageIcon("images/conquer2.png"));
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			btnConquer.setIcon(new ImageIcon("images/conquer.png"));
-		}
-		
 	}
 	
 	@Override

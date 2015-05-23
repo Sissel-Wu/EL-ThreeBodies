@@ -39,14 +39,14 @@ public class RevisePWPanel extends JPanel{
 		
 	}
 	private void initComonent() {
-		this.btnCancel = new JButton(new ImageIcon("images/logcancel.png"));
+		this.btnCancel = new SquareButton("images/logcancel.png");
 		this.btnCancel.setBounds(220, 220, 80, 40);
 		btnCancel.setContentAreaFilled(false);
 		btnCancel.setBorderPainted(false);
 		btnCancel.addMouseListener(new CancelListener());
 		this.add(btnCancel);
 		
-		this.btnRevise = new JButton(new ImageIcon("images/pwRevise.png"));
+		this.btnRevise = new SquareButton("images/pwRevise.png");
 		this.btnRevise.setBounds(100, 220, 80, 40);
 		btnRevise.setContentAreaFilled(false);
 		btnRevise.setBorderPainted(false);
@@ -88,18 +88,6 @@ public class RevisePWPanel extends JPanel{
 		public void mouseClicked(MouseEvent e) {
 			frame.setVisible(false);
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			btnCancel.setIcon(new ImageIcon("images/logcancel2.png"));
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			btnCancel.setIcon(new ImageIcon("images/logcancel.png"));
-		}
-		
-		
 	}
 	
 	class ReviseListener extends MouseAdapter {
@@ -120,18 +108,6 @@ public class RevisePWPanel extends JPanel{
 				break;
 			}
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			btnRevise.setIcon(new ImageIcon("images/pwRevise2.png"));
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			btnRevise.setIcon(new ImageIcon("images/pwRevise.png"));
-		}
-		
-		
 	}
 
 	public void paintComponent(Graphics g) {

@@ -87,14 +87,14 @@ public class SophonFinderPanel extends JPanel{
 		this.add(btnCoordinateFour);
 		this.setPicture(position);
 		
-		this.btnOK = new JButton(new ImageIcon("images/find.png"));
+		this.btnOK = new SquareButton("images/find.png");
 		this.btnOK.setContentAreaFilled(false);
 		this.btnOK.setBounds(250, 125, 60, 30);
 		btnOK.setBorderPainted(false);
 		btnOK.addMouseListener(new FindListener());
 		this.add(btnOK);
 		
-		this.btnReturn = new JButton(new ImageIcon("images/littlecancel.png"));
+		this.btnReturn = new SquareButton("images/littlecancel.png");
 		this.btnReturn.setContentAreaFilled(false);
 		this.btnReturn.setBounds(335, 125, 60, 30);
 		btnReturn.setBorderPainted(false);
@@ -125,18 +125,6 @@ public class SophonFinderPanel extends JPanel{
 		public void mouseReleased(MouseEvent e) {
 			sophonFinderFrame.setVisible(false);
 		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			btnReturn.setIcon(new ImageIcon("images/littlecancel2.png"));
-
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			btnReturn.setIcon(new ImageIcon("images/littlecancel.png"));
-		}
-		
 	}
 	class FindListener extends MouseAdapter {
 		
@@ -189,15 +177,6 @@ public class SophonFinderPanel extends JPanel{
 				jumpPanel();
 			}
 		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			btnOK.setIcon(new ImageIcon("images/find2.png"));
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-			btnOK.setIcon(new ImageIcon("images/find.png"));
-		}
-		
 	}
 	class CoordinateOneListener extends MouseAdapter {
 		@Override
