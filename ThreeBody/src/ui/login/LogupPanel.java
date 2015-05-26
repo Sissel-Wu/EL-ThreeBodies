@@ -47,15 +47,17 @@ public class LogupPanel extends JPanel {
 		
 	}
 	private void initComonent() {
-		this.btnCancel = new SquareButton("images/logcancel.png");
+		this.btnCancel = new JButton(new ImageIcon("images/logcancel.png"));
 		this.btnCancel.setBounds(220, 220, 80, 40);
 		btnCancel.setContentAreaFilled(false);
+		btnCancel.setBorderPainted(false);
 		btnCancel.addMouseListener(new CancelListener());
 		this.add(btnCancel);
 		
-		this.btnlogup = new SquareButton("images/logup.png");
+		this.btnlogup = new JButton(new ImageIcon("images/logup.png"));
 		this.btnlogup.setBounds(100, 220, 80, 40);
 		btnlogup.setContentAreaFilled(false);
+		btnlogup.setBorderPainted(false);
 		btnlogup.addMouseListener(new LogupListener());
 		this.add(btnlogup);
 		
@@ -116,10 +118,11 @@ public class LogupPanel extends JPanel {
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			btnCancel.setIcon(new ImageIcon("images/logcancel2.png"));
 		}
 		@Override
 		public void mouseExited(MouseEvent e) {
-			
+			btnCancel.setIcon(new ImageIcon("images/logcancel.png"));
 		}
 	}
 	
@@ -158,10 +161,11 @@ public class LogupPanel extends JPanel {
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			btnlogup.setIcon(new ImageIcon("images/logup2.png"));
 		}
 		@Override
 		public void mouseExited(MouseEvent e) {
-			
+			btnlogup.setIcon(new ImageIcon("images/logup2.png"));
 		}
 	}
 	public void paintComponent(Graphics g) {

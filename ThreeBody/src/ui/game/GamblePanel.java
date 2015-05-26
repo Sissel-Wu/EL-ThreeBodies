@@ -44,7 +44,7 @@ public class GamblePanel extends JPanel {
 		this.initComonent(message);
 	}
 	private void initComonent(String message) {
-		this.btnOK = new SquareButton("images/btnOk.png");
+		this.btnOK = new JButton(new ImageIcon("images/btnOk.png"));
 		this.btnOK.setContentAreaFilled(false);
 		this.btnOK.setBounds(120, 132,60, 30);
 		this.btnOK.setBorderPainted(false);
@@ -110,10 +110,11 @@ public class GamblePanel extends JPanel {
 		}
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			btnOK.setIcon(new ImageIcon("images/btnOk2.png"));
 		}
 		@Override
 		public void mouseExited(MouseEvent e) {
-			
+			btnOK.setIcon(new ImageIcon("images/btnOk.png"));
 		}
 	}
 	

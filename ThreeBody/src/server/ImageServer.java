@@ -62,16 +62,16 @@ public class ImageServer extends UnicastRemoteObject implements RMIImage {
 	@Override
 	public info uploadImage(String id, byte[] file, img_type type, img_format format)
 			throws RemoteException {
-		String location = null;
+		String path = null;
 		switch(type){
 		case HEAD:
-			location = "/root/EL/head/";
+			path = "/root/EL/head/";
 			switch(format){
 			case PNG:
-				location += (id+".png");
+				path += (id+".png");
 				break;
 			case JPG:
-				location += (id+".jpg");
+				path += (id+".jpg");
 				break;
 			}
 			break;
@@ -79,7 +79,7 @@ public class ImageServer extends UnicastRemoteObject implements RMIImage {
 			break;
 		}
 		try {
-			File img = new File(location);
+			File img = new File(path);
 			img.createNewFile();
 			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(img));
 			bos.write(file);
@@ -97,8 +97,11 @@ public class ImageServer extends UnicastRemoteObject implements RMIImage {
 	public img_format checkFormat(String id, img_type type)
 			throws RemoteException {
 		String location = getLocation(id, type);
+		if(location == null){
+			return null;
+		}
 		int index = location.lastIndexOf(".");
-		switch(location.substring(index+1, location.length()-1)){
+		switch(location.substring(index+1, location.length())){
 		case "png":
 			return img_format.PNG;
 		case "jpg":
@@ -111,15 +114,17 @@ public class ImageServer extends UnicastRemoteObject implements RMIImage {
 		String location = null;
 		switch(type){
 		case HEAD:
-			File tmp = new File("/root/EL/heads");
+			File tmp = new File("/root/EL/head");
 			for(String name:tmp.list()){
 				if(name.startsWith(id+".")){
-					location = "/root/EL/heads/"+name;
+					location = "/root/EL/head/"+name;
 					break;
 				}
 			}
+			break;
 		case ADVERTISEMENT:
 			location = "/root/EL/ads/ad0";
+			break;
 		}
 		return location;
 	}

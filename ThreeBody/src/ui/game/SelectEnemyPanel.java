@@ -20,6 +20,7 @@ import model.card.NoBroadcasting;
 import model.operation.CardUse;
 import model.operation.Operation;
 import model.operation.Priviledge_GetRole;
+import ui.FrameUtil;
 import ui.component.SquareButton;
 import util.R;
 import control.GameControl;
@@ -32,21 +33,24 @@ public class SelectEnemyPanel extends JPanel {
 	private JButton btnOK;
 	private JComboBox<String> enemys;
 	private JLabel msgLabel;
+	private JPanel panel;
+	
 	List<Player> players=null;
 	Player user;
 	/**
 	 * 
 	 * @param successInformFrame 
 	 */
-	public SelectEnemyPanel(JFrame frame,String message) {
+	public SelectEnemyPanel(JPanel panel ,JFrame frame,String message) {
 		this.setLayout(null);
 		players= GameDTO.getInstance().getPlayers();
 		user=GameDTO.getInstance().getUser();
 		this.frame=frame;
+		this.panel = panel;
 		this.initComonent(message);
 	}
 	private void initComonent(String message) {
-		this.btnOK = new SquareButton("images/btnOk.png");
+		this.btnOK = new JButton(new ImageIcon("images/btnOk.png"));
 		this.btnOK.setContentAreaFilled(false);
 		this.btnOK.setBounds(120, 132,60, 30);
 		btnOK.addMouseListener(new OKListener());
@@ -83,12 +87,27 @@ public class SelectEnemyPanel extends JPanel {
 				Card card = new NoBroadcasting(AccountDTO.getInstance().getId(), receiver);
 				Operation operation = new CardUse(AccountDTO.getInstance().getId(), receiver,card);
 				GameControl.getInstance().doOperation(operation);
+				FrameUtil.sendMessageByPullDown(panel, "干扰成功！");
 			}else if(msgLabel.getText().equals("选择要探知的敌人")){
 				Operation operation = new Priviledge_GetRole(AccountDTO.getInstance().getId(), receiver);
 				GameControl.getInstance().doOperation(operation);
+				FrameUtil.sendMessageByPullDown(panel, "探知成功！");
 			}
 			frame.setVisible(false);
 		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			btnOK.setIcon(new ImageIcon("images/btnOk2.png"));
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			btnOK.setIcon(new ImageIcon("images/btnOk.png"));
+
+		}
+		
+		
 	}
 	
 	public void paintComponent(Graphics g) {

@@ -112,7 +112,6 @@ public class LobbyPanel extends JPanel implements MouseWheelListener {
 	public void initComponent() {
 		// lobby room 3*2
 		if(btn_createRoom == null){
-//			this.btn_createRoom = new SquareButton("images/newroom.png");
 			this.btn_createRoom = new JButton(new ImageIcon("images/newroom.png"));
 			this.btn_createRoom.setContentAreaFilled(false);
 			this.btn_createRoom.setBounds(825, 500, 110, 50);
@@ -198,7 +197,7 @@ public class LobbyPanel extends JPanel implements MouseWheelListener {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			lobbyControl.changeEntered();
-			mainControl.toStartMenu();
+			mainControl.toStartMenu(false);
 		}
 	}
 
